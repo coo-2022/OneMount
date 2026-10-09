@@ -10,6 +10,7 @@ $secure = ConvertTo-SecureString $password -AsPlainText -Force
 $work = Join-Path $env:RUNNER_TEMP $name
 New-Item -ItemType Directory -Path $work | Out-Null
 $user = New-LocalUser -Name $name -Password $secure -AccountNeverExpires
+$taskName = 'OneMount-validation-' + $name
 try {
   # Only the local Users group; never Administrators.
   Add-LocalGroupMember -SID 'S-1-5-32-545' -Member $name
@@ -32,17 +33,29 @@ Write-Host 'PASS: running with a non-administrator Windows token'
 `$env:ONEMOUNT_PLAYWRIGHT = $(& $q ([string]$env:ONEMOUNT_PLAYWRIGHT))
 `$env:GITHUB_ACTIONS = 'true'
 Set-Location $(& $q $root)
-& $(& $q $node) $(& $q $scriptPath)
-exit `$LASTEXITCODE
+`$p = Start-Process $(& $q $node) -ArgumentList $(& $q ('"' + $scriptPath + '"')) -WorkingDirectory $(& $q $root) -RedirectStandardOutput $(& $q (Join-Path $work 'stdout.txt')) -RedirectStandardError $(& $q (Join-Path $work 'stderr.txt')) -Wait -PassThru
+[System.IO.File]::WriteAllText($(& $q (Join-Path $work 'exit.txt')), [string]`$p.ExitCode)
+exit `$p.ExitCode
 "@
-  $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($command))
-  $credential = [PSCredential]::new("$env:COMPUTERNAME\$name", $secure)
-  $proc = Start-Process powershell.exe -Credential $credential -LoadUserProfile -ArgumentList @('-NoProfile','-NonInteractive','-EncodedCommand',$encoded) -WorkingDirectory $root -RedirectStandardOutput (Join-Path $work 'stdout.txt') -RedirectStandardError (Join-Path $work 'stderr.txt') -PassThru
-  if (!$proc.WaitForExit(600000)) { throw 'Standard-user test timed out (10 minutes)' }
-  $proc.Refresh()
+  $runnerScript = Join-Path $work 'run.ps1'
+  [System.IO.File]::WriteAllText($runnerScript, $command, [System.Text.UTF8Encoding]::new($true))
+  $action = New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument "-NoProfile -NonInteractive -File `"$runnerScript`"" -WorkingDirectory $root
+  $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
+  Register-ScheduledTask -TaskName $taskName -Action $action -Settings $settings -User "$env:COMPUTERNAME\$name" -Password $password -RunLevel Limited -Force | Out-Null
+  Start-ScheduledTask -TaskName $taskName
+  $deadline = [DateTime]::UtcNow.AddMinutes(10)
+  while (!(Test-Path (Join-Path $work 'exit.txt'))) {
+    if ([DateTime]::UtcNow -gt $deadline) { throw 'Standard-user test timed out (10 minutes)' }
+    Start-Sleep -Seconds 2
+    $info = Get-ScheduledTaskInfo -TaskName $taskName
+    if ((Get-ScheduledTask -TaskName $taskName).State -eq 'Ready' -and $info.LastRunTime.Year -gt 2000 -and $info.LastTaskResult -ne 0 -and $info.LastTaskResult -ne 267009) { throw "Test task failed before completion: $($info.LastTaskResult)" }
+  }
+  $exitCode = [int](Get-Content -LiteralPath (Join-Path $work 'exit.txt') -Raw)
   Get-Content -LiteralPath (Join-Path $work 'stdout.txt')
   Get-Content -LiteralPath (Join-Path $work 'stderr.txt')
-  if ($proc.ExitCode -ne 0) { throw "Standard-user test failed: $($proc.ExitCode)" }
+  if ($exitCode -ne 0) { throw "Standard-user test failed: $exitCode" }
+  Write-Host 'PASS: standard-user test completed with an explicitly non-administrator token'
 } finally {
+  Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
   Remove-LocalUser -Name $name
 }
