@@ -1,0 +1,5 @@
+{
+  "onedrive": {"clientId": "", "clientSecret": ""},
+  "drive": {"clientId": "", "clientSecret": ""},
+  "dropbox": {"clientId": "", "clientSecret": ""}
+}

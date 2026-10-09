@@ -1,0 +1,29 @@
+name: Windows preview build
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+      - name: Download and verify bundled engines
+        run: npm run engines:win
+      - name: Build portable Windows application
+        run: npm run package:win
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OneMount-Windows-x64-preview
+          path: dist/CloudIsland-win32-x64/
+          retention-days: 14

@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const {_electron}=await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const electron=process.env.ELECTRON_BINARY || path.join(root,'node_modules/electron/dist/electron');
+const backend=fs.mkdtempSync(path.join(os.tmpdir(),'ci-ui-backend-'));
+const app=await _electron.launch({executablePath:electron,args:['--no-sandbox','--ozone-platform=headless','--disable-gpu',path.join(root,'scripts/ui-host.cjs')],timeout:20000});
+const errors=[];
+try{
+ const p=await app.firstWindow();await p.setViewportSize({width:1180,height:810});p.on('pageerror',e=>errors.push(e.message));await p.getByRole('heading',{name:'你的文件，就在手边'}).waitFor();
+ assert.ok(!/rclone|juicefs/i.test(await p.locator('body').innerText()));
+ await app.evaluate(({dialog},backend)=>{dialog.showOpenDialog=async()=>({canceled:false,filePaths:[backend]});},backend);
+ await p.getByRole('button',{name:'添加存储连接',exact:true}).click();await p.locator('[data-service="local"]').click();
+ await p.locator('[name="name"]').fill('本地验证');await p.getByRole('button',{name:'选择…',exact:true}).click();await p.getByRole('button',{name:'连接存储',exact:true}).click();await p.getByRole('heading',{name:'存储连接',exact:true}).waitFor();
+ await p.getByRole('button',{name:'检查',exact:true}).click();await p.getByText('连接正常，可以访问此目录',{exact:true}).waitFor();
+ await p.locator('.ir-nav [data-nav="home"]').click();await p.getByRole('button',{name:'添加磁盘',exact:true}).click();
+ await p.locator('#add-disk-form [name="name"]').fill('我的资料');await p.getByRole('button',{name:'创建磁盘',exact:true}).click();await p.getByRole('heading',{name:'我的资料',exact:true}).waitFor();
+ let snapshot=await p.evaluate(()=>window.island.invoke('snapshot'));assert.equal(snapshot.disks[0].mode,'direct');assert.equal(snapshot.disks[0].letter,'X:');
+ await p.locator('.ir-nav [data-nav="home"]').click();await p.getByRole('button',{name:'添加磁盘',exact:true}).click();await p.locator('[data-mode="juicefs"]').click();await p.locator('#add-disk-form [name="name"]').fill('工作空间');await p.getByRole('button',{name:'创建磁盘',exact:true}).click();await p.getByRole('heading',{name:'工作空间',exact:true}).waitFor();
+ snapshot=await p.evaluate(()=>window.island.invoke('snapshot'));assert.equal(snapshot.disks[1].mode,'juicefs');assert.equal(snapshot.disks[1].writeback,false);assert.equal(snapshot.disks[1].letter,'Y:');
+ await p.locator('[data-tab="advanced"]').click();await p.locator('#disk-settings [name="cacheGiB"]').fill('20');await p.getByRole('button',{name:'保存设置',exact:true}).click();snapshot=await p.evaluate(()=>window.island.invoke('snapshot'));assert.equal(snapshot.disks[1].cacheGiB,20);
+ await p.locator('.ir-nav [data-nav="home"]').click();
+ fs.mkdirSync(path.join(root,'screenshots'),{recursive:true});await p.locator('#toast').evaluate(el=>el.hidden=true);await p.screenshot({path:path.join(root,'screenshots/desktop.png')});
+ await p.getByRole('button',{name:'添加磁盘',exact:true}).click();await p.screenshot({path:path.join(root,'screenshots/create-disk.png')});await p.getByRole('button',{name:'取消',exact:true}).click();
+ await p.locator('.ir-nav [data-nav="connections"]').click();await p.getByRole('button',{name:'添加连接',exact:true}).click();assert.ok(await p.locator('[data-service="onedrive"]').isDisabled());await p.screenshot({path:path.join(root,'screenshots/connections.png')});
+ assert.ok(!/rclone|juicefs/i.test(await p.locator('body').innerText()));assert.deepEqual(errors,[]);
+ console.log('PASS: real IPC, local connection, connectivity check, both disk types, cache settings, unavailable OAuth branding gate, no engine names in UI, no renderer errors');
+}finally{await app.close();}

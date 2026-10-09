@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'..');
+const out=path.join(root,'dist/CloudIsland-win32-x64');
+for(const file of ['README.md','WINDOWS-VALIDATION.md','THIRD-PARTY-NOTICES.md'])fs.copyFileSync(path.join(root,file),path.join(out,file));
+fs.cpSync(path.join(root,'licenses'),path.join(out,'licenses'),{recursive:true});
+fs.copyFileSync(path.join(root,'LICENSE'),path.join(out,'LICENSE-OneMount'));
+const crypto=require('node:crypto');const hashes={};
+for(const file of ['CloudIsland.exe','resources/app.asar','resources/engines/rclone.exe','resources/engines/juicefs.exe'])hashes[file]=crypto.createHash('sha256').update(fs.readFileSync(path.join(out,file))).digest('hex');
+fs.writeFileSync(path.join(out,'SHA256.json'),JSON.stringify(hashes,null,2)+'\n');
+console.log('Documentation, licenses and package checksums included.');

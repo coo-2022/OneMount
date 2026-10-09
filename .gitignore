@@ -1,0 +1,17 @@
+node_modules/
+dist/
+engines/*
+!engines/README.md
+*.log
+*.db
+*.db-*
+accounts.conf
+credentials.json
+sessions.json
+oauth-clients.local.json
+.env
+.env.*
+test-results/
+playwright-report/
+core
+core.*

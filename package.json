@@ -1,0 +1,21 @@
+{
+  "name": "cloud-island",
+  "productName": "CloudIsland",
+  "version": "0.1.0",
+  "description": "云屿 — rclone 与 JuiceFS 桌面磁盘管理器",
+  "main": "src/bootstrap.cjs",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "install:electron": "node node_modules/electron/install.js",
+    "engines:win": "powershell -NoProfile -File scripts/fetch-engines.ps1",
+    "release:config": "node scripts/release-config.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "package:win": "electron-packager . CloudIsland --platform=win32 --arch=x64 --out=dist --overwrite --asar --icon=assets/icon.ico --ignore=^/dist --ignore=^/tests --ignore=^/scripts --ignore=^/screenshots --extra-resource=engines --ignore=^/engines --prune=true --ignore=^/oauth-clients.local.json --ignore=^/core --ignore=^/.github && node scripts/finish-package.cjs"
+  },
+  "devDependencies": {
+    "electron": "44.7.0",
+    "@electron/packager": "20.3.0"
+  }
+}
