@@ -55,7 +55,7 @@ async function unmount(id) {
   await page.locator('#overlay').waitFor({state:'hidden'});
 }
 async function quit() {
-  await page.locator('[data-nav="settings"]').click();
+  await page.locator('.ir-nav [data-nav="settings"]').click();
   await page.locator('[data-action="quit-confirm"]').click();
   const closed=app.waitForEvent('close',{timeout:90000});
   await page.locator('[data-action="quit"]').click();await closed;app=null;
@@ -76,7 +76,7 @@ async function main(){
   pass('UI creates and checks local storage connection');
   const disks=[];
   for(const [i,mode] of ['direct','juicefs'].entries()){
-    await page.locator('[data-nav="home"]').click();
+    await page.locator('.ir-nav [data-nav="home"]').click();
     await page.locator('[data-action="add-disk"]').first().click();
     await page.locator(`[data-mode="${mode}"]`).click();
     await page.locator('#add-disk-form [name="name"]').fill(mode==='direct'?'网盘直连验证':'文件系统卷验证');
@@ -96,7 +96,7 @@ async function main(){
     await page.screenshot({path:path.join(results,mode+'-mounted.png')});
     pass(`Packaged UI creates and mounts ${mode}; existing-file semantics, PowerShell read/write, binary hash`);
   }
-  await page.locator('[data-nav="activity"]').click();
+  await page.locator('.ir-nav [data-nav="activity"]').click();
   await page.screenshot({path:path.join(results,'activity.png')});
   assert.ok(!(await page.locator('body').innerText()).match(/rclone|juicefs/i),'UI must not expose internal engine names');
   // The real window-close handler must leave mounts and the tray process alive.
@@ -125,7 +125,7 @@ async function main(){
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync(d.letter+'\\大文件 验证.bin')).digest('hex'),d.hash);
   }
   pass('Safe exit and EXE restart preserve encrypted account configuration, disk records, auto-mount and cold-cache file hashes');
-  await page.locator('[data-nav="home"]').click();
+  await page.locator('.ir-nav [data-nav="home"]').click();
   await page.screenshot({path:path.join(results,'both-modes.png')});
   for(const d of disks)await drain(d.id);
   // Quit directly while both disks are mounted: the product must unmount them itself.
