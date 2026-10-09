@@ -38,9 +38,9 @@ public sealed class CiDesktopAccess : IDisposable {
         station=GetProcessWindowStation(); desktop=GetThreadDesktop(GetCurrentThreadId());
         oldStation=Read(station); oldDesktop=Read(desktop);
         try {
-            // Object-specific access and READ_CONTROL only; no WRITE_DAC or WRITE_OWNER.
-            Allow(station,oldStation,sid,0x0002037F);
-            Allow(desktop,oldDesktop,sid,0x000201FF);
+            // Same full access a user normally has on their own interactive desktop.
+            Allow(station,oldStation,sid,0x000F037F);
+            Allow(desktop,oldDesktop,sid,0x000F01FF);
         } catch { Write(station,oldStation); Write(desktop,oldDesktop); throw; }
     }
     public void Dispose() { Write(desktop,oldDesktop); Write(station,oldStation); }
