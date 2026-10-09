@@ -29,15 +29,13 @@ function formatArgs(port, volumeName) {
   return ['format', '--no-update', '--storage', 's3', '--bucket', `http://127.0.0.1:${port}/jfs`, 'sqlite3://meta.db', volumeName];
 }
 
-function juiceMountArgs(disk, paths, metricsPort, sid) {
-  if (!/^S-1-\d+(?:-\d+)+$/.test(sid)) throw new Error('无法识别当前 Windows 用户');
-  // Single-user volume: JuiceFS creates uid 0; map that uid to THIS user in WinFsp.
-  // --as-root is JuiceFS's internal POSIX identity, not Windows UAC elevation.
-  // JuiceFS 1.3.0 for Windows has no --umask flag. Keep Windows ownership
-  // mapping in WinFsp options; do not copy Unix-only mount flags here.
+function juiceMountArgs(disk, paths, metricsPort) {
+  // JuiceFS 1.3.0 --as-root already sets WinFsp uid=-1,gid=-1, which
+  // presents ownership as the mounting Windows user while using POSIX root
+  // internally. Do not override it: WinFsp explicitly rejects uidmap UID 0.
   const args = ['mount', '--no-usage-report', '--as-root',
     '--cache-dir', paths.cache, '--cache-size', String(disk.cacheGiB * 1024),
-    '--metrics', `127.0.0.1:${metricsPort}`, '-o', `uid=0,gid=0,uidmap=0:${sid}`];
+    '--metrics', `127.0.0.1:${metricsPort}`];
   if (disk.writeback) args.push('--writeback');
   args.push('sqlite3://meta.db', disk.letter);
   return args;

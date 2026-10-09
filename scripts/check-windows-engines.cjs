@@ -18,7 +18,7 @@ function check(engine, args) {
   assert.match(result.output, /USAGE:|Usage:/, 'Expected help output without performing the operation');
 }
 const d = {name: 'compatibility-check', letter: 'X:', cacheGiB: 10, writeback: false};
-for (const writeback of [false, true]) check('juicefs', plans.juiceMountArgs({...d, writeback}, {cache: path.join(root, 'test-cache-not-created')}, 19567, 'S-1-5-21-1-2-3-1001'));
+for (const writeback of [false, true]) check('juicefs', plans.juiceMountArgs({...d, writeback}, {cache: path.join(root, 'test-cache-not-created')}, 19567));
 check('juicefs', plans.formatArgs(18765, 'compatibilitycheck'));
 check('rclone', plans.gatewayArgs(path.join(root, 'test-backend-not-created'), 18765, 18766, path.join(root, 'test-cache-not-created'), path.join(root, 'test-config-not-created')));
 // Negative control proves that --help does not hide the original parser failure.

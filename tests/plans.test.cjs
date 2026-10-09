@@ -18,13 +18,13 @@ test('S3 gateway is local and never has an asynchronous VFS write cache',()=>{
   assert.equal(a[a.indexOf('--vfs-cache-mode')+1],'off');
   assert.ok(!a.includes('--auth-key'));
 });
-test('Windows ownership maps root to the current SID without a fixed user SID',()=>{
-  const a=p.juiceMountArgs(d,{cache:'C:\\cache'},1234,'S-1-5-21-1-2-3-1001');
+test('Windows ownership uses JuiceFS built-in current-user mapping',()=>{
+  const a=p.juiceMountArgs(d,{cache:'C:\\cache'},1234);
   assert.ok(a.includes('--no-usage-report'));assert.ok(a.includes('--as-root'));
   assert.ok(!a.includes('--umask'), 'Windows JuiceFS rejects the Unix-only umask flag');
-  assert.equal(a[a.indexOf('-o')+1],'uid=0,gid=0,uidmap=0:S-1-5-21-1-2-3-1001');
-  assert.ok(!a.includes('--writeback'));assert.ok(p.juiceMountArgs({...d,writeback:true},{cache:'C:\\cache'},1234,'S-1-5-21-2').includes('--writeback'));
-  assert.throws(()=>p.juiceMountArgs(d,{cache:''},1234,'evil,allow_other'));
+  assert.ok(!a.includes('-o'), 'Do not override the built-in uid=-1,gid=-1 mapping');
+  assert.ok(!a.some(x=>x.includes('uidmap=')), 'WinFsp rejects explicit UID 0 mapping');
+  assert.ok(!a.includes('--writeback'));assert.ok(p.juiceMountArgs({...d,writeback:true},{cache:'C:\\cache'},1234).includes('--writeback'));
   assert.ok(p.formatArgs(1234,'test').includes('--no-update'));
 });
 test('direct mount uses full cache and the actual typed RC units',()=>{

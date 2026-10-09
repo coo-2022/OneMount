@@ -1,7 +1,7 @@
 {
   "name": "cloud-island",
   "productName": "CloudIsland",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "云屿 — rclone 与 JuiceFS 桌面磁盘管理器",
   "main": "src/bootstrap.cjs",
   "private": true,

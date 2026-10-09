@@ -58,7 +58,6 @@ class Manager extends EventEmitter {
       const base = process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)';
       this.health.winfsp = fs.existsSync(path.join(base, 'WinFsp', 'bin', 'winfsp-x64.dll'));
       if (!this.health.winfsp) {try {const out = await P.run('reg.exe', ['query', 'HKLM\\SOFTWARE\\WOW6432Node\\WinFsp', '/v', 'InstallDir']); const m = out.match(/REG_SZ\s+(.+)/); this.health.winfsp = !!m && fs.existsSync(path.join(m[1].trim(), 'bin', 'winfsp-x64.dll'));} catch {}}
-      this.sid = (await P.run('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', '[System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value'])).trim();
     }
     // Adopt surviving sessions after a UI crash; authenticated RC prevents adopting an unrelated service.
     const journal = read(path.join(this.root, 'sessions.json'), null);
@@ -75,7 +74,7 @@ class Manager extends EventEmitter {
     this.timer.unref();
   }
   snapshot() {
-    return {version: '0.1.1', health: this.health, settings: this.state.settings, root: this.root,
+    return {version: '0.1.2', health: this.health, settings: this.state.settings, root: this.root,
       services: [
         {id: 'local', name: '本地文件夹', available: true}, {id: 'webdav', name: 'WebDAV', available: true},
         {id: 's3', name: 'S3 兼容存储', available: true},
@@ -168,7 +167,7 @@ class Manager extends EventEmitter {
               env: {ACCESS_KEY: credentials.access, SECRET_KEY: credentials.secret}, timeout: 120000});
             d.initialized = true; this.save();
           } else if (!fs.existsSync(p.meta)) throw new Error('卷的元数据文件丢失，不能自动新建覆盖');
-          r.jfs = this.spawn(id, 'juicefs', plan.juiceMountArgs(d, p, r.metricsPort, this.sid), p.jfsLog, {}, true);
+          r.jfs = this.spawn(id, 'juicefs', plan.juiceMountArgs(d, p, r.metricsPort), p.jfsLog, {}, true);
           this.saveRuntime();
           await P.waitFor(() => fs.existsSync(d.letter + '\\.config') && P.alive(r.jfs.pid), 45000);
           r.everMounted = true;
