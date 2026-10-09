@@ -1,0 +1,20 @@
+{
+  "version": "0.1.2",
+  "platform": "10.0.26100",
+  "standardUser": true,
+  "checks": [
+    "Packaged EXE launches with production preload, renderer sandbox and Windows DPAPI",
+    "UI creates and checks local storage connection",
+    "Packaged UI creates and mounts direct; existing-file semantics, PowerShell read/write, binary hash",
+    "Packaged UI creates and mounts juicefs; existing-file semantics, PowerShell read/write, binary hash",
+    "Closing the window preserves mounted drives and hides to tray",
+    "Safe exit and EXE restart preserve encrypted account configuration, disk records, auto-mount and cold-cache file hashes",
+    "Safe exit with both disks mounted removes drive letters and engine processes; no renderer exceptions"
+  ],
+  "limits": [
+    "Native folder picker selection supplied by fixture",
+    "No real third-party cloud OAuth or remote backend",
+    "No manual Explorer shell inspection"
+  ],
+  "status": "passed"
+}

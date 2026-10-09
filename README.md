@@ -26,7 +26,7 @@ Windows 桌面存储管理器。统一管理账号、挂载、缓存与传输状
 4. 「我的磁盘 → 添加磁盘」，分别创建网盘直连 X: 和文件系统卷 Y:，点击「挂载磁盘」。
 5. 在资源管理器中新建、读取、修改文件；关闭文件，等待上传完成，点击「安全卸载」。再次挂载验证持久化。
 
-**当前构建未经过 Windows 本机挂载验收，也未进行代码签名。** Linux 下真实引擎集成和桌面交互测试已通过；不要把预览版当作唯一的数据副本。详细验收步骤见 [WINDOWS-VALIDATION.md](WINDOWS-VALIDATION.md)。
+**0.1.2 已通过真实 Windows + WinFsp 挂载与打包界面自动化验收，包括独立普通用户。** 本次环境为 Windows Server 2025（10.0.26100），后端为本地测试目录；未覆盖真实网盘 OAuth 或 Windows 10/11 逐版本验收，软件尚未代码签名。结果及边界见 [WINDOWS-VALIDATION.md](WINDOWS-VALIDATION.md)。
 
 ## 开发与构建
 
@@ -43,7 +43,7 @@ npm run package:win
 
 便携软件输出到 `dist/CloudIsland-win32-x64/`。整个目录一起分发。两个引擎包含在 `resources/engines/`；下载脚本固定版本并校验 SHA-256。Git 不保存大体积引擎二进制，避免超过 GitHub 单文件限制。
 
-推送 main 或手动运行 GitHub Actions 后，可在成功的 `Windows preview build` 工作流的 Artifacts 中下载 `OneMount-Windows-x64-preview`。该工作流执行单元测试和打包，不代表 WinFsp 实际挂载验证通过。
+推送 main 或手动运行 GitHub Actions 后，可在成功的 `Windows preview build` 工作流的 Artifacts 中下载 `OneMount-Windows-x64-preview`。该工作流安装 WinFsp，执行真实挂载、PowerShell 读写、冷缓存重挂校验以及打包 EXE 界面测试；另以独立普通用户重复验收。所有门禁通过后才上传软件包，日志和界面截图在 `Windows-validation-evidence` 中。
 
 ## 自有品牌账号授权
 
@@ -68,7 +68,7 @@ npm run package:win
 - 每卷固定本机 S3 端口，重启保持一致。端口被占用时拒绝启动，不偷偷改写已格式化卷的地址。
 - 意外退出后保留缓存与元数据。重新启动会尝试接管仍存活且能够通过认证的后台会话；不通过进程名批量终止程序。
 - 移除磁盘只归档配置，不删除远端数据、元数据和缓存。没有「强制退出并删除缓存」按钮。
-- Windows 挂载采用当前用户 SID 映射，内部 POSIX root 身份不要求以 Windows 管理员身份运行主程序。
+- Windows 挂载保留 JuiceFS/WinFsp 的当前用户默认映射，不传入自定义 `uidmap` 或不支持的 `--umask`。`--as-root` 只设置内部 POSIX 身份，不要求以 Windows 管理员身份运行主程序。
 
 ## 当前边界
 
@@ -80,7 +80,7 @@ npm run package:win
 
 ## 验证与结构
 
-`npm test`：配置校验、磁盘冲突、SID 映射、私有端点、未知状态、卸载队列保护、数据归档与 IPC 安全约束。
+`npm test`：配置校验、磁盘冲突、Windows 挂载参数、私有端点、未知状态、卸载队列保护、数据归档与 IPC 安全约束。
 
 Linux 无 FUSE 的集成验证：
 
