@@ -32,9 +32,23 @@ Write-Host 'PASS: running with a non-administrator Windows token'
 `$env:ONEMOUNT_PLAYWRIGHT = $(& $q ([string]$env:ONEMOUNT_PLAYWRIGHT))
 `$env:GITHUB_ACTIONS = 'true'
 Set-Location $(& $q $root)
-`$p = Start-Process $(& $q $node) -ArgumentList $(& $q ('"' + $scriptPath + '"')) -WorkingDirectory $(& $q $root) -RedirectStandardOutput $(& $q (Join-Path $work 'stdout.txt')) -RedirectStandardError $(& $q (Join-Path $work 'stderr.txt')) -PassThru
+`$si = [System.Diagnostics.ProcessStartInfo]::new()
+`$si.FileName = $(& $q $node)
+`$si.Arguments = $(& $q ('"' + $scriptPath + '"'))
+`$si.WorkingDirectory = $(& $q $root)
+`$si.UseShellExecute = `$false
+`$si.RedirectStandardOutput = `$true
+`$si.RedirectStandardError = `$true
+`$p = [System.Diagnostics.Process]::new()
+`$p.StartInfo = `$si
+[void]`$p.Start()
+`$outTask = `$p.StandardOutput.ReadToEndAsync()
+`$errTask = `$p.StandardError.ReadToEndAsync()
 `$p.WaitForExit()
-[System.IO.File]::WriteAllText($(& $q (Join-Path $work 'exit.txt')), [string]`$p.ExitCode)
+[System.IO.File]::WriteAllText($(& $q (Join-Path $work 'stdout.txt')), `$outTask.GetAwaiter().GetResult())
+[System.IO.File]::WriteAllText($(& $q (Join-Path $work 'stderr.txt')), `$errTask.GetAwaiter().GetResult())
+[System.IO.File]::WriteAllText($(& $q (Join-Path $work 'exit.tmp')), `$p.ExitCode.ToString())
+[System.IO.File]::Move($(& $q (Join-Path $work 'exit.tmp')), $(& $q (Join-Path $work 'exit.txt')))
 exit `$p.ExitCode
 "@
   $runnerScript = Join-Path $work 'run.ps1'
@@ -57,7 +71,7 @@ exit `$p.ExitCode
     }
     if ($proc.HasExited -and !(Test-Path (Join-Path $work 'exit.txt'))) { throw "Launcher exited before test completion: $($proc.ExitCode)" }
   }
-  $exitText = (Get-Content -LiteralPath (Join-Path $work 'exit.txt') -Raw).Trim()
+  $exitText = [System.IO.File]::ReadAllText((Join-Path $work 'exit.txt')).Trim()
   if ($exitText -notmatch '^-?\d+$') { throw 'Missing numeric test process exit status' }
   $exitCode = [int]$exitText
   Get-Content -LiteralPath (Join-Path $work 'stdout.txt')
