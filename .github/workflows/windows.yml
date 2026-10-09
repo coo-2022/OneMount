@@ -27,8 +27,25 @@ jobs:
       - name: Exercise real Windows filesystem mounts
         timeout-minutes: 8
         run: node scripts/windows-mount-integration.cjs
+      - name: Verify both mount modes as a standard Windows user
+        timeout-minutes: 12
+        run: ./scripts/run-standard-user-test.ps1 -Script scripts/windows-mount-integration.cjs
       - name: Build portable Windows application
         run: npm run package:win
+      - name: Install isolated desktop test tools
+        run: |
+          npm install --prefix "$env:RUNNER_TEMP/onemount-tools" --no-audit --no-fund playwright@1.64.0
+          "ONEMOUNT_PLAYWRIGHT=$env:RUNNER_TEMP/onemount-tools/node_modules/playwright" >> $env:GITHUB_ENV
+      - name: Validate packaged desktop app as a standard Windows user
+        timeout-minutes: 12
+        run: ./scripts/run-standard-user-test.ps1 -Script scripts/windows-packaged-e2e.cjs
+      - name: Upload Windows test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-validation-evidence
+          path: test-results/
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
           name: OneMount-Windows-x64-preview

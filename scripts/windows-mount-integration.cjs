@@ -22,8 +22,8 @@ async function main() {
   assert.ok(m.health.winfsp, 'WinFsp must be installed');
   const backend = path.join(base, 'backend'); fs.mkdirSync(backend);
   const connectionId = await m.addLocal({name: 'Mount integration', path: backend});
-  for (const writeback of [false, true]) {
-    const id = await m.addDisk({connectionId, name: 'Volume ' + writeback, mode: 'juicefs', letter, cacheGiB: 1, writeback});
+  for (const {mode, writeback} of [{mode:'direct',writeback:false}, {mode:'juicefs',writeback:false}, {mode:'juicefs',writeback:true}]) {
+    const id = await m.addDisk({connectionId, name: mode + ' ' + writeback, mode, letter, cacheGiB: 1, writeback});
     const files = {'hello.txt': Buffer.from('hello juicefs + rclone'), 'empty': Buffer.alloc(0), '中文 空格/large.bin': crypto.randomBytes(12 * 1024 ** 2 + 137)};
     await m.mount(id);
     assert.equal(m.snapshot().disks.find(d => d.id === id).status, 'mounted');
@@ -35,23 +35,23 @@ async function main() {
     }
     // Reproduce the user's exact PowerShell access pattern as well as Node I/O.
     await P.run('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', `$ErrorActionPreference='Stop'; Set-Content '${letter}\\powershell.txt' 'hello juicefs + rclone'; if ((Get-Content '${letter}\\powershell.txt' -Raw).Trim() -ne 'hello juicefs + rclone') { throw 'Read mismatch' }`]);
-    await m.unmount(id);
+    await P.waitFor(async () => {await m.unmount(id); return true;}, 90000);
     assert.ok(!fs.existsSync(letter + '\\'));
     // Eliminate the read cache only after a clean flush/unmount, and only in this new test fixture.
     const paths = m.paths(m.disk(id));
     fs.rmSync(paths.cache, {recursive: true, force: true});
-    const metaBefore = fs.statSync(paths.meta).size;
+    const metaBefore = mode === 'juicefs' ? fs.statSync(paths.meta).size : null;
     const portBefore = m.disk(id).gatewayPort;
     await m.mount(id);
     assert.equal(m.disk(id).gatewayPort, portBefore);
-    assert.ok(metaBefore > 0);
+    if (mode === 'juicefs') assert.ok(metaBefore > 0);
     for (const [name, data] of Object.entries(files)) assert.equal(hash(fs.readFileSync(path.join(letter + '\\', name))), hash(data));
     fs.appendFileSync(letter + '\\hello.txt', '\nupdated');
     assert.match(fs.readFileSync(letter + '\\hello.txt', 'utf8'), /updated$/);
     fs.renameSync(letter + '\\hello.txt', letter + '\\renamed.txt');
     fs.unlinkSync(letter + '\\renamed.txt');
-    await m.unmount(id);
-    console.log(`PASS real Windows mount / PowerShell read-write / flush / cold-cache remount / hash / rename-delete; writeback=${writeback}`);
+    await P.waitFor(async () => {await m.unmount(id); return true;}, 90000);
+    console.log(`PASS real Windows mount / PowerShell read-write / flush / cold-cache remount / hash / rename-delete; mode=${mode}, writeback=${writeback}`);
     // Release the configured letter before the next independent test volume.
     await m.removeDisk(id);
   }
