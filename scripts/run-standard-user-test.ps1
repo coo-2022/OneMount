@@ -33,7 +33,8 @@ Write-Host 'PASS: running with a non-administrator Windows token'
 `$env:ONEMOUNT_PLAYWRIGHT = $(& $q ([string]$env:ONEMOUNT_PLAYWRIGHT))
 `$env:GITHUB_ACTIONS = 'true'
 Set-Location $(& $q $root)
-`$p = Start-Process $(& $q $node) -ArgumentList $(& $q ('"' + $scriptPath + '"')) -WorkingDirectory $(& $q $root) -RedirectStandardOutput $(& $q (Join-Path $work 'stdout.txt')) -RedirectStandardError $(& $q (Join-Path $work 'stderr.txt')) -Wait -PassThru
+`$p = Start-Process $(& $q $node) -ArgumentList $(& $q ('"' + $scriptPath + '"')) -WorkingDirectory $(& $q $root) -RedirectStandardOutput $(& $q (Join-Path $work 'stdout.txt')) -RedirectStandardError $(& $q (Join-Path $work 'stderr.txt')) -PassThru
+`$p.WaitForExit()
 [System.IO.File]::WriteAllText($(& $q (Join-Path $work 'exit.txt')), [string]`$p.ExitCode)
 exit `$p.ExitCode
 "@
@@ -43,12 +44,19 @@ exit `$p.ExitCode
   $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
   Register-ScheduledTask -TaskName $taskName -Action $action -Settings $settings -User "$env:COMPUTERNAME\$name" -Password $password -RunLevel Limited -Force | Out-Null
   Start-ScheduledTask -TaskName $taskName
-  $deadline = [DateTime]::UtcNow.AddMinutes(10)
+  $deadline = [DateTime]::UtcNow.AddMinutes(4)
+  $tick = 0
   while (!(Test-Path (Join-Path $work 'exit.txt'))) {
-    if ([DateTime]::UtcNow -gt $deadline) { throw 'Standard-user test timed out (10 minutes)' }
+    if ([DateTime]::UtcNow -gt $deadline) { throw 'Standard-user test timed out (4 minutes)' }
     Start-Sleep -Seconds 2
     $info = Get-ScheduledTaskInfo -TaskName $taskName
-    if ((Get-ScheduledTask -TaskName $taskName).State -eq 'Ready' -and $info.LastRunTime.Year -gt 2000 -and $info.LastTaskResult -ne 0 -and $info.LastTaskResult -ne 267009) { throw "Test task failed before completion: $($info.LastTaskResult)" }
+    $tick++
+    if ($tick % 10 -eq 0) {
+      Write-Host "Test task state: $((Get-ScheduledTask -TaskName $taskName).State), result: $($info.LastTaskResult)"
+      if (Test-Path (Join-Path $work 'stdout.txt')) { Get-Content (Join-Path $work 'stdout.txt') -Tail 10 }
+      if (Test-Path (Join-Path $work 'stderr.txt')) { Get-Content (Join-Path $work 'stderr.txt') -Tail 10 }
+    }
+    if (!(Test-Path (Join-Path $work 'exit.txt')) -and (Get-ScheduledTask -TaskName $taskName).State -eq 'Ready' -and $info.LastRunTime.Year -gt 2000 -and $info.LastTaskResult -ne 0 -and $info.LastTaskResult -ne 267009) { throw "Test task failed before completion: $($info.LastTaskResult)" }
   }
   $exitCode = [int](Get-Content -LiteralPath (Join-Path $work 'exit.txt') -Raw)
   Get-Content -LiteralPath (Join-Path $work 'stdout.txt')
