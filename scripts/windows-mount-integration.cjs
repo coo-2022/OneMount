@@ -52,6 +52,8 @@ async function main() {
     fs.unlinkSync(letter + '\\renamed.txt');
     await m.unmount(id);
     console.log(`PASS real Windows mount / PowerShell read-write / flush / cold-cache remount / hash / rename-delete; writeback=${writeback}`);
+    // Release the configured letter before the next independent test volume.
+    await m.removeDisk(id);
   }
 }
 main().catch(e => {
