@@ -14,6 +14,10 @@ try {
   # Only the local Users group; never Administrators.
   Add-LocalGroupMember -SID 'S-1-5-32-545' -Member $name
   $sid = $user.SID.Value
+  if ($Script -like '*packaged-e2e*') {
+    Add-Type -Path (Join-Path $PSScriptRoot 'ci-desktop-access.cs')
+    $desktopAccess = [CiDesktopAccess]::new($sid)
+  }
   & icacls.exe $root /grant "*${sid}:(OI)(CI)RX" /T /Q | Out-Null
   & icacls.exe $work /grant "*${sid}:(OI)(CI)F" /T /Q | Out-Null
   $results = Join-Path $root 'test-results'
@@ -31,6 +35,7 @@ Write-Host 'PASS: running with a non-administrator Windows token'
 `$env:TMP = $(& $q $work)
 `$env:ONEMOUNT_PLAYWRIGHT = $(& $q ([string]$env:ONEMOUNT_PLAYWRIGHT))
 `$env:GITHUB_ACTIONS = 'true'
+`$env:ONEMOUNT_STANDARD_USER = '1'
 Set-Location $(& $q $root)
 `$si = [System.Diagnostics.ProcessStartInfo]::new()
 `$si.FileName = $(& $q $node)
@@ -82,5 +87,6 @@ exit `$p.ExitCode
   if ($Script -like '*packaged-e2e*' -and $output -notlike '*PASS Safe exit with both disks mounted*') { throw 'Packaged UI checks did not complete' }
   Write-Host 'PASS: standard-user test completed with an explicitly non-administrator token'
 } finally {
-  Remove-LocalUser -Name $name
+  try { if ($desktopAccess) { $desktopAccess.Dispose() } }
+  finally { Remove-LocalUser -Name $name }
 }

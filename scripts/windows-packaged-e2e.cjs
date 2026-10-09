@@ -16,7 +16,7 @@ const backend = path.join(base, 'backend'); fs.mkdirSync(backend);
 fs.writeFileSync(path.join(backend, 'existing.txt'), 'existing backend file');
 const letters = [...'ZYXWVUTSRQPONMLKJIHGFE'].filter(c=>!fs.existsSync(c+':\\')).slice(0,2).map(c=>c+':');
 assert.equal(letters.length,2);
-const report = {version:'0.1.2',platform:os.release(),checks:[],limits:['Native folder picker selection supplied by fixture','No real third-party cloud OAuth or remote backend','No manual Explorer shell inspection']};
+const report = {version:'0.1.2',platform:os.release(),standardUser:process.env.ONEMOUNT_STANDARD_USER==='1',checks:[],limits:['Native folder picker selection supplied by fixture','No real third-party cloud OAuth or remote backend','No manual Explorer shell inspection']};
 let app, page, stateRoot;
 const errors=[];
 const pass = name => {report.checks.push(name); console.log('PASS '+name);};
@@ -30,7 +30,7 @@ async function waitDisk(id, status) {
   },90000);
 }
 async function launch() {
-  app=await _electron.launch({executablePath:exe,args:['--disable-gpu'],cwd:path.dirname(exe),timeout:60000,chromiumSandbox:true});
+  app=await _electron.launch({executablePath:exe,args:['--disable-gpu','--enable-logging=stderr'],cwd:path.dirname(exe),timeout:60000,chromiumSandbox:true});
   page=await app.firstWindow({timeout:60000}); page.setDefaultTimeout(20000);
   page.on('pageerror',e=>errors.push(e.message));
   await page.waitForFunction(()=>document.querySelector('#content h1')?.textContent==='我的磁盘');
