@@ -75,7 +75,7 @@ class Manager extends EventEmitter {
     this.timer.unref();
   }
   snapshot() {
-    return {version: '0.1.0', health: this.health, settings: this.state.settings, root: this.root,
+    return {version: '0.1.1', health: this.health, settings: this.state.settings, root: this.root,
       services: [
         {id: 'local', name: '本地文件夹', available: true}, {id: 'webdav', name: 'WebDAV', available: true},
         {id: 's3', name: 'S3 兼容存储', available: true},
