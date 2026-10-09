@@ -29,7 +29,8 @@ async function main() {
     assert.equal(m.snapshot().disks.find(d => d.id === id).status, 'mounted');
     for (const [name, data] of Object.entries(files)) {
       const file = path.join(letter + '\\', name);
-      fs.mkdirSync(path.dirname(file), {recursive: true});
+      // Windows rejects mkdir on a drive root even with recursive=true.
+      if (!fs.existsSync(path.dirname(file))) fs.mkdirSync(path.dirname(file), {recursive: true});
       fs.writeFileSync(file, data); assert.equal(hash(fs.readFileSync(file)), hash(data));
     }
     // Reproduce the user's exact PowerShell access pattern as well as Node I/O.
