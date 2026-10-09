@@ -57,8 +57,11 @@ async function unmount(id) {
 async function quit() {
   await page.locator('.ir-nav [data-nav="settings"]').click();
   await page.locator('[data-action="quit-confirm"]').click();
-  const closed=app.waitForEvent('close',{timeout:90000});
-  await page.locator('[data-action="quit"]').click();await closed;app=null;
+  const closed=page.waitForEvent('close',{timeout:30000});
+  await page.locator('[data-action="quit"]').click().catch(e=>{if(!page.isClosed())throw e;});
+  await closed;
+  // Release Playwright's main-process inspector after the product closes its window.
+  await app.close();app=null;
 }
 async function main(){
   await launch();assert.equal((await snapshot()).disks.length,0,'Must start with fresh CI user data');
@@ -85,14 +88,18 @@ async function main(){
     await page.locator('[data-action="create-disk"]').click();
     await page.locator('#overlay').waitFor({state:'hidden'});
     const d=(await snapshot()).disks.find(x=>x.mode===mode);assert.ok(d);disks.push(d);
+    console.log('CHECK mounting '+mode);
     await mount(d.id);
+    console.log('CHECK mounted '+mode);
     if(mode==='direct')assert.equal(fs.readFileSync(d.letter+'\\existing.txt','utf8'),'existing backend file');
     else assert.ok(!fs.existsSync(d.letter+'\\existing.txt'),'Filesystem volume must stay isolated');
     const data=crypto.randomBytes(8*1024**2+73),file=d.letter+'\\大文件 验证.bin';
     fs.writeFileSync(file,data);assert.deepEqual(fs.readFileSync(file),data);
     d.hash=crypto.createHash('sha256').update(data).digest('hex');
     await P.run('powershell.exe',['-NoProfile','-NonInteractive','-Command',`$ErrorActionPreference='Stop'; Set-Content '${d.letter}\\hello.txt' 'hello juicefs + rclone'; if ((Get-Content '${d.letter}\\hello.txt' -Raw).Trim() -ne 'hello juicefs + rclone') {throw 'Read mismatch'}`]);
+    console.log('CHECK waiting for uploads '+mode);
     await drain(d.id);
+    console.log('CHECK uploads complete '+mode);
     await page.screenshot({path:path.join(results,mode+'-mounted.png')});
     pass(`Packaged UI creates and mounts ${mode}; existing-file semantics, PowerShell read/write, binary hash`);
   }
@@ -114,10 +121,12 @@ async function main(){
   await page.waitForFunction(async id=>(await window.island.invoke('snapshot')).disks.find(d=>d.id===id).autoMount,first.id);
   const paths=(await snapshot()).disks.map(d=>d.paths.cache);
   assert.match(fs.readFileSync(path.join(stateRoot,'accounts.conf'),'utf8'),/RCLONE_ENCRYPT_V0/);
+  console.log('CHECK safe exit before restart');
   await quit();
   for(const d of disks)assert.ok(!fs.existsSync(d.letter+'\\'));
   // All are clean and stopped; erase ONLY fresh CI read caches before restart.
   for(const cache of paths)fs.rmSync(cache,{recursive:true,force:true});
+  console.log('CHECK restart');
   await launch();assert.equal((await snapshot()).disks.length,2);
   await waitDisk(first.id,'mounted');
   for(const d of disks){
@@ -130,16 +139,19 @@ async function main(){
   for(const d of disks)await drain(d.id);
   // Quit directly while both disks are mounted: the product must unmount them itself.
   await quit();for(const d of disks)assert.ok(!fs.existsSync(d.letter+'\\'));
-  const processes=await P.run('powershell.exe',['-NoProfile','-NonInteractive','-Command',"Get-Process -Name rclone,juicefs -ErrorAction SilentlyContinue | ForEach-Object { $_.Id }"]);
+  const processes=await P.run('powershell.exe',['-NoProfile','-NonInteractive','-Command',"[System.Diagnostics.Process]::GetProcesses() | Where-Object { $_.ProcessName -in @('rclone','juicefs') } | ForEach-Object { $_.Id }"]);
   assert.equal(processes.trim(),'','Safe exit must not leave engine processes for this test user');
   assert.deepEqual(errors,[]);pass('Safe exit with both disks mounted removes drive letters and engine processes; no renderer exceptions');
   report.status='passed';
 }
 main().catch(async e=>{
   report.status='failed';report.error=e.stack;console.error(e);process.exitCode=1;
+  fs.writeFileSync(path.join(results,'windows-packaged-report.json'),JSON.stringify(report,null,2));
+  if(page&&!page.isClosed())console.error('STATE',JSON.stringify(await snapshot().catch(()=>null)));
   if(page&&!page.isClosed())await page.screenshot({path:path.join(results,'failure.png')}).catch(()=>{});
   if(stateRoot&&fs.existsSync(path.join(stateRoot,'volumes')))for(const file of fs.readdirSync(path.join(stateRoot,'volumes'),{recursive:true}))if(/(?:engine|volume)\.log$/.test(file)){
     const text=fs.readFileSync(path.join(stateRoot,'volumes',file),'utf8');console.error(text.slice(-12000));
   }
-  if(page&&!page.isClosed())await page.evaluate(()=>window.island.invoke('quit')).catch(()=>{});
+  if(page&&!page.isClosed())await Promise.race([page.evaluate(()=>window.island.invoke('quit')).catch(()=>{}),P.delay(10000)]);
+  if(app)await Promise.race([app.close().catch(()=>{}),P.delay(10000)]);
 }).finally(()=>{fs.writeFileSync(path.join(results,'windows-packaged-report.json'),JSON.stringify(report,null,2));});
