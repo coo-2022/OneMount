@@ -31,6 +31,20 @@ try {
 `$principal = [System.Security.Principal.WindowsPrincipal]::new(`$identity)
 if (`$principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)) { throw 'Test must not be elevated' }
 Write-Host 'PASS: running with a non-administrator Windows token'
+# A credentialed launch can inherit the caller's APPDATA/USERPROFILE environment.
+# Build GUI paths from the loaded target user's Windows profile, not that caller.
+`$profileDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)
+if ([string]::IsNullOrWhiteSpace(`$profileDir)) { throw 'Target user profile was not loaded' }
+`$env:USERPROFILE = `$profileDir
+`$env:APPDATA = Join-Path `$profileDir 'AppData\Roaming'
+`$env:LOCALAPPDATA = Join-Path `$profileDir 'AppData\Local'
+`$env:USERNAME = `$identity.Name.Split('\')[-1]
+`$env:USERDOMAIN = `$env:COMPUTERNAME
+`$env:HOMEDRIVE = [System.IO.Path]::GetPathRoot(`$profileDir).TrimEnd('\')
+`$env:HOMEPATH = `$profileDir.Substring(`$env:HOMEDRIVE.Length)
+[System.IO.Directory]::CreateDirectory(`$env:APPDATA) | Out-Null
+[System.IO.Directory]::CreateDirectory(`$env:LOCALAPPDATA) | Out-Null
+Write-Host "Target profile: `$profileDir"
 `$env:TEMP = $(& $q $work)
 `$env:TMP = $(& $q $work)
 `$env:ONEMOUNT_PLAYWRIGHT = $(& $q ([string]$env:ONEMOUNT_PLAYWRIGHT))
