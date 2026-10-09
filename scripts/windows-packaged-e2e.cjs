@@ -22,11 +22,12 @@ const errors=[];
 const pass = name => {report.checks.push(name); console.log('PASS '+name);};
 const snapshot = () => page.evaluate(()=>window.island.invoke('snapshot'));
 async function waitDisk(id, status) {
-  await page.waitForFunction(async ({id,status})=>{
-    const s=await window.island.invoke('snapshot'); const d=s.disks.find(x=>x.id===id);
-    if(d?.status==='error') throw new Error(d.error||d.lastError||'Mount failed');
+  // Poll awaited IPC in Node. A Promise is truthy in browser predicate polling.
+  await P.waitFor(async()=>{
+    const s=await snapshot(),d=s.disks.find(x=>x.id===id);
+    if(d?.status==='error')throw new Error(d.error||d.lastError||'Mount failed');
     return d?.status===status&&!d.busy;
-  }, {id,status}, {timeout:90000});
+  },90000);
 }
 async function launch() {
   app=await _electron.launch({executablePath:exe,args:['--disable-gpu'],cwd:path.dirname(exe),timeout:60000,chromiumSandbox:true});
@@ -118,7 +119,7 @@ async function main(){
   await selectDisk(first.id);await page.locator('[data-tab="advanced"]').click();
   await page.locator('#disk-settings [name="autoMount"]').check();
   await page.locator('[data-action="save-disk-settings"]').click();
-  await page.waitForFunction(async id=>(await window.island.invoke('snapshot')).disks.find(d=>d.id===id).autoMount,first.id);
+  await P.waitFor(async()=>(await snapshot()).disks.find(d=>d.id===first.id).autoMount);
   const paths=(await snapshot()).disks.map(d=>d.paths.cache);
   assert.match(fs.readFileSync(path.join(stateRoot,'accounts.conf'),'utf8'),/RCLONE_ENCRYPT_V0/);
   console.log('CHECK safe exit before restart');
