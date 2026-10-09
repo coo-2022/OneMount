@@ -10,7 +10,6 @@ $secure = ConvertTo-SecureString $password -AsPlainText -Force
 $work = Join-Path $env:RUNNER_TEMP $name
 New-Item -ItemType Directory -Path $work | Out-Null
 $user = New-LocalUser -Name $name -Password $secure -AccountNeverExpires
-$taskName = 'OneMount-validation-' + $name
 try {
   # Only the local Users group; never Administrators.
   Add-LocalGroupMember -SID 'S-1-5-32-545' -Member $name
@@ -40,27 +39,23 @@ exit `$p.ExitCode
 "@
   $runnerScript = Join-Path $work 'run.ps1'
   [System.IO.File]::WriteAllText($runnerScript, $command, [System.Text.UTF8Encoding]::new($true))
-  $action = New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument "-NoProfile -NonInteractive -File `"$runnerScript`"" -WorkingDirectory $root
-  & wevtutil.exe sl Microsoft-Windows-TaskScheduler/Operational /e:true
-  $started = Get-Date
-  $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 10) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
-  Register-ScheduledTask -TaskName $taskName -Action $action -Settings $settings -User "$env:COMPUTERNAME\$name" -Password $password -RunLevel Limited -Force | Out-Null
-  Start-ScheduledTask -TaskName $taskName
+  # CreateProcessWithLogonW limits the complete command line to 1024 characters.
+  # Pass a short script path, never a long -EncodedCommand payload.
+  $credential = [PSCredential]::new("$env:COMPUTERNAME\$name", $secure)
+  $args = @('-NoProfile','-NonInteractive','-File', ('"' + $runnerScript + '"'))
+  $proc = Start-Process "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -Credential $credential -LoadUserProfile -ArgumentList $args -WorkingDirectory $root -RedirectStandardOutput (Join-Path $work 'launcher-stdout.txt') -RedirectStandardError (Join-Path $work 'launcher-stderr.txt') -PassThru
   $deadline = [DateTime]::UtcNow.AddMinutes(4)
   $tick = 0
   while (!(Test-Path (Join-Path $work 'exit.txt'))) {
     if ([DateTime]::UtcNow -gt $deadline) { throw 'Standard-user test timed out (4 minutes)' }
     Start-Sleep -Seconds 2
-    $info = Get-ScheduledTaskInfo -TaskName $taskName
     $tick++
-    if ($tick % 10 -eq 0) {
-      Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-TaskScheduler/Operational'; StartTime=$started} -ErrorAction SilentlyContinue | Where-Object { $_.Message -like "*$taskName*" } | Select-Object -First 8 Id,Message | Format-List
-      if ($info.LastTaskResult -eq 267011 -and $tick -ge 20) { throw 'Scheduled task never started; see scheduler events above' }
-      Write-Host "Test task state: $((Get-ScheduledTask -TaskName $taskName).State), result: $($info.LastTaskResult)"
-      if (Test-Path (Join-Path $work 'stdout.txt')) { Get-Content (Join-Path $work 'stdout.txt') -Tail 10 }
-      if (Test-Path (Join-Path $work 'stderr.txt')) { Get-Content (Join-Path $work 'stderr.txt') -Tail 10 }
+    if ($tick % 10 -eq 0 -or $proc.HasExited) {
+      foreach ($file in @('launcher-stdout.txt','launcher-stderr.txt','stdout.txt','stderr.txt')) {
+        if (Test-Path (Join-Path $work $file)) { Get-Content (Join-Path $work $file) -Tail 10 }
+      }
     }
-    if (!(Test-Path (Join-Path $work 'exit.txt')) -and (Get-ScheduledTask -TaskName $taskName).State -eq 'Ready' -and $info.LastRunTime.Year -gt 2000 -and $info.LastTaskResult -ne 0 -and $info.LastTaskResult -ne 267009) { throw "Test task failed before completion: $($info.LastTaskResult)" }
+    if ($proc.HasExited -and !(Test-Path (Join-Path $work 'exit.txt'))) { throw "Launcher exited before test completion: $($proc.ExitCode)" }
   }
   $exitText = (Get-Content -LiteralPath (Join-Path $work 'exit.txt') -Raw).Trim()
   if ($exitText -notmatch '^-?\d+$') { throw 'Missing numeric test process exit status' }
@@ -73,6 +68,5 @@ exit `$p.ExitCode
   if ($Script -like '*packaged-e2e*' -and $output -notlike '*PASS Safe exit with both disks mounted*') { throw 'Packaged UI checks did not complete' }
   Write-Host 'PASS: standard-user test completed with an explicitly non-administrator token'
 } finally {
-  Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
   Remove-LocalUser -Name $name
 }
