@@ -9,16 +9,22 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: npm
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: engine-src/rclone/go.mod
+          cache-dependency-path: engine-src/rclone/go.sum
       - run: npm ci --no-audit --no-fund
       - run: npm test
-      - name: Download and verify bundled engines
+      - name: Verify custom backend discovery and Go tests
+        run: npm run engine:rclone:test
+      - name: Build custom rclone and download verified JuiceFS
         run: npm run engines:win
       - name: Validate commands with real Windows engines
         run: node scripts/check-windows-engines.cjs

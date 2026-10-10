@@ -30,7 +30,7 @@ Windows 桌面存储管理器。统一管理账号、挂载、缓存与传输状
 
 ## 开发与构建
 
-Windows 10/11 x64、Node.js 24、PowerShell、系统自带 tar。
+Windows 10/11 x64、Node.js 24、Go（工具链版本固定在 `engine-src/rclone/go.mod`）、PowerShell、系统自带 tar。
 
 ```powershell
 npm ci
@@ -41,9 +41,19 @@ npm start
 npm run package:win
 ```
 
-便携软件输出到 `dist/CloudIsland-win32-x64/`。整个目录一起分发。两个引擎包含在 `resources/engines/`；下载脚本固定版本并校验 SHA-256。Git 不保存大体积引擎二进制，避免超过 GitHub 单文件限制。
+便携软件输出到 `dist/CloudIsland-win32-x64/`。整个目录一起分发。两个引擎包含在 `resources/engines/`；rclone 从固定依赖的 Go 模块编译，JuiceFS 按固定版本及 SHA-256 下载。定制引擎的版本和校验记录保存在 `rclone-build.json`。Git 不保存大体积引擎二进制，避免超过 GitHub 单文件限制。
 
 推送 main 或手动运行 GitHub Actions 后，可在成功的 `Windows preview build` 工作流的 Artifacts 中下载 `OneMount-Windows-x64-preview`。该工作流安装 WinFsp，执行真实挂载、PowerShell 读写、冷缓存重挂校验以及打包 EXE 界面测试；另以独立普通用户重复验收。所有门禁通过后才上传软件包，日志和界面截图在 `Windows-validation-evidence` 中。
+
+## 自定义后端扩展
+
+新后端统一放在 `engine-src/rclone/backend/<name>/`。构建自动生成导入并编译到定制 `rclone.exe`，不需要维护上游源码副本。接口、认证、测试和界面接入要求见 [后端扩展规范](engine-src/rclone/backend/README.md)。
+
+```powershell
+npm run engine:rclone:generate
+npm run engine:rclone:test
+npm run engine:rclone:build
+```
 
 ## 自有品牌账号授权
 

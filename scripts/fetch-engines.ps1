@@ -15,16 +15,11 @@ function Download-Verified($url, $file, $sha256) {
   if ($actual -ne $sha256) { throw "Downloaded archive checksum mismatch: $url" }
 }
 try {
-  $rcZip = Join-Path $work 'rclone.zip'
-  Download-Verified 'https://downloads.rclone.org/v1.75.0/rclone-v1.75.0-windows-amd64.zip' $rcZip '203581f0a7baeae873f2347483a798c79e2eaf5c384a4e9d866aa374f1c89ac0'
-  Add-Type -AssemblyName System.IO.Compression.FileSystem
-  [System.IO.Compression.ZipFile]::ExtractToDirectory($rcZip, (Join-Path $work 'rc'))
-  Copy-Item (Join-Path $work 'rc/rclone-v1.75.0-windows-amd64/rclone.exe') (Join-Path $dest 'rclone.exe') -Force
   $jfsTar = Join-Path $work 'juicefs.tar.gz'
   Download-Verified 'https://github.com/juicedata/juicefs/releases/download/v1.3.0/juicefs-1.3.0-windows-amd64.tar.gz' $jfsTar '2d7118f6db7046582fb8658682164942fcd014aada7f0f08b620f6065babdd22'
   New-Item -ItemType Directory -Path (Join-Path $work 'jfs') | Out-Null
   tar -xzf $jfsTar -C (Join-Path $work 'jfs')
   if ($LASTEXITCODE -ne 0) { throw 'Cannot extract volume engine' }
   Copy-Item (Join-Path $work 'jfs/juicefs.exe') (Join-Path $dest 'juicefs.exe') -Force
-  Write-Host 'Both Windows engines downloaded and verified.'
+  Write-Host 'JuiceFS downloaded and verified. rclone is built from engine-src/rclone.'
 } finally { Remove-Item -LiteralPath $work -Recurse -Force }
