@@ -1,13 +1,32 @@
-name: WinFsp full external conformance
+name: Rclone direct WinFsp conformance
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
       - '.github/workflows/winfsp-conformance.yml'
-      - 'scripts/*winfsp-conformance*'
+      - 'src/**'
+      - 'engine-src/**'
+      - 'engines/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    paths:
+      - '.github/workflows/winfsp-conformance.yml'
+      - 'src/**'
+      - 'engine-src/**'
+      - 'engines/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
 permissions:
   contents: read
+concurrency:
+  group: rclone-conformance-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   prepare:
     runs-on: windows-latest
@@ -41,10 +60,7 @@ jobs:
     needs: prepare
     runs-on: windows-latest
     timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [ntfs, direct, juicefs, juicefs-writeback]
+    name: Rclone direct — all 117 external tests
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -59,11 +75,15 @@ jobs:
       - name: Install original Python test runtime on this runner
         run: ./scripts/install-winfsp-conformance-python.ps1
       - name: Run every external case including optional tests
-        run: node scripts/windows-winfsp-conformance.cjs ${{ matrix.target }}
+        run: node scripts/windows-winfsp-conformance.cjs direct
+      - name: Publish counts and failure assertions in job summary
+        if: always()
+        run: node scripts/summarize-winfsp-conformance.cjs direct
       - name: Upload every result including assertions and timeouts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: winfsp-conformance-${{ matrix.target }}
+          name: winfsp-conformance-direct
           path: test-results/conformance/
           retention-days: 30
+          if-no-files-found: error

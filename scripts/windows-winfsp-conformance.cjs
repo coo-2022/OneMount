@@ -10,7 +10,7 @@ if(!['ntfs','direct','juicefs','juicefs-writeback'].includes(mode))throw Error('
 const root=path.resolve(__dirname,'..'),tools=path.join(root,'test-tools');
 const base=fs.mkdtempSync(path.join(os.tmpdir(),'onemount-conformance-'));
 const results=path.join(root,'test-results','conformance',mode);fs.mkdirSync(results,{recursive:true});
-const report={mode,platform:os.release(),winfsp:'2.1.25156',secfsCommit:'6ac65cda46abc2be39c7b137debf9521052edbaf',startedAt:new Date().toISOString(),status:'running',catalog:[],internalOnly:[],results:[],limits:['Windows x64 on local backend; no real cloud service','External filesystem suite; WinFsp internal MEMFS/driver tests and Microsoft HLK not run','Per-case deadline: 90 seconds; stress and FSX: 300 seconds; timeout is not a pass','WinFsp --external --resilient, all optional cases; no FUSE exclusion list or case comparison relaxation']};
+const report={mode,commit:process.env.GITHUB_SHA||null,arch:process.arch,platform:os.release(),winfsp:'2.1.25156',secfsCommit:'6ac65cda46abc2be39c7b137debf9521052edbaf',startedAt:new Date().toISOString(),status:'running',catalog:[],internalOnly:[],results:[],limits:['Windows x64 on local backend; no real cloud service','External filesystem suite; WinFsp internal MEMFS/driver tests and Microsoft HLK not run','Per-case deadline: 90 seconds; stress and FSX: 300 seconds; timeout is not a pass','WinFsp --external --resilient, all optional cases; no FUSE exclusion list or case comparison relaxation']};
 const reportFile=path.join(results,'report.json');
 const save=()=>fs.writeFileSync(reportFile,JSON.stringify(report,null,2)+'\n');
 const bounded=(promise,ms)=>{let timer;return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Operation timed out')),ms);})]).finally(()=>clearTimeout(timer));};
@@ -39,7 +39,7 @@ async function one(test){
  const tap=test.suite==='winfstest'?tapStats(r.output):undefined;
  const signature=test.suite==='winfsp-tests'?/^.{39} OK [\d.]+s\r?$/m.test(r.output)&&r.output.includes('--- COMPLETE ---'):test.suite==='winfstest'?tap.planned>0&&tap.passed===tap.planned&&tap.failed===0:/All operations - \d+ - completed A-OK!/.test(r.output);
  const status=r.timedOut?'timeout':r.exitCode===0&&signature&&!r.error?'passed':'failed';
- report.results.push({id:test.id,suite:test.suite,status,seconds:r.seconds,exitCode:r.exitCode,error:r.error,assertions:tap,log:outputFile,command:[test.exe,...test.args],failure:r.output.split(/\r?\n/).filter(l=>/ASSERT|EXCEPTION|not ok|error|fail|mismatch/i.test(l)).slice(0,8)});save();
+ report.results.push({id:test.id,suite:test.suite,status,seconds:r.seconds,exitCode:r.exitCode,error:r.error,assertions:tap,log:outputFile,command:[test.exe,...test.args],failure:r.output.split(/\r?\n/).filter(l=>!/^ok \d/.test(l)&&/ASSERT|EXCEPTION|^not ok|^Traceback|error|fail|mismatch|Invalid argument/i.test(l)).slice(0,8)});save();
  console.log(`${status.toUpperCase()} ${mode} ${test.id} (${r.seconds}s)`);
 }
 async function main(){
