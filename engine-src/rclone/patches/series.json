@@ -1,0 +1,20 @@
+{
+  "upstream": "v1.75.0",
+  "patches": [
+    {
+      "id": "cmount-exclusive-mkdir",
+      "file": "cmd/cmount/fs.go",
+      "sourceSha256": "5dbf6888ee945d2a871d90e33e190928dc5c4d373f149f0e9dc2e4ed14519bf8",
+      "replacements": [
+        {
+          "before": "\tmu        sync.Mutex // to protect the below\n",
+          "after": "\tmkdirMu   sync.Mutex // serialize exclusive directory creation through this mount\n\tmu        sync.Mutex // to protect the below\n"
+        },
+        {
+          "before": "\t_, err := parentDir.Mkdir(leaf)\n\treturn translateError(err)\n}",
+          "after": "\t// VFS.Mkdir is intentionally idempotent for internal rclone callers.\n\t// The filesystem boundary must reject an existing name. Serialize the\n\t// check/create pair so concurrent requests through this mount have one winner.\n\tfsys.mkdirMu.Lock()\n\tdefer fsys.mkdirMu.Unlock()\n\tif _, err := parentDir.Stat(leaf); err == nil {\n\t\treturn -fuse.EEXIST\n\t} else if err != vfs.ENOENT {\n\t\treturn translateError(err)\n\t}\n\t_, err := parentDir.Mkdir(leaf)\n\treturn translateError(err)\n}"
+        }
+      ]
+    }
+  ]
+}

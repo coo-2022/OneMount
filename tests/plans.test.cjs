@@ -28,7 +28,7 @@ test('Windows ownership uses JuiceFS built-in current-user mapping',()=>{
   assert.ok(p.formatArgs(1234,'test').includes('--no-update'));
 });
 test('direct mount uses full cache and the actual typed RC units',()=>{
-  const b=p.directMountBody(d,{source:'drive:'});assert.equal(b.vfsOpt.CacheMode,3);assert.equal(b.vfsOpt.WriteBack,5e9);assert.equal(b.mountType,'cmount');assert.equal(b.fs,'drive:');
+  const b=p.directMountBody(d,{source:'drive:'});assert.equal(b.vfsOpt.CacheMode,3);assert.equal(b.vfsOpt.WriteBack,5e9);assert.equal(b.mountType,'cmount');assert.equal(b.fs,'drive:');assert.equal(b.vfsOpt.FilePerms,0o777, 'Windows executable images require execute bits');
 });
 test('missing metrics are unknown, not zero',()=>{
   assert.equal(p.parseMetrics('').pendingBlocks,null);

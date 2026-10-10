@@ -10,6 +10,7 @@ for(const name of require('./generate-rclone-backends.cjs').generate(source))if(
 const sha=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const dependency=JSON.parse(execFileSync('go',['list','-mod=readonly','-m','-json','github.com/rclone/rclone'],{cwd:source,encoding:'utf8'}));
 let commit='unknown';try{commit=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();}catch{}
-const report={upstream:dependency.Version,upstreamModuleSum:dependency.Sum,go:execFileSync('go',['version'],{encoding:'utf8'}).trim(),sourceCommit:commit,buildTags:['cmount'],goModSha256:sha(path.join(source,'go.mod')),goSumSha256:sha(path.join(source,'go.sum')),customBackends:require('./generate-rclone-backends.cjs').generate(source),sha256:sha(exe),version:version.trim()};
+const sourcePatches=JSON.parse(fs.readFileSync(path.join(source,'.build/patched/manifest.json'),'utf8'));
+const report={sourcePatches,upstream:dependency.Version,upstreamModuleSum:dependency.Sum,go:execFileSync('go',['version'],{encoding:'utf8'}).trim(),sourceCommit:commit,buildTags:['cmount'],goModSha256:sha(path.join(source,'go.mod')),goSumSha256:sha(path.join(source,'go.sum')),customBackends:require('./generate-rclone-backends.cjs').generate(source),sha256:sha(exe),version:version.trim()};
 fs.writeFileSync(path.join(root,'engines/rclone-build.json'),JSON.stringify(report,null,2)+'\n');
 console.log(version.trim());console.log('Verified registered backends and wrote engine build manifest.');

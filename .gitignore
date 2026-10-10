@@ -15,3 +15,5 @@ test-results/
 playwright-report/
 core
 core.*
+
+engine-src/rclone/.build/
