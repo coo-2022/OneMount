@@ -56,6 +56,8 @@ jobs:
           path: .
       - name: Install verified WinFsp driver
         run: ./scripts/install-ci-winfsp.ps1
+      - name: Install original Python test runtime on this runner
+        run: ./scripts/install-winfsp-conformance-python.ps1
       - name: Run every external case including optional tests
         run: node scripts/windows-winfsp-conformance.cjs ${{ matrix.target }}
       - name: Upload every result including assertions and timeouts

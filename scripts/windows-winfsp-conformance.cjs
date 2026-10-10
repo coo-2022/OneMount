@@ -37,7 +37,7 @@ async function one(test){
  const r=await run(test.exe,test.args,cwd,test.timeout||90000,test.env||{});
  const outputFile=test.id.replace(/[^a-z0-9_-]/gi,'_')+'.log';fs.writeFileSync(path.join(results,outputFile),r.output);
  const tap=test.suite==='winfstest'?tapStats(r.output):undefined;
- const signature=test.suite==='winfsp-tests'?/\.\.+ OK [\d.]+s/.test(r.output)&&r.output.includes('--- COMPLETE ---'):test.suite==='winfstest'?tap.planned>0&&tap.passed===tap.planned&&tap.failed===0:/All operations - \d+ - completed A-OK!/.test(r.output);
+ const signature=test.suite==='winfsp-tests'?/^.{39} OK [\d.]+s\r?$/m.test(r.output)&&r.output.includes('--- COMPLETE ---'):test.suite==='winfstest'?tap.planned>0&&tap.passed===tap.planned&&tap.failed===0:/All operations - \d+ - completed A-OK!/.test(r.output);
  const status=r.timedOut?'timeout':r.exitCode===0&&signature&&!r.error?'passed':'failed';
  report.results.push({id:test.id,suite:test.suite,status,seconds:r.seconds,exitCode:r.exitCode,error:r.error,assertions:tap,log:outputFile,command:[test.exe,...test.args],failure:r.output.split(/\r?\n/).filter(l=>/ASSERT|EXCEPTION|not ok|error|fail|mismatch/i.test(l)).slice(0,8)});save();
  console.log(`${status.toUpperCase()} ${mode} ${test.id} (${r.seconds}s)`);

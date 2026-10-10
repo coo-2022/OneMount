@@ -13,12 +13,8 @@ Download-Verified 'https://github.com/winfsp/winfsp/releases/download/v2.1/winfs
 Expand-Archive $zip (Join-Path $tools 'winfsp') -Force
 # Run the upstream legacy suite unchanged, with its original Python runtime.
 # This runtime is confined to disposable tests and never packaged with OneMount.
-$msi = Join-Path $env:RUNNER_TEMP 'python-2.7.18.amd64.msi'
+$msi = Join-Path $tools 'python-2.7.18.amd64.msi'
 Download-Verified 'https://www.python.org/ftp/python/2.7.18/python-2.7.18.amd64.msi' $msi 'b74a3afa1e0bf2a6fc566a7b70d15c9bfabba3756fb077797d16fffa27800c05'
-$python = Join-Path $tools 'python27'
-$p = Start-Process msiexec.exe -ArgumentList @('/i',('"'+$msi+'"'),'/qn','/norestart',('TARGETDIR="'+$python+'"'),'ALLUSERS=0') -Wait -PassThru
-if ($p.ExitCode -notin @(0,3010)) { throw "Python test runtime installation failed: $($p.ExitCode)" }
-if (!(Test-Path (Join-Path $python 'python.exe'))) { throw 'Python test runtime not found' }
 $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
 $vs = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 $dev = Join-Path $vs 'Common7/Tools/VsDevCmd.bat'
