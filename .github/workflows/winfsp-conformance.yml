@@ -1,0 +1,67 @@
+name: WinFsp full external conformance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/winfsp-conformance.yml'
+      - 'scripts/*winfsp-conformance*'
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: billziss-gh/secfs.test
+          ref: 6ac65cda46abc2be39c7b137debf9521052edbaf
+          path: test-tools/secfs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: engine-src/rclone/go.mod
+          cache-dependency-path: engine-src/rclone/go.sum
+      - name: Build the same custom engines as the product
+        run: npm run engines:win
+      - name: Prepare official test tools
+        run: ./scripts/prepare-winfsp-conformance.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: conformance-tools
+          path: |
+            engines/
+            test-tools/
+          retention-days: 7
+  conformance:
+    needs: prepare
+    runs-on: windows-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ntfs, direct, juicefs, juicefs-writeback]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v4
+        with:
+          name: conformance-tools
+          path: .
+      - name: Install verified WinFsp driver
+        run: ./scripts/install-ci-winfsp.ps1
+      - name: Run every external case including optional tests
+        run: node scripts/windows-winfsp-conformance.cjs ${{ matrix.target }}
+      - name: Upload every result including assertions and timeouts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: winfsp-conformance-${{ matrix.target }}
+          path: test-results/conformance/
+          retention-days: 30
