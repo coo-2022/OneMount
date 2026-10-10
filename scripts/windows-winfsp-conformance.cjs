@@ -44,9 +44,13 @@ async function one(test){
 }
 async function main(){
  save();
+ // Official test executable imports winfsp-x64.dll at process startup.
+ const winfspBin=path.join(process.env['ProgramFiles(x86)']||'C:\\Program Files (x86)','WinFsp','bin');
+ if(!fs.existsSync(path.join(winfspBin,'winfsp-x64.dll')))throw Error('Installed WinFsp DLL not found');
+ process.env.PATH=winfspBin+path.delimiter+process.env.PATH;
  const wf=path.join(tools,'winfsp/winfsp-tests-x64.exe');
  const catalog=await run(wf,['--external','--resilient','--list','+*'],base);
- if(catalog.exitCode!==0)throw Error('Cannot list external WinFsp tests: '+catalog.output);
+ if(catalog.exitCode!==0)throw Error('Cannot list external WinFsp tests: '+JSON.stringify(catalog));
  const names=catalog.output.split(/\r?\n/).filter(s=>/^[a-z0-9_]+_test$/.test(s));
  if(names.length<40)throw Error('Unexpectedly incomplete external WinFsp catalog');
  const internal=await run(wf,['--list','+*'],base);
