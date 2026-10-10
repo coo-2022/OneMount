@@ -36,3 +36,5 @@
 参考：[WinFsp Testing](https://winfsp.dev/doc/WinFsp-Testing/)、[官方 2.1 测试发行包](https://github.com/winfsp/winfsp/releases/tag/v2.1)。
 
 直连失败的逐项归因见 [rclone 直连分析](RCLONE-DIRECT-FAILURE-ANALYSIS.md)。CI 严格保留失败/超时状态，并在 Actions Summary 展示计数与断言；未配置分支保护策略。
+
+最新修复验证：[执行权限与重复建目录](RCLONE-DIRECT-FIXES-2026-10-10.md)，直连结果为 68 通过、48 失败、1 超时。

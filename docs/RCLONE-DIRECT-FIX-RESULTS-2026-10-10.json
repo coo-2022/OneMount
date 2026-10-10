@@ -1,0 +1,1264 @@
+{
+  "testedCommit": "aa273af42b7359c73dee5278204da054f8286f18",
+  "run": "https://github.com/coo-2022/OneMount/actions/runs/38050532018",
+  "windowsBuild": "https://github.com/coo-2022/OneMount/actions/runs/38050531893",
+  "before": {
+    "planned": 117,
+    "passed": 62,
+    "failed": 54,
+    "timeout": 1,
+    "notRun": 0
+  },
+  "after": {
+    "planned": 117,
+    "passed": 68,
+    "failed": 48,
+    "timeout": 1,
+    "notRun": 0
+  },
+  "changed": [
+    {
+      "id": "create_test",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "id": "exec_test",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "id": "exec_delete_test",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "id": "exec_rename_test",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "id": "exec_rename_dir_test",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "id": "winfstest-base/02.t",
+      "before": "failed",
+      "after": "passed"
+    }
+  ],
+  "regressions": [],
+  "sourcePatches": {
+    "upstream": "v1.75.0",
+    "seriesSha256": "15f5dcaca4594463e4b7fd21495d5727437d4518928675aeed571e9472139c21",
+    "patches": [
+      {
+        "id": "cmount-exclusive-mkdir",
+        "file": "cmd/cmount/fs.go",
+        "sourceSha256": "5dbf6888ee945d2a871d90e33e190928dc5c4d373f149f0e9dc2e4ed14519bf8",
+        "patchedSha256": "2eba64cf7503acc94c16ec226ba57466f2c8b53af3386e677775d13ecf377bed"
+      }
+    ]
+  },
+  "results": [
+    {
+      "id": "create_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.135,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "create_fileattr_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.354,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(FILE_ATTRIBUTE_ARCHIVE == FileAttributes) failed at create-test.c:257:create_fileattr_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "create_readonlydir_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.156,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT((FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_READONLY) == FileAttributes) failed at create-test.c:377:create_readonlydir_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "create_related_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.125,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "create_allocation_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.157,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(65536 == StandardInfo.AllocationSize.QuadPart) failed at create-test.c:518:create_allocation_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "create_sd_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.109,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "create_notraverse_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.165,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(!Success) failed at create-test.c:765:create_notraverse_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "create_backup_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.17,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE == Handle) failed at create-test.c:896:create_backup_dotest (err=c0000034:0)"
+      ]
+    },
+    {
+      "id": "create_restore_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.156,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE == Handle) failed at create-test.c:1010:create_restore_dotest (err=c0000034:0)"
+      ]
+    },
+    {
+      "id": "create_share_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.106,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "create_curdir_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.101,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "create_namelen_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.146,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "getfileattr_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.165,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_FILE_ATTRIBUTES == FileAttributes) failed at info-test.c:88:getfileattr_dotest (err=c0000034:0)"
+      ]
+    },
+    {
+      "id": "getfileinfo_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.102,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "getfileinfo_name_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.106,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "setfileinfo_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.164,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(FILE_ATTRIBUTE_HIDDEN == FileInfo.dwFileAttributes) failed at info-test.c:430:setfileinfo_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "delete_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.108,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "delete_access_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.157,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(!Success) failed at info-test.c:568:delete_access_dotest (err=c0000034:0)"
+      ]
+    },
+    {
+      "id": "delete_pending_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.102,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "delete_mmap_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.104,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "delete_standby_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.198,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "delete_ex_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.159,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(STATUS_CANNOT_DELETE == IoStatus.Status) failed at info-test.c:961:delete_ex_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "rename_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.134,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rename_backslash_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.121,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rename_open_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.108,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rename_caseins_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.118,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rename_flipflop_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.958,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rename_mmap_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.113,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rename_standby_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.291,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rename_ex_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.127,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "getvolinfo_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.098,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "setvolinfo_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.094,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "getsecurity_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.1,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "setsecurity_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.159,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(0 == wcscmp(L\"D:P(A;;FA;;;SY)(A;;FA;;;BA)\", ConvertedSddl)) failed at security-test.c:231:setsecurity_dotest (err=c0000023:0)"
+      ]
+    },
+    {
+      "id": "security_stress_meta_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.889,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_noncached_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.105,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_noncached_overlapped_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.108,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_cached_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.107,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_cached_append_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.109,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_cached_overlapped_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.103,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_writethru_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.108,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_writethru_append_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.103,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_writethru_overlapped_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.113,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_mmap_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.186,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "rdwr_mixed_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.108,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "flush_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.121,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "flush_volume_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.102,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "lock_noncached_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.108,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "lock_noncached_overlapped_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.107,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "lock_cached_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.112,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "lock_cached_overlapped_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.104,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "querydir_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 2.886,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "querydir_nodup_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 7.16,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "querydir_single_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 5.66,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "querydir_expire_cache_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.095,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "querydir_buffer_overflow_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.103,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "querydir_namelen_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.114,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "dirnotify_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 1.117,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "exec_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.129,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "exec_delete_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 1.126,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "exec_rename_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 1.14,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "exec_rename_dir_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 2.132,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "reparse_guid_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.186,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(Success) failed at reparse-test.c:65:reparse_guid_dotest (err=c0000277:4394)"
+      ]
+    },
+    {
+      "id": "reparse_nfs_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.185,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(Success) failed at reparse-test.c:167:reparse_nfs_dotest (err=c0000010:1)"
+      ]
+    },
+    {
+      "id": "reparse_symlink_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.173,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(ERROR_PRIVILEGE_NOT_HELD == GetLastError()) failed at reparse-test.c:295:reparse_symlink_dotest0 (err=c0000010:1)"
+      ]
+    },
+    {
+      "id": "reparse_symlink_relative_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.154,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(ERROR_PRIVILEGE_NOT_HELD == GetLastError()) failed at reparse-test.c:530:reparse_symlink_relative_dotest (err=c0000010:1)"
+      ]
+    },
+    {
+      "id": "ea_create_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.148,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(STATUS_INVALID_EA_NAME == Result) failed at ea-test.c:707:ea_create_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "ea_overwrite_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.157,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(STATUS_SUCCESS == Result) failed at ea-test.c:830:ea_overwrite_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "ea_getset_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.155,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(STATUS_INVALID_EA_NAME == Result) failed at ea-test.c:906:ea_getset_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "stream_create_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.148,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:46:stream_create_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_create_overwrite_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.158,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:381:stream_create_overwrite_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_create_related_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.159,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(STATUS_SUCCESS == Result) failed at stream-tests.c:495:stream_create_related_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "stream_create_sd_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.147,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:553:stream_create_sd_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_create_share_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.151,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle1) failed at stream-tests.c:627:stream_create_share_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_getfileinfo_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.148,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:957:stream_getfileinfo_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_setfileinfo_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.156,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != StreamHandle) failed at stream-tests.c:1188:stream_setfileinfo_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_delete_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.148,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1329:stream_delete_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_delete_pending_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.151,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1413:stream_delete_pending_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_rename_flipflop_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.15,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1523:stream_rename_flipflop_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_getsecurity_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.15,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1659:stream_getsecurity_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_setsecurity_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.149,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != StreamHandle) failed at stream-tests.c:1830:stream_setsecurity_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_getstreaminfo_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.183,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1966:stream_getstreaminfo_dotest (err=c0000033:123)"
+      ]
+    },
+    {
+      "id": "stream_getstreaminfo_expire_cache_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.1,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "stream_dirnotify_test",
+      "suite": "winfsp-tests",
+      "status": "timeout",
+      "seconds": 90.13,
+      "exitCode": 1,
+      "failure": []
+    },
+    {
+      "id": "oplock_level1_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 1.333,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "oplock_level2_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 2.566,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "oplock_batch_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 1.326,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "oplock_filter_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 1.33,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "oplock_rwh_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 1.342,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "oplock_rw_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 1.36,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "oplock_rh_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 2.588,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "oplock_r_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 2.567,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "oplock_not_granted_test",
+      "suite": "winfsp-tests",
+      "status": "passed",
+      "seconds": 0.105,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "wsl_stat_test",
+      "suite": "winfsp-tests",
+      "status": "failed",
+      "seconds": 0.145,
+      "exitCode": 3221226505,
+      "failure": [
+        "    ASSERT(STATUS_INVALID_INFO_CLASS == Result || STATUS_NOT_IMPLEMENTED == Result) failed at wsl-test.c:161:wsl_stat_dotest (err=0:0)"
+      ]
+    },
+    {
+      "id": "winfstest-base/00.t",
+      "suite": "winfstest",
+      "status": "passed",
+      "seconds": 0.248,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 21,
+        "passed": 21,
+        "failed": 0
+      },
+      "failure": []
+    },
+    {
+      "id": "winfstest-base/01.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.187,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 15,
+        "passed": 8,
+        "failed": 7
+      },
+      "failure": [
+        "not ok 2 - expect \"GetFileInformation aaefff03\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2013, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:48Z', 'LastAccessTime': '2026-10-10T12:10:48Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:48Z', 'FileAttributes': 128}]",
+        "not ok 4 - expect \"GetFileInformation aaefff03\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2013, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:48Z', 'LastAccessTime': '2026-10-10T12:10:48Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:48Z', 'FileAttributes': 128}]",
+        "not ok 7 - expect \"GetFileInformation aaefff03\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2013, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:48Z', 'LastAccessTime': '2026-10-10T12:10:48Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:48Z', 'FileAttributes': 128}]",
+        "not ok 10 - expect \"GetFileInformation aaefff03\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2013, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:48Z', 'LastAccessTime': '2026-10-10T12:10:48Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:48Z', 'FileAttributes': 128}]",
+        "not ok 13 - expect \"DeleteFile aaefff03\" ERROR_ACCESS_DENIED - got 0",
+        "not ok 14 - expect \"SetFileAttributes aaefff03 FILE_ATTRIBUTE_NORMAL\" 0 - got ERROR_FILE_NOT_FOUND",
+        "not ok 15 - expect \"DeleteFile aaefff03\" 0 - got ERROR_FILE_NOT_FOUND"
+      ]
+    },
+    {
+      "id": "winfstest-base/02.t",
+      "suite": "winfstest",
+      "status": "passed",
+      "seconds": 0.16,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 13,
+        "passed": 13,
+        "failed": 0
+      },
+      "failure": []
+    },
+    {
+      "id": "winfstest-base/03.t",
+      "suite": "winfstest",
+      "status": "passed",
+      "seconds": 0.179,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      "failure": []
+    },
+    {
+      "id": "winfstest-base/04.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.472,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 45,
+        "passed": 43,
+        "failed": 2
+      },
+      "failure": [
+        "not ok 10 - expect \"MoveFileEx fdb69bb6\\bar fdb69bb6\\baz MOVEFILE_REPLACE_EXISTING\" ERROR_ACCESS_DENIED - got 0",
+        "not ok 12 - expect \"MoveFileEx fdb69bb6\\bar fdb69bb6\\baz MOVEFILE_REPLACE_EXISTING\" 0 - got ERROR_FILE_NOT_FOUND"
+      ]
+    },
+    {
+      "id": "winfstest-base/05.t",
+      "suite": "winfstest",
+      "status": "passed",
+      "seconds": 0.18,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 13,
+        "passed": 13,
+        "failed": 0
+      },
+      "failure": []
+    },
+    {
+      "id": "winfstest-base/06.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.112,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 8,
+        "passed": 6,
+        "failed": 2
+      },
+      "failure": [
+        "not ok 5 - testeval(\"2134-01-01T00:00:00Z\" == r[0][\"CreationTime\"])",
+        "not ok 6 - testeval(\"2134-10-11T12:34:56Z\" == r[0][\"LastAccessTime\"])"
+      ]
+    },
+    {
+      "id": "winfstest-base/07.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.151,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 11,
+        "passed": 6,
+        "failed": 5
+      },
+      "failure": [
+        "not ok 2 - expect \"GetFileInformation e423eadd\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2042, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:49Z', 'LastAccessTime': '2026-10-10T12:10:49Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:49Z', 'FileAttributes': 128}]",
+        "not ok 4 - expect \"GetFileInformation e423eadd\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2042, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:49Z', 'LastAccessTime': '2026-10-10T12:10:49Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:49Z', 'FileAttributes': 128}]",
+        "not ok 6 - expect \"GetFileInformation e423eadd\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2042, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:49Z', 'LastAccessTime': '2026-10-10T12:10:49Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:49Z', 'FileAttributes': 128}]",
+        "not ok 8 - expect \"GetFileInformation e423eadd\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2042, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:49Z', 'LastAccessTime': '2026-10-10T12:10:49Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:49Z', 'FileAttributes': 128}]",
+        "not ok 10 - expect \"GetFileInformation e423eadd\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2042, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:49Z', 'LastAccessTime': '2026-10-10T12:10:49Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:49Z', 'FileAttributes': 128}]"
+      ]
+    },
+    {
+      "id": "winfstest-base/08.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.145,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 17,
+        "passed": 14,
+        "failed": 3
+      },
+      "failure": [
+        "not ok 4 - expect \"CreateFile 04560a57 GENERIC_READ FILE_SHARE_READ+FILE_SHARE_WRITE+FILE_SHARE_DELETE 0 OPEN_EXISTING 0 0\" ERROR_ACCESS_DENIED - got ERROR_FILE_NOT_FOUND",
+        "not ok 9 - testeval(len(s) == 3)",
+        "not ok 12 - testeval(\"foo\" in s)"
+      ]
+    },
+    {
+      "id": "winfstest-base/09.t",
+      "suite": "winfstest",
+      "status": "passed",
+      "seconds": 0.214,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 19,
+        "passed": 19,
+        "failed": 0
+      },
+      "failure": []
+    },
+    {
+      "id": "winfstest-base/10.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.261,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 24,
+        "passed": 15,
+        "failed": 9
+      },
+      "failure": [
+        "not ok 2 - expect \"GetFileSecurity 791097c8 DACL_SECURITY_INFORMATION\" <lambda> - result [{'Sddl': 'D:P(A;;0x1f01bf;;;LA)(A;;0x1201af;;;S-1-5-21-1643835476-1616584234-1346609752-513)(A;;0x1201af;;;WD)'}]",
+        "not ok 4 - expect \"GetFileSecurity 791097c8 DACL_SECURITY_INFORMATION\" <lambda> - result [{'Sddl': 'D:P(A;;0x1f01bf;;;LA)(A;;0x1201af;;;S-1-5-21-1643835476-1616584234-1346609752-513)(A;;0x1201af;;;WD)'}]",
+        "not ok 9 - expect \"CreateFile 791097c8 GENERIC_READ 0 0 OPEN_EXISTING 0 0\" ERROR_ACCESS_DENIED - got 0",
+        "not ok 12 - expect \"GetFileSecurity 791097c8 DACL_SECURITY_INFORMATION\" <lambda> - result [{'Sddl': 'D:P(A;;FA;;;LA)(A;;0x1201ef;;;S-1-5-21-1643835476-1616584234-1346609752-513)(A;;0x1201ef;;;WD)'}]",
+        "not ok 14 - expect \"GetFileSecurity 791097c8 DACL_SECURITY_INFORMATION\" <lambda> - result [{'Sddl': 'D:P(A;;FA;;;LA)(A;;0x1201ef;;;S-1-5-21-1643835476-1616584234-1346609752-513)(A;;0x1201ef;;;WD)'}]",
+        "not ok 17 - expect \"CreateFile 791097c8\\foobar GENERIC_READ 0 D:P(A;;FR;;;WD) CREATE_NEW 0 0\" ERROR_ACCESS_DENIED - got 0",
+        "not ok 19 - expect \"CreateFile 791097c8\\foobar GENERIC_READ 0 D:P(A;;FR;;;WD) CREATE_NEW 0 0\" 0 - got ERROR_FILE_EXISTS",
+        "not ok 21 - expect \"DeleteFile 791097c8\\foobar\" ERROR_ACCESS_DENIED - got 0"
+      ]
+    },
+    {
+      "id": "winfstest-reparse/00.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.384,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 39,
+        "passed": 18,
+        "failed": 21
+      },
+      "failure": [
+        "not ok 2 - expect \"GetFileInformation 1aaa6a22\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2057, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:50Z', 'LastAccessTime': '2026-10-10T12:10:50Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:50Z', 'FileAttributes': 128}]",
+        "not ok 3 - expect \"SetReparsePoint 1aaa6a22 42 {92A23BD8-99F5-4FD6-807C-C56F3A063C52} 1A 2B 3C 4D 5F\" 0 - got ERROR(4394)",
+        "not ok 4 - expect \"GetFileInformation 1aaa6a22\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2057, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:50Z', 'LastAccessTime': '2026-10-10T12:10:50Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:50Z', 'FileAttributes': 128}]",
+        "not ok 5 - expect \"GetReparsePoint 1aaa6a22\" 0 - got ERROR(4390)",
+        "not ok 6 - expect \"SetReparsePoint 1aaa6a22 42 {92A23BD8-99F5-4FD6-807C-C56F3A063C52} A1 B2 C3 D4 F5 1A 2B 3C 4D 5F\" 0 - got ERROR(4394)",
+        "not ok 7 - expect \"GetReparsePoint 1aaa6a22\" 0 - got ERROR(4390)",
+        "not ok 9 - expect \"SetReparsePoint 1aaa6a22 42 {02A23BD8-99F5-4FD6-807C-C56F3A063C52} A1 B2 C3 D4 F5 1A 2B 3C 4D 5F\" ERROR(4391) - got ERROR(4394)",
+        "not ok 12 - expect \"GetFileInformation 1aaa6a22\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2058, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:50Z', 'LastAccessTime': '2026-10-10T12:10:50Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:50Z', 'FileAttributes': 128}]"
+      ]
+    },
+    {
+      "id": "winfstest-reparse/01.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.32,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 35,
+        "passed": 15,
+        "failed": 20
+      },
+      "failure": [
+        "not ok 3 - expect \"SetReparsePoint f85673b1 42 {92A23BD8-99F5-4FD6-807C-C56F3A063C52} 1A 2B 3C 4D 5F\" 0 - got ERROR(4394)",
+        "not ok 4 - expect \"GetFileInformation f85673b1\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2062, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:50Z', 'LastAccessTime': '2026-10-10T12:10:50Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:50Z', 'FileAttributes': 16}]",
+        "not ok 5 - expect \"GetReparsePoint f85673b1\" 0 - got ERROR(4390)",
+        "not ok 6 - expect \"SetReparsePoint f85673b1 42 {92A23BD8-99F5-4FD6-807C-C56F3A063C52} A1 B2 C3 D4 F5 1A 2B 3C 4D 5F\" 0 - got ERROR(4394)",
+        "not ok 7 - expect \"GetReparsePoint f85673b1\" 0 - got ERROR(4390)",
+        "not ok 9 - expect \"SetReparsePoint f85673b1 42 {02A23BD8-99F5-4FD6-807C-C56F3A063C52} A1 B2 C3 D4 F5 1A 2B 3C 4D 5F\" ERROR(4391) - got ERROR(4394)",
+        "not ok 13 - expect \"SetReparsePoint f85673b1 42 {92A23BD8-99F5-4FD6-807C-C56F3A063C52} 1A 2B 3C 4D 5F\" 0 - got ERROR(4394)",
+        "not ok 14 - expect \"GetFileInformation f85673b1\" <lambda> - result [{'VolumeSerialNumber': 238382448, 'FileIndex': 2063, 'NumberOfLinks': 1, 'CreationTime': '2026-10-10T12:10:50Z', 'LastAccessTime': '2026-10-10T12:10:50Z', 'FileSize': 0, 'LastWriteTime': '2026-10-10T12:10:50Z', 'FileAttributes': 16}]"
+      ]
+    },
+    {
+      "id": "winfstest-reparse/02.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.069,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 1,
+        "passed": 0,
+        "failed": 1
+      },
+      "failure": [
+        "not ok 1 - expect \"CreateSymbolicLink 8e561de4 15f28b49 0\" 0 - got ERROR_INVALID_FUNCTION"
+      ]
+    },
+    {
+      "id": "winfstest-reparse/03.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.067,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 1,
+        "passed": 0,
+        "failed": 1
+      },
+      "failure": [
+        "not ok 1 - expect \"CreateSymbolicLink fc8b1cf3 87e2abe1 SYMBOLIC_LINK_FLAG_DIRECTORY\" 0 - got ERROR_INVALID_FUNCTION"
+      ]
+    },
+    {
+      "id": "winfstest-streams/00.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.115,
+      "exitCode": 1,
+      "assertions": {
+        "planned": null,
+        "passed": 1,
+        "failed": 4
+      },
+      "failure": [
+        "not ok 1 - expect \"CreateFile 481c3d74:foo GENERIC_WRITE 0 0 CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" 0 - got ERROR_INVALID_NAME",
+        "not ok 2 - expect \"CreateFile 481c3d74 GENERIC_WRITE 0 0 CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" ERROR_FILE_EXISTS - got 0",
+        "not ok 3 - expect \"CreateFile 481c3d74:foo GENERIC_WRITE 0 0 CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" ERROR_FILE_EXISTS - got ERROR_INVALID_NAME",
+        "not ok 5 - expect \"GetFileInformation 481c3d74:foo\" 0 - got ERROR_INVALID_NAME",
+        "Traceback (most recent call last):",
+        "IndexError: list index out of range"
+      ]
+    },
+    {
+      "id": "winfstest-streams/01.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.108,
+      "exitCode": 1,
+      "assertions": {
+        "planned": null,
+        "passed": 3,
+        "failed": 4
+      },
+      "failure": [
+        "not ok 1 - expect \"CreateDirectory 3cf98373:foo 0\" ERROR_DIRECTORY - got ERROR_INVALID_NAME",
+        "not ok 4 - expect \"CreateFile 3cf98373:foo GENERIC_WRITE 0 0 CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" 0 - got ERROR_INVALID_NAME",
+        "not ok 5 - expect \"CreateFile 3cf98373:foo GENERIC_WRITE 0 0 CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" ERROR_FILE_EXISTS - got ERROR_INVALID_NAME",
+        "not ok 7 - expect \"GetFileInformation 3cf98373:foo\" 0 - got ERROR_INVALID_NAME",
+        "Traceback (most recent call last):",
+        "IndexError: list index out of range"
+      ]
+    },
+    {
+      "id": "winfstest-streams/02.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 1.102,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 250,
+        "passed": 15,
+        "failed": 235
+      },
+      "failure": [
+        "not ok 2 - expect \"FindStreams 25c7baa7\" 0 - got ERROR_INVALID_PARAMETER",
+        "not ok 3 - testeval(len(s) == 1)",
+        "not ok 4 - testeval(\"::$DATA\" in s)",
+        "not ok 7 - expect \"CreateFile 25c7baa7:foo GENERIC_WRITE 0 0 CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" 0 - got ERROR_INVALID_NAME",
+        "not ok 8 - expect \"CreateFile 25c7baa7:bar GENERIC_WRITE 0 0 CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" 0 - got ERROR_INVALID_NAME",
+        "not ok 9 - expect \"FindStreams 25c7baa7\" 0 - got ERROR_FILE_NOT_FOUND",
+        "not ok 10 - testeval(len(s) == 3)",
+        "not ok 11 - testeval(\"::$DATA\" in s)"
+      ]
+    },
+    {
+      "id": "winfstest-streams/03.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.363,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 39,
+        "passed": 12,
+        "failed": 27
+      },
+      "failure": [
+        "not ok 1 - expect \"CreateFile 70c698c2:strm GENERIC_WRITE 0 D:P(A;;GA;;;WD) CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" 0 - got ERROR_INVALID_NAME",
+        "not ok 2 - expect \"GetFileSecurity 70c698c2 DACL_SECURITY_INFORMATION\" 0 - got ERROR_FILE_NOT_FOUND",
+        "not ok 3 - expect \"GetFileSecurity 70c698c2:strm DACL_SECURITY_INFORMATION\" 0 - got ERROR_INVALID_NAME",
+        "not ok 4 - expect \"SetFileSecurity 70c698c2:strm DACL_SECURITY_INFORMATION D:P(A;;GA;;;WD)(A;;GR;;;SY)\" 0 - got ERROR_INVALID_NAME",
+        "not ok 5 - expect \"GetFileSecurity 70c698c2 DACL_SECURITY_INFORMATION\" 0 - got ERROR_FILE_NOT_FOUND",
+        "not ok 6 - expect \"GetFileSecurity 70c698c2:strm DACL_SECURITY_INFORMATION\" 0 - got ERROR_INVALID_NAME",
+        "not ok 7 - expect \"DeleteFile 70c698c2\" 0 - got ERROR_FILE_NOT_FOUND",
+        "not ok 8 - expect \"CreateFile 70c698c2:strm GENERIC_WRITE 0 D:P(A;;GA;;;WD) CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" 0 - got ERROR_INVALID_NAME"
+      ]
+    },
+    {
+      "id": "winfstest-streams/04.t",
+      "suite": "winfstest",
+      "status": "failed",
+      "seconds": 0.136,
+      "exitCode": 0,
+      "assertions": {
+        "planned": 9,
+        "passed": 0,
+        "failed": 9
+      },
+      "failure": [
+        "not ok 1 - expect \"CreateFile 0d02aba2:strm GENERIC_WRITE 0 0 CREATE_NEW FILE_ATTRIBUTE_NORMAL 0\" 0 - got ERROR_INVALID_NAME",
+        "not ok 2 - expect \"GetFileInformation 0d02aba2\" 0 - got ERROR_FILE_NOT_FOUND",
+        "not ok 3 - expect \"SetReparsePoint 0d02aba2:strm 42 {92A23BD8-99F5-4FD6-807C-C56F3A063C52} 1A 2B 3C 4D 5F\" 0 - got ERROR_INVALID_NAME",
+        "not ok 4 - expect \"GetFileInformation 0d02aba2\" 0 - got ERROR_FILE_NOT_FOUND",
+        "not ok 5 - expect \"GetReparsePoint 0d02aba2\" 0 - got ERROR_FILE_NOT_FOUND",
+        "not ok 6 - expect \"SetReparsePoint 0d02aba2 42 {92A23BD8-99F5-4FD6-807C-C56F3A063C52} A1 B2 C3 D4 F5 1A 2B 3C 4D 5F\" 0 - got ERROR_FILE_NOT_FOUND",
+        "not ok 7 - expect \"GetReparsePoint 0d02aba2:strm\" 0 - got ERROR_INVALID_NAME",
+        "not ok 8 - expect \"DeleteFile 0d02aba2\" 0 - got ERROR_FILE_NOT_FOUND"
+      ]
+    },
+    {
+      "id": "fsx-normal",
+      "suite": "fsx",
+      "status": "passed",
+      "seconds": 2.203,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "fsx-mixed",
+      "suite": "fsx",
+      "status": "passed",
+      "seconds": 2.146,
+      "exitCode": 0,
+      "failure": []
+    },
+    {
+      "id": "fsx-stream",
+      "suite": "fsx",
+      "status": "failed",
+      "seconds": 0.021,
+      "exitCode": 91,
+      "failure": [
+        "testfile:foo: Invalid argument"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # rclone 直连：WinFsp 失败归因与 CI
 
+后续更新：执行权限与重复建目录已完成修复，六项由失败变为通过，见 [修复及 Windows 验证](RCLONE-DIRECT-FIXES-2026-10-10.md)。本文保留修复前的归因基线。
+
 本阶段只分析 rclone 直连。证据来自 [2026-10-10 Windows 全量运行](https://github.com/coo-2022/OneMount/actions/runs/38048124469)：117 个入口，62 通过、54 失败、1 超时。被测版本为 rclone v1.75.0-onemount / WinFsp 2.1.25156，使用本地后端、产品默认挂载参数。
 
 54 个失败不等于 54 个独立缺陷。大量断言来自同一个功能缺口，而且这套测试按完整 Windows 文件系统语义检查，没有使用 FUSE 排除列表。即使后端是 NTFS，本次 IO 仍经过 rclone VFS 和 WinFsp FUSE 适配，不会自动透传 NTFS 全部能力。
@@ -25,7 +27,7 @@
 
 ## 几个容易误判的地方
 
-**程序无法启动首先是配置问题。** 当前 `src/plans.cjs` 的 `directMountBody` 未指定 `FilePerms`，rclone 默认 0666。官方 Windows 权限文档说明这会禁止从挂载盘启动程序。设置执行位是候选调整，本次没有修改产品权限，也没有声称这四项修复后已通过；全局 0777 同时增加了 owner/group/others 的执行权限，应按产品权限策略选择。
+**程序无法启动首先是配置问题。** 修复前 `src/plans.cjs` 的 `directMountBody` 未指定 `FilePerms`，rclone 默认 0666。官方 Windows 权限文档说明这会禁止从挂载盘启动程序。设置执行位是候选调整，本次没有修改产品权限，也没有声称这四项修复后已通过；全局 0777 同时增加了 owner/group/others 的执行权限，应按产品权限策略选择。
 
 **重复 mkdir 是具体的语义缺陷。** `create_test` 在第 125 行要求第二次 CreateDirectory 失败，实际成功；`winfstest-base/02.t` 第 6 个断言重复验证了这一点。它与 NTFS 对照 `create_test` 在第 183 行的尾随反斜杠错误码问题不是一回事。
 
