@@ -21,6 +21,8 @@
 
 ## 运行与证据
 
+已完成实测：[2026-10-10 结果报告](WINFSP-RESULTS-2026-10-10.md)，含四组结果、NTFS 基线差异和逐项证据。
+
 在 GitHub Actions 选择 **WinFsp full external conformance → Run workflow**。测试基础设施变更也会触发。它与常规软件发布验收分开运行，完整测试结果保存在 `winfsp-conformance-*` 附件中（30 天）。不要在真实用户挂载盘运行这类破坏性测试。
 
 ## 不包含的范围
