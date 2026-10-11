@@ -83,6 +83,17 @@ func (o *Object) Update(ctx context.Context, in io.Reader, src fs.ObjectInfo, op
 		return err
 	}
 	target := o.fs.fullPath(o.remote)
+	// Use the server's spelling for an existing object. Do not lowercase names
+	// or create a second object because only its parent's spelling differs.
+	existing, lookupErr := o.fs.statPath(ctx, target)
+	if lookupErr == nil {
+		if existing.IsDir != 0 {
+			return fs.ErrorIsDir
+		}
+		target = existing.Path
+	} else if !errors.Is(lookupErr, fs.ErrorObjectNotFound) {
+		return lookupErr
+	}
 	mtime := strconv.FormatInt(src.ModTime(ctx).Unix(), 10)
 	blocks, _ := json.Marshal(digests)
 	{
@@ -156,7 +167,7 @@ func (o *Object) Update(ctx context.Context, in io.Reader, src fs.ObjectInfo, op
 			if err != nil {
 				return err
 			}
-			if result.ID <= 0 || result.Path != target || result.Size != src.Size() || result.IsDir != 0 {
+			if result.ID <= 0 || !sameDestination(result.Path, target) || result.Size != src.Size() || result.IsDir != 0 {
 				return errors.New("baidu: file commit not confirmed")
 			}
 		}

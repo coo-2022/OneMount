@@ -274,9 +274,30 @@ func (f *Fs) post(ctx context.Context, endpoint string, q, form url.Values, out 
 	return f.call(ctx, f.api, endpoint, q, []byte(form.Encode()), "application/x-www-form-urlencoded", false, out)
 }
 
+// Baidu can return historical directory spellings (Camera/camera) within one
+// listing. Compare those spellings locally, without changing displayed names,
+// request paths or the global CaseInsensitive filesystem capability.
+func validAbsolutePath(p string) bool {
+	return strings.HasPrefix(p, "/") && path.Clean(p) == p
+}
+
+func samePath(a, b string) bool {
+	return validAbsolutePath(a) && validAbsolutePath(b) && strings.EqualFold(a, b)
+}
+
+// A successful create must retain the requested leaf name. Only its parent may
+// use a different spelling; a rename must not silently change the destination.
+func sameDestination(a, b string) bool {
+	return validAbsolutePath(a) && validAbsolutePath(b) && path.Base(a) == path.Base(b) && samePath(path.Dir(a), path.Dir(b))
+}
+
 func (f *Fs) listPath(ctx context.Context, dir string) ([]entry, error) {
+	if !validAbsolutePath(dir) {
+		return nil, errors.New("baidu: invalid directory path")
+	}
 	result := []entry{}
 	seen := map[int64]bool{}
+	names := map[string]bool{}
 	for start := 0; ; start += pageSize {
 		var page struct {
 			List []entry `json:"list"`
@@ -291,11 +312,28 @@ func (f *Fs) listPath(ctx context.Context, dir string) ([]entry, error) {
 		if page.List == nil {
 			return nil, errors.New("baidu: missing directory listing")
 		}
-		for _, e := range page.List {
-			if e.ID <= 0 || e.Size < 0 || path.Dir(e.Path) != dir || seen[e.ID] {
-				return nil, errors.New("baidu: invalid or repeated directory entry")
+		for index, e := range page.List {
+			// Only structural diagnostics: never log provider bodies or credentials.
+			reason := ""
+			switch {
+			case e.ID <= 0:
+				reason = "invalid entry ID"
+			case e.Size < 0:
+				reason = "negative entry size"
+			case !validAbsolutePath(e.Path) || e.Path == "/":
+				reason = "invalid entry path"
+			case !samePath(path.Dir(e.Path), dir):
+				reason = "entry parent mismatch"
+			case seen[e.ID]:
+				reason = "repeated entry ID"
+			case names[path.Base(e.Path)]:
+				reason = "repeated entry name"
+			}
+			if reason != "" {
+				return nil, fmt.Errorf("baidu: directory listing %s (start=%d index=%d)", reason, start, index)
 			}
 			seen[e.ID] = true
+			names[path.Base(e.Path)] = true
 			result = append(result, e)
 		}
 		if len(page.List) < pageSize {
@@ -304,6 +342,9 @@ func (f *Fs) listPath(ctx context.Context, dir string) ([]entry, error) {
 	}
 }
 func (f *Fs) statPath(ctx context.Context, p string) (entry, error) {
+	if !validAbsolutePath(p) {
+		return entry{}, errors.New("baidu: invalid lookup path")
+	}
 	if p == "/" {
 		return entry{Path: "/", IsDir: 1}, nil
 	}
@@ -311,10 +352,31 @@ func (f *Fs) statPath(ctx context.Context, p string) (entry, error) {
 	if err != nil {
 		return entry{}, err
 	}
+	// Prefer an exact path, then an exact leaf under a parent alias. Use a
+	// folded leaf only when unique, so case-distinct files are never conflated.
+	best, matches := 0, 0
+	var found entry
 	for _, e := range entries {
-		if e.Path == p {
-			return e, nil
+		score := 0
+		switch {
+		case e.Path == p:
+			score = 3
+		case sameDestination(e.Path, p):
+			score = 2
+		case samePath(e.Path, p):
+			score = 1
 		}
+		if score > best {
+			best, matches, found = score, 1, e
+		} else if score != 0 && score == best {
+			matches++
+		}
+	}
+	if matches > 1 {
+		return entry{}, errors.New("baidu: ambiguous case-insensitive path lookup")
+	}
+	if matches == 1 {
+		return found, nil
 	}
 	return entry{}, fs.ErrorObjectNotFound
 }
@@ -411,7 +473,7 @@ func (f *Fs) Mkdir(ctx context.Context, dir string) error {
 	if err != nil {
 		return err
 	}
-	if created.ID <= 0 || created.Path != p || created.IsDir != 1 {
+	if created.ID <= 0 || !sameDestination(created.Path, p) || created.IsDir != 1 {
 		return errors.New("baidu: directory creation not confirmed")
 	}
 	return nil
@@ -495,7 +557,7 @@ func (f *Fs) movePath(ctx context.Context, old, new string) error {
 	}
 	item := map[string]string{"path": old, "newname": path.Base(new)}
 	op := "rename"
-	if path.Dir(old) != path.Dir(new) {
+	if !samePath(path.Dir(old), path.Dir(new)) {
 		op = "move"
 		item["dest"] = path.Dir(new)
 	}

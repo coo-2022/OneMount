@@ -31,7 +31,7 @@ func (f *Fs) transferURL(raw string) (*url.URL, error) {
 	return u, nil
 }
 func sameVersion(a, b entry) bool {
-	return a.ID == b.ID && a.Path == b.Path && a.Size == b.Size && a.IsDir == b.IsDir && a.MD5 == b.MD5 && a.Mtime == b.Mtime
+	return a.ID == b.ID && samePath(a.Path, b.Path) && a.Size == b.Size && a.IsDir == b.IsDir && a.MD5 == b.MD5 && a.Mtime == b.Mtime
 }
 func (o *Object) Open(ctx context.Context, options ...fs.OpenOption) (io.ReadCloser, error) {
 	offset, count := int64(0), o.info.Size
