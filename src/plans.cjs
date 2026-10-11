@@ -44,7 +44,7 @@ function juiceMountArgs(disk, paths, metricsPort) {
 function directMountBody(disk, connection) {
   return {fs: connection.source, mountPoint: disk.letter, mountType: 'cmount',
     vfsOpt: {FilePerms: 0o777, CacheMode: 3, CacheMaxSize: disk.cacheGiB * 1024 ** 3, WriteBack: 5e9},
-    mountOpt: {VolName: disk.name}};
+    mountOpt: {VolumeName: disk.name}};
 }
 
 function parseMetrics(raw) {

@@ -27,6 +27,10 @@ async function main() {
     const files = {'hello.txt': Buffer.from('hello juicefs + rclone'), 'empty': Buffer.alloc(0), '中文 空格/large.bin': crypto.randomBytes(12 * 1024 ** 2 + 137)};
     await m.mount(id);
     assert.equal(m.snapshot().disks.find(d => d.id === id).status, 'mounted');
+    if (mode === 'direct') {
+      const label = await P.run('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', `[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); [Console]::Write([System.IO.DriveInfo]::new('${letter}\\').VolumeLabel)`]);
+      assert.equal(label, m.disk(id).name, 'Windows volume label must inherit the configured disk name');
+    }
     for (const [name, data] of Object.entries(files)) {
       const file = path.join(letter + '\\', name);
       // Windows rejects mkdir on a drive root even with recursive=true.
@@ -42,7 +46,12 @@ async function main() {
     fs.rmSync(paths.cache, {recursive: true, force: true});
     const metaBefore = mode === 'juicefs' ? fs.statSync(paths.meta).size : null;
     const portBefore = m.disk(id).gatewayPort;
+    if (mode === 'direct') await m.updateDisk(id, {name: '工作资料 Backup'});
     await m.mount(id);
+    if (mode === 'direct') {
+      const label = await P.run('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', `[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); [Console]::Write([System.IO.DriveInfo]::new('${letter}\\').VolumeLabel)`]);
+      assert.equal(label, '工作资料 Backup', 'Remount must apply the renamed Unicode label');
+    }
     assert.equal(m.disk(id).gatewayPort, portBefore);
     if (mode === 'juicefs') assert.ok(metaBefore > 0);
     for (const [name, data] of Object.entries(files)) assert.equal(hash(fs.readFileSync(path.join(letter + '\\', name))), hash(data));

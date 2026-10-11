@@ -1,5 +1,14 @@
 {
-  "onedrive": {"clientId": "", "clientSecret": ""},
-  "drive": {"clientId": "", "clientSecret": ""},
-  "dropbox": {"clientId": "", "clientSecret": ""}
+  "onedrive": {
+    "clientId": "61171606-dfe6-429f-916d-9bb8627648e6",
+    "clientSecret": ""
+  },
+  "drive": {
+    "clientId": "",
+    "clientSecret": ""
+  },
+  "dropbox": {
+    "clientId": "",
+    "clientSecret": ""
+  }
 }

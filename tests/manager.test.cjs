@@ -10,6 +10,7 @@ test('creation persists and removal archives without deleting metadata or cache'
 test('state snapshot never includes encryption keys or RC credentials',t=>{
   const {m}=setup(t);m.secrets.disks.x={secret:'TOPSECRET'};m.runtime.set('unused',{rcPass:'PASSWORD'});const s=JSON.stringify(m.snapshot());assert.ok(!s.includes('TOPSECRET'));assert.ok(!s.includes('PASSWORD'));assert.ok(!s.includes(m.secrets.configPass));
 });
+
 test('dirty cache metadata scan includes open dirty files and fails closed on malformed data',async t=>{
   const {m,base}=setup(t);const dir=path.join(base,'vfsMeta');fs.mkdirSync(dir);fs.writeFileSync(path.join(dir,'dirty'),JSON.stringify({Dirty:true}));fs.writeFileSync(path.join(dir,'clean'),JSON.stringify({Dirty:false}));assert.equal(await m.dirtyMetadata(dir),1);fs.writeFileSync(path.join(dir,'bad'),'{');await assert.rejects(()=>m.dirtyMetadata(dir));
 });
@@ -20,4 +21,19 @@ test('disk edits, removal, and duplicate actions are blocked while running',asyn
 test('frontend markup injection remains escaped, CSP blocks remote code',()=>{
   const html=fs.readFileSync(path.join(__dirname,'../ui/index.html'),'utf8');assert.ok(html.includes("script-src 'self'"));assert.ok(html.includes("connect-src 'none'"));
   const main=fs.readFileSync(path.join(__dirname,'../src/main.cjs'),'utf8');assert.ok(main.includes('nodeIntegration: false'));assert.ok(main.includes('sandbox: true'));assert.ok(main.includes('senderFrame !== win.webContents.mainFrame'));
+});
+test('disk rename persists without replacing disk identity, source or cached data',async t=>{
+  const {m,base}=setup(t);const c=await m.addLocal({name:'本地',path:base});const id=await m.addDisk({connectionId:c,name:'旧名称',mode:'direct',letter:'X:',cacheGiB:10});
+  const before={...m.disk(id)},p=m.paths(before);fs.writeFileSync(path.join(p.cache,'pending'),'preserve me');
+  await m.updateDisk(id,{name:'  工作资料  ',cacheGiB:20,autoMount:true});
+  assert.deepEqual(m.disk(id),{...before,name:'工作资料',cacheGiB:20,autoMount:true});
+  assert.deepEqual(JSON.parse(fs.readFileSync(m.file,'utf8')).disks[0],m.disk(id));
+  assert.deepEqual(m.paths(m.disk(id)),p);assert.equal(fs.readFileSync(path.join(p.cache,'pending'),'utf8'),'preserve me');
+  const saved=fs.readFileSync(m.file,'utf8');
+  for(const input of [{name:''},{name:' '.repeat(3)},{name:'x'.repeat(49)},{name:'不应保存',cacheGiB:0,autoMount:false}]){
+    await assert.rejects(()=>m.updateDisk(id,input));assert.equal(m.disk(id).name,'工作资料');assert.equal(m.disk(id).autoMount,true);assert.equal(fs.readFileSync(m.file,'utf8'),saved);
+  }
+  m.busy.add(id);await assert.rejects(()=>m.updateDisk(id,{name:'处理中'}),/上一个操作/);m.busy.delete(id);
+  m.runtime.set(id,{status:'mounted'});await assert.rejects(()=>m.updateDisk(id,{name:'运行中'}),/先卸载/);
+  assert.equal(m.disk(id).name,'工作资料');
 });

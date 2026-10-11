@@ -121,10 +121,15 @@ class Manager extends EventEmitter {
     this.state.disks.push(d); this.save(); return d.id;
   }
   async updateDisk(id, input) {
-    const d = this.disk(id); if (this.runtime.has(id)) throw new Error('请先卸载磁盘再调整设置');
-    if (typeof input.autoMount === 'boolean') d.autoMount = input.autoMount;
-    if (input.cacheGiB !== undefined) d.cacheGiB = plan.validateDisk({...d, cacheGiB: input.cacheGiB}, []).cacheGiB;
-    this.save();
+    return this.locked(id, async () => {
+      const d = this.disk(id); if (this.runtime.has(id)) throw new Error('请先卸载磁盘再调整设置');
+      const next = plan.validateDisk({...d,
+        name: input.name === undefined ? d.name : input.name,
+        cacheGiB: input.cacheGiB === undefined ? d.cacheGiB : input.cacheGiB}, []);
+      d.name = next.name; d.cacheGiB = next.cacheGiB;
+      if (typeof input.autoMount === 'boolean') d.autoMount = input.autoMount;
+      this.save();
+    });
   }
   async removeDisk(id) {
     if (this.runtime.has(id) || this.busy.has(id)) throw new Error('请先安全卸载磁盘');
