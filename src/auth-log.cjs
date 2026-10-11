@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const MAX_BYTES = 1024 * 1024;
 const BACKUPS = 3;
-const OAUTH_ERRORS = ['invalid_client', 'invalid_grant', 'invalid_request', 'invalid_scope', 'unauthorized_client', 'access_denied', 'interaction_required', 'consent_required', 'login_required', 'temporarily_unavailable', 'server_error'];
+const OAUTH_ERRORS = ['invalid_client', 'invalid_grant', 'invalid_request', 'invalid_scope', 'unauthorized_client', 'access_denied', 'authorization_declined', 'expired_token', 'interaction_required', 'consent_required', 'login_required', 'temporarily_unavailable', 'server_error'];
 const NETWORK_ERRORS = ['ETIMEDOUT', 'ECONNREFUSED', 'ECONNRESET', 'ENOTFOUND', 'EAI_AGAIN', 'EHOSTUNREACH', 'ENETUNREACH', 'ERR_TLS_CERT_ALTNAME_INVALID', 'CERT_HAS_EXPIRED', 'DEPTH_ZERO_SELF_SIGNED_CERT', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'UND_ERR_SOCKET'];
 
 // Retain diagnostic identifiers, never arbitrary provider text. Error bodies may
@@ -17,6 +17,7 @@ function errorDetails(error) {
   const networkCodes=NETWORK_ERRORS.filter(code=>raw.includes(code)||causeCodes.includes(code));
   let category='unknown';
   if (/failed to get token/i.test(raw)) category='token_exchange';
+  else if (/baidu_auth/.test(raw)) category='device_authorization';
   else if (/failed to refresh token/i.test(raw)) category='authorization_callback';
   else if (/failed to query.*drive|failed to query root|failed to configure OneDrive/i.test(raw)) category='drive_discovery';
   if(category==='unknown'&&/timeout|timed out|fetch failed|connectex|no such host|TLS handshake/i.test(raw)) category='network';

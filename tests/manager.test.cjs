@@ -11,6 +11,18 @@ test('state snapshot never includes encryption keys or RC credentials',t=>{
   const {m}=setup(t);m.secrets.disks.x={secret:'TOPSECRET'};m.runtime.set('unused',{rcPass:'PASSWORD'});const s=JSON.stringify(m.snapshot());assert.ok(!s.includes('TOPSECRET'));assert.ok(!s.includes('PASSWORD'));assert.ok(!s.includes(m.secrets.configPass));
 });
 
+test('Baidu availability needs both application credentials and only allows direct disks',async t=>{
+  const {m}=setup(t); m.oauthClients.baidu={clientId:'PRIVATE_APP'};
+  assert.equal(m.snapshot().services.find(s=>s.id==='baidu').available,false);
+  m.oauthClients.baidu.clientSecret='PRIVATE_SECRET';
+  assert.equal(m.snapshot().services.find(s=>s.id==='baidu').available,true);
+  assert.doesNotMatch(JSON.stringify(m.snapshot()),/PRIVATE_/);
+  m.state.connections.push({id:'baidu',type:'baidu',name:'百度网盘',source:'test:'});
+  await assert.rejects(m.addDisk({connectionId:'baidu',name:'卷',mode:'juicefs',letter:'Z:',cacheGiB:10}),/网盘直连/);
+  assert.equal(m.state.disks.length,0);
+  const id=await m.addDisk({connectionId:'baidu',name:'百度网盘',mode:'direct',letter:'Z:',cacheGiB:10});
+  assert.equal(m.disk(id).mode,'direct');
+});
 test('dirty cache metadata scan includes open dirty files and fails closed on malformed data',async t=>{
   const {m,base}=setup(t);const dir=path.join(base,'vfsMeta');fs.mkdirSync(dir);fs.writeFileSync(path.join(dir,'dirty'),JSON.stringify({Dirty:true}));fs.writeFileSync(path.join(dir,'clean'),JSON.stringify({Dirty:false}));assert.equal(await m.dirtyMetadata(dir),1);fs.writeFileSync(path.join(dir,'bad'),'{');await assert.rejects(()=>m.dirtyMetadata(dir));
 });

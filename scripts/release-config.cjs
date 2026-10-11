@@ -3,7 +3,7 @@
 const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'..');
 const local=path.join(root,'oauth-clients.local.json');
 const config=fs.existsSync(local)?JSON.parse(fs.readFileSync(local,'utf8')):JSON.parse(fs.readFileSync(path.join(root,'oauth-clients.json'),'utf8'));
-for(const id of ['onedrive','drive','dropbox']){
+for(const id of ['onedrive','drive','dropbox','baidu']){
   const prefix='ONEMOUNT_OAUTH_'+id.toUpperCase();
   if(process.env[prefix+'_CLIENT_ID'])config[id]={clientId:process.env[prefix+'_CLIENT_ID'],clientSecret:process.env[prefix+'_CLIENT_SECRET']||''};
 }

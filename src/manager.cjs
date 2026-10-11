@@ -78,10 +78,10 @@ class Manager extends EventEmitter {
       services: [
         {id: 'local', name: '本地文件夹', available: true}, {id: 'webdav', name: 'WebDAV', available: true},
         {id: 's3', name: 'S3 兼容存储', available: true},
-        ...['onedrive', 'drive', 'dropbox'].map(id => ({id, name: {onedrive: 'OneDrive', drive: 'Google Drive', dropbox: 'Dropbox'}[id], available: !!this.oauthClients[id]?.clientId}))],
+        ...['onedrive', 'drive', 'dropbox', 'baidu'].map(id => ({id, name: {onedrive: 'OneDrive', drive: 'Google Drive', dropbox: 'Dropbox', baidu: '百度网盘'}[id], available: !!this.oauthClients[id]?.clientId && (id !== 'baidu' || !!this.oauthClients[id]?.clientSecret)}))],
       connections: this.state.connections.map(c => ({id: c.id, name: c.name, type: c.type, folder: c.folder || '/', localPath: c.type === 'local' ? c.source : undefined})),
       disks: this.state.disks.map(d => {const r = this.runtime.get(d.id); return {...d, lastError: displayError(d.lastError), paths: this.paths(d), status: r?.status || 'unmounted', error: displayError(r?.error), stats: r?.stats || null, busy: this.busy.has(d.id)};}),
-      auth: this.auth ? {id: this.auth.id, status: this.auth.status, service: this.auth.type, question: this.auth.question, error: this.auth.error} : null};
+      auth: this.auth ? {id: this.auth.id, status: this.auth.status, service: this.auth.type, question: this.auth.question, error: this.auth.error, device: this.auth.device} : null};
   }
   async addLocal(input) {
     const name = safeName(input.name), source = path.resolve(String(input.path || ''));
@@ -115,7 +115,8 @@ class Manager extends EventEmitter {
     return true;
   }
   async addDisk(input) {
-    this.connection(input.connectionId);
+    const c = this.connection(input.connectionId);
+    if (c.type === 'baidu' && input.mode !== 'direct') throw new Error('百度网盘目前支持“网盘直连”，请选择此方式');
     const d = {id: uid(), ...plan.validateDisk(input, this.state.disks), connectionId: input.connectionId, initialized: false};
     const paths = this.paths(d); fs.mkdirSync(paths.cache, {recursive: true, mode: 0o700});
     this.state.disks.push(d); this.save(); return d.id;
@@ -141,6 +142,7 @@ class Manager extends EventEmitter {
   async mount(id) {
     return this.locked(id, async () => {
       const d = this.disk(id), c = this.connection(d.connectionId), p = this.paths(d);
+      if (c.type === 'baidu' && d.mode !== 'direct') throw new Error('百度网盘目前支持“网盘直连”');
       if (this.runtime.has(id)) throw new Error('此磁盘已有后台会话，请先安全卸载');
       if (this.platform !== 'win32') throw new Error('此发行版仅支持 Windows 挂载');
       if (!this.health.winfsp) throw new Error('请先安装磁盘驱动，然后重新打开云屿');

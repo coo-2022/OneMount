@@ -12,6 +12,7 @@ Windows 桌面存储管理器。统一管理账号、挂载、缓存与传输状
 - **文件系统卷**：内部 JuiceFS 1.3.0，通过本机、需要认证的 S3 网关连接 rclone 后端。网关缓存关闭，避免双重异步写回；卷默认关闭 writeback。
 - 软件内连接本地文件夹、WebDAV、S3 兼容存储，检查连接与选择目录。
 - 软件接管 OAuth 状态机、系统浏览器授权、问题选择、取消和超时。OneDrive、Google Drive、Dropbox 须先配置发布者自己的 OAuth 应用，才开放登录入口。
+- 百度网盘：自定义开放平台后端，设备码授权，当前开放网盘直连。能力、测试与额外上传临时空间见 [百度后端说明](engine-src/rclone/backend/baidu/README.md)。
 - 每个磁盘独立缓存目录；文件系统卷使用独立远端前缀和本地 SQLite 元数据。
 - 直连模式显示文件上传队列；文件系统卷显示待上传块数和字节数。未知状态不会显示成已上传。
 - 安全卸载、托盘后台运行、启动时挂载、Windows 登录后启动。
@@ -62,7 +63,7 @@ npm run engine:rclone:build
 第三方授权页展示的应用名由 OAuth 注册决定。默认构建不使用 rclone 内置的公共 Client ID，避免授权页出现不属于本产品的名称。发布者应注册自己的桌面 OAuth 应用，把显示名设为「云屿」或 OneMount，配置相应权限与重定向地址。
 
 1. 按 `oauth-clients.json` 格式新建 `oauth-clients.local.json`（已被 Git 忽略）。
-2. 填写 `onedrive`、`drive`、`dropbox` 对应的 `clientId`、`clientSecret`，执行 `npm run release:config`。
+2. 填写 `onedrive`、`drive`、`dropbox` 或 `baidu` 对应的 `clientId`、`clientSecret`；百度对应 AppKey / SecretKey。构建工作副本中执行 `npm run release:config`，注意此命令会将私有配置写入 `oauth-clients.json`，不得提交含密钥的生成文件。
 3. 执行打包。未配置的服务会显示「等待发布者开放登录」。
 
 也可通过 `ONEMOUNT_OAUTH_ONEDRIVE_CLIENT_ID` 等环境变量注入。桌面程序中的 Client Secret 可被提取，不能把它当成服务器端保密凭据；应按各厂商对本机应用的要求注册。回调使用内置引擎的本机回调端口 `53682`，常见 URI 为 `http://localhost:53682/`；具体提供商要求请以其官方注册指南为准。
