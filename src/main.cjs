@@ -47,7 +47,10 @@ async function start(options = {}) {
       else if (method === 'pickFolder') {const r = await dialog.showOpenDialog(win, {title: '选择存储文件夹', properties: ['openDirectory', 'createDirectory']}); value = r.canceled ? null : r.filePaths[0];}
       else if (method === 'openDisk') {const d = manager.disk(args[0]); if (manager.runtime.get(d.id)?.status !== 'mounted') throw new Error('请先挂载此磁盘'); const err = await shell.openPath(d.letter + '\\'); if (err) throw new Error('暂时无法打开磁盘');}
       else if (method === 'openData') await shell.openPath(manager.root);
-      else if (method === 'settings') {const loginStart = args[0]?.loginStart === true; app.setLoginItemSettings({openAtLogin: loginStart, args: ['--hidden']}); manager.state.settings.loginStart = loginStart; manager.save();}
+      else if (method === 'settings') {
+        manager.updateSettings(args[0]);
+        if (args[0]?.loginStart !== undefined) app.setLoginItemSettings({openAtLogin: manager.state.settings.loginStart, args: ['--hidden']});
+      }
       else if (method === 'installDriver') await shell.openExternal('https://winfsp.dev/rel/');
       else if (method === 'quit') await requestQuit();
       else throw new Error('不支持此操作');

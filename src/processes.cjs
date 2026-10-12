@@ -3,10 +3,14 @@ const {spawn} = require('node:child_process');
 const fs = require('node:fs');
 const net = require('node:net');
 const {setTimeout: delay} = require('node:timers/promises');
+const {PROXY_KEYS} = require('./proxy.cjs');
 
 function cleanEnv(extra = {}) {
   const env = {...process.env};
   for (const k of Object.keys(env)) if (/^(RCLONE_|JFS_|ACCESS_KEY$|SECRET_KEY$|JUICEFS_)/i.test(k)) delete env[k];
+  // Windows environment keys are case-insensitive; remove every inherited
+  // spelling before applying explicit proxy overrides (including direct mode).
+  if (Object.keys(extra).some(k => PROXY_KEYS.test(k))) for (const k of Object.keys(env)) if (PROXY_KEYS.test(k)) delete env[k];
   return {...env, ...extra};
 }
 

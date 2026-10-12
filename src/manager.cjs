@@ -6,6 +6,7 @@ const crypto = require('node:crypto');
 const {EventEmitter} = require('node:events');
 const P = require('./processes.cjs');
 const plan = require('./plans.cjs');
+const {normalizeProxy, proxyEnv} = require('./proxy.cjs');
 const uid = () => crypto.randomUUID();
 const key = () => crypto.randomBytes(32).toString('hex');
 
@@ -25,6 +26,8 @@ class Manager extends EventEmitter {
     fs.mkdirSync(root, {recursive: true, mode: 0o700});
     this.file = path.join(root, 'disks.json'); this.config = path.join(root, 'accounts.conf');
     this.state = read(this.file, {version: 1, connections: [], disks: [], settings: {loginStart: false}});
+    this.state.settings = {loginStart: false, ...this.state.settings, proxy: normalizeProxy(this.state.settings?.proxy)};
+    this.activeProxy = {...this.state.settings.proxy};
     this.runtime = new Map(); this.busy = new Set(); this.polling = false;
     const secFile = path.join(root, 'credentials.json');
     this.secrets = fs.existsSync(secFile) ? JSON.parse(unprotect(read(secFile).data)) : {configPass: key(), disks: {}};
@@ -43,7 +46,16 @@ class Manager extends EventEmitter {
   engine(name) {return path.join(this.engines, name + (this.platform === 'win32' ? '.exe' : ''));}
   disk(id) {const d = this.state.disks.find(d => d.id === id); if (!d) throw new Error('找不到此磁盘'); return d;}
   connection(id) {const c = this.state.connections.find(c => c.id === id); if (!c) throw new Error('找不到此存储连接'); return c;}
-  env(extra = {}) {return {RCLONE_CONFIG_PASS: this.secrets.configPass, ...extra};}
+  env(extra = {}) {return {...proxyEnv(this.activeProxy), RCLONE_CONFIG_PASS: this.secrets.configPass, ...extra};}
+  updateSettings(input = {}) {
+    const next = {...this.state.settings};
+    if (input.loginStart !== undefined) {
+      if (typeof input.loginStart !== 'boolean') throw new Error('启动设置无效');
+      next.loginStart = input.loginStart;
+    }
+    if (input.proxy !== undefined) next.proxy = normalizeProxy(input.proxy);
+    this.state.settings = next; this.save();
+  }
   async locked(id, fn) {if (this.busy.has(id)) throw new Error('此磁盘正在处理上一个操作'); this.busy.add(id); try {return await fn();} finally {this.busy.delete(id); this.emit('change');}}
 
   async init() {
@@ -75,6 +87,7 @@ class Manager extends EventEmitter {
   }
   snapshot() {
     return {version: '0.1.2', health: this.health, settings: this.state.settings, root: this.root,
+      proxyRestartRequired: JSON.stringify(this.state.settings.proxy) !== JSON.stringify(this.activeProxy),
       services: [
         {id: 'local', name: '本地文件夹', available: true}, {id: 'webdav', name: 'WebDAV', available: true},
         {id: 's3', name: 'S3 兼容存储', available: true},
@@ -184,9 +197,13 @@ class Manager extends EventEmitter {
         r.status = 'error'; r.error = e.message;
         // A partially created mount may still own data. Never kill a mount on a timeout.
         if (!r.jfs && !r.everMounted) {
-          let hasMount = true;
-          try {const list = await P.rc(r, 'mount/listmounts'); hasMount = (list.mountPoints || []).length > 0;} catch {}
-          if (!hasMount) {try {await P.rc(r, 'core/quit'); await P.waitExit(r.proc, 10000); this.runtime.delete(id);} catch {}}
+          if (d.mode === 'direct') {
+            try {await this.stopUnstartedDirect(id, r);} catch {}
+          } else {
+            let hasMount = true;
+            try {const list = await P.rc(r, 'mount/listmounts'); hasMount = (list.mountPoints || []).length > 0;} catch {}
+            if (!hasMount) {try {await P.rc(r, 'core/quit'); await P.waitExit(r.proc, 10000); this.runtime.delete(id);} catch {}}
+          }
         }
         d.lastError = e.message; this.save(); this.saveRuntime(); throw e;
       }
@@ -203,6 +220,9 @@ class Manager extends EventEmitter {
     try {await Promise.allSettled([...this.runtime].map(async ([id, r]) => {
       if (!['mounted', 'error'].includes(r.status)) return;
       const d = this.disk(id);
+      // A failed startup has no VFS yet. Repeated VFS queries only flood logs
+      // with "no VFS active"; unmount performs fresh safety checks separately.
+      if (d.mode === 'direct' && r.status === 'error' && r.everMounted === false) {r.stats = {known: false}; return;}
       try {
         const core = await P.rc(r, 'core/stats');
         if (d.mode === 'direct') {
@@ -232,13 +252,34 @@ class Manager extends EventEmitter {
     }
     return dirty;
   }
+  async stopUnstartedDirect(id, r) {
+    const d = this.disk(id);
+    if (d.mode !== 'direct' || r.everMounted !== false || r.jfs || !P.alive(r.proc?.pid)) return false;
+    // mount/listmounts shares the mount initialization mutex and can block
+    // behind a network request. These independent APIs can prove that startup
+    // has not created a filesystem. Never treat a missing/error response as empty.
+    const [vfs, stats] = await Promise.all([P.rc(r, 'vfs/list'), P.rc(r, 'core/stats')]);
+    if (!Array.isArray(vfs.vfses) || vfs.vfses.length || !Number.isFinite(stats.bytes) || !Number.isFinite(stats.transfers) ||
+        (!Array.isArray(stats.transferring) && stats.transferring != null) ||
+        stats.transferring?.length || fs.existsSync(d.letter + '\\') ||
+        await this.dirtyMetadata(path.join(this.paths(d).cache, 'vfsMeta'))) return false;
+    // Request the engine's ordinary graceful shutdown, not process.kill().
+    // Keep the session and all cache files if shutdown cannot be confirmed.
+    const previous = r.status; r.status = 'stopping'; this.emit('change');
+    try {await P.rc(r, 'core/quit'); await P.waitExit(r.proc, 15000);}
+    catch (e) {r.status = previous; throw e;}
+    this.runtime.delete(id); this.saveRuntime(); return true;
+  }
   async unmount(id) {
     return this.locked(id, async () => {
       const d = this.disk(id), r = this.runtime.get(id); if (!r) return;
       const p = this.paths(d);
+      if (await this.stopUnstartedDirect(id, r)) {d.lastError = ''; this.save(); return;}
       // Fresh checks, not UI snapshots. The user is asked to close applications before this action.
       if (d.mode === 'direct' && P.alive(r.proc?.pid)) {
-        const mounts = await P.rc(r, 'mount/listmounts');
+        let mounts;
+        try {mounts = await P.rc(r, 'mount/listmounts');}
+        catch {throw new Error('暂时无法确认后台挂载状态，尚不能安全退出。这不代表有待上传文件；请稍后重试。');}
         if ((mounts.mountPoints || []).some(m => m.MountPoint === d.letter || m.mountPoint === d.letter)) {
           for (let i = 0; i < 2; i++) {
             const [stats, queue] = await Promise.all([P.rc(r, 'vfs/stats'), P.rc(r, 'vfs/queue')]);
