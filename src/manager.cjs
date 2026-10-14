@@ -7,6 +7,7 @@ const {EventEmitter} = require('node:events');
 const P = require('./processes.cjs');
 const plan = require('./plans.cjs');
 const {normalizeProxy, proxyEnv} = require('./proxy.cjs');
+const perf = require('./telemetry.cjs');
 const uid = () => crypto.randomUUID();
 const key = () => crypto.randomBytes(32).toString('hex');
 
@@ -28,6 +29,7 @@ class Manager extends EventEmitter {
     this.state = read(this.file, {version: 1, connections: [], disks: [], settings: {loginStart: false}});
     this.state.settings = {loginStart: false, ...this.state.settings, proxy: normalizeProxy(this.state.settings?.proxy)};
     this.activeProxy = {...this.state.settings.proxy};
+    this.performanceHistory = new perf.History();
     this.runtime = new Map(); this.busy = new Set(); this.polling = false;
     const secFile = path.join(root, 'credentials.json');
     this.secrets = fs.existsSync(secFile) ? JSON.parse(unprotect(read(secFile).data)) : {configPass: key(), disks: {}};
@@ -86,13 +88,13 @@ class Manager extends EventEmitter {
     this.timer.unref();
   }
   snapshot() {
-    return {version: '0.1.2', health: this.health, settings: this.state.settings, root: this.root,
+    return {version: require('../package.json').version, health: this.health, settings: this.state.settings, root: this.root,
       proxyRestartRequired: JSON.stringify(this.state.settings.proxy) !== JSON.stringify(this.activeProxy),
       services: [
         {id: 'local', name: '本地文件夹', available: true}, {id: 'webdav', name: 'WebDAV', available: true},
         {id: 's3', name: 'S3 兼容存储', available: true},
         ...['onedrive', 'drive', 'dropbox', 'baidu'].map(id => ({id, name: {onedrive: 'OneDrive', drive: 'Google Drive', dropbox: 'Dropbox', baidu: '百度网盘'}[id], available: !!this.oauthClients[id]?.clientId && (id !== 'baidu' || !!this.oauthClients[id]?.clientSecret)}))],
-      connections: this.state.connections.map(c => ({id: c.id, name: c.name, type: c.type, folder: c.folder || '/', localPath: c.type === 'local' ? c.source : undefined})),
+      connections: this.state.connections.map(c => ({id: c.id, name: c.name, type: c.type, folder: c.folder || '/', localPath: c.type === 'local' ? c.source : undefined, performance:{...perf.sample(c.id,this.state.disks,this.runtime),history:this.performanceHistory.get(c.id)}})),
       disks: this.state.disks.map(d => {const r = this.runtime.get(d.id); return {...d, lastError: displayError(d.lastError), paths: this.paths(d), status: r?.status || 'unmounted', error: displayError(r?.error), stats: r?.stats || null, busy: this.busy.has(d.id)};}),
       auth: this.auth ? {id: this.auth.id, status: this.auth.status, service: this.auth.type, question: this.auth.question, error: this.auth.error, device: this.auth.device} : null};
   }
@@ -127,6 +129,7 @@ class Manager extends EventEmitter {
     await P.rc(r, 'operations/list', {fs: c.source, remote: '', opt: {dirsOnly: true}}, 30000);
     return true;
   }
+  renameConnection(id, name) {this.connection(id).name = safeName(name); this.save();}
   async addDisk(input) {
     const c = this.connection(input.connectionId);
     if (c.type === 'baidu' && input.mode !== 'direct') throw new Error('百度网盘目前支持“网盘直连”，请选择此方式');
@@ -216,7 +219,7 @@ class Manager extends EventEmitter {
     }});
   }
   async poll() {
-    if (this.polling || this.runtime.size === 0) return; this.polling = true;
+    if (this.polling) return; this.polling = true;
     try {await Promise.allSettled([...this.runtime].map(async ([id, r]) => {
       if (!['mounted', 'error'].includes(r.status)) return;
       const d = this.disk(id);
@@ -228,18 +231,20 @@ class Manager extends EventEmitter {
         if (d.mode === 'direct') {
           const [vfs, result] = await Promise.all([P.rc(r, 'vfs/stats'), P.rc(r, 'vfs/queue')]);
           const queue = result.queue || [];
-          r.stats = {known: true, checkedAt: Date.now(), speed: core.speed || 0, transferring: core.transferring || [], cacheBytes: vfs.diskCache?.bytesUsed ?? null,
+          const rates = perf.transferRates(core,queue);
+          r.stats = {known: true, checkedAt: Date.now(), speed: rates.totalSpeed, ...rates, transferring: core.transferring || [], cacheBytes: vfs.diskCache?.bytesUsed ?? null,
             pendingFiles: queue.length, queuedBytes: queue.reduce((n, x) => n + x.size, 0), queue, vfs, errors: core.errors || 0};
         } else {
           if (!P.alive(r.jfs?.pid)) throw new Error('磁盘服务已停止');
           const response = await fetch(`http://127.0.0.1:${r.metricsPort}/metrics`, {signal: AbortSignal.timeout(3500)});
           if (!response.ok) throw new Error('暂时无法读取磁盘状态');
           const m = plan.parseMetrics(await response.text());
-          r.stats = {known: m.pendingBlocks !== null && m.pendingBytes !== null, checkedAt: Date.now(), speed: core.speed || 0, ...m, raw: undefined};
+          const rates = perf.transferRates(core);
+          r.stats = {known: m.pendingBlocks !== null && m.pendingBytes !== null, checkedAt: Date.now(), speed: rates.totalSpeed, ...rates, transferring:core.transferring || [], ...m, raw: undefined};
         }
         if (r.status === 'mounted') r.error = '';
       } catch (e) {r.stats = {...r.stats, known: false}; if (r.status === 'mounted') {r.error = '暂时无法读取实时状态，请检查连接';}}
-    })); this.emit('change');} finally {this.polling = false;}
+    })); this.performanceHistory.record(this.state.connections,this.state.disks,this.runtime); this.emit('change');} finally {this.polling = false;}
   }
   async dirtyMetadata(dir) {
     let dirty = 0;

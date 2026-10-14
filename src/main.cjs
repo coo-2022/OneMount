@@ -42,7 +42,7 @@ async function start(options = {}) {
     try {
       if (quitting && method !== 'snapshot') throw new Error('正在安全退出，请稍候');
       let value;
-      const methods = new Set(['snapshot','addLocal','connect','answerAuth','cancelAuth','addDisk','updateDisk','removeDisk','mount','unmount','deleteConnection','testConnection','listFolders','setFolder']);
+      const methods = new Set(['snapshot','addLocal','connect','answerAuth','cancelAuth','addDisk','updateDisk','removeDisk','mount','unmount','deleteConnection','testConnection','renameConnection','listFolders','setFolder']);
       if (methods.has(method)) value = await manager[method](...args);
       else if (method === 'pickFolder') {const r = await dialog.showOpenDialog(win, {title: '选择存储文件夹', properties: ['openDirectory', 'createDirectory']}); value = r.canceled ? null : r.filePaths[0];}
       else if (method === 'openDisk') {const d = manager.disk(args[0]); if (manager.runtime.get(d.id)?.status !== 'mounted') throw new Error('请先挂载此磁盘'); const err = await shell.openPath(d.letter + '\\'); if (err) throw new Error('暂时无法打开磁盘');}

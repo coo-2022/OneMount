@@ -16,7 +16,7 @@ const backend = path.join(base, 'backend'); fs.mkdirSync(backend);
 fs.writeFileSync(path.join(backend, 'existing.txt'), 'existing backend file');
 const letters = [...'ZYXWVUTSRQPONMLKJIHGFE'].filter(c=>!fs.existsSync(c+':\\')).slice(0,2).map(c=>c+':');
 assert.equal(letters.length,2);
-const report = {version:'0.1.2',platform:os.release(),standardUser:process.env.ONEMOUNT_STANDARD_USER==='1',checks:[],limits:['Native folder picker selection supplied by fixture','No real third-party cloud OAuth or remote backend','No manual Explorer shell inspection']};
+const report = {version:require('../package.json').version,platform:os.release(),standardUser:process.env.ONEMOUNT_STANDARD_USER==='1',checks:[],limits:['Native folder picker selection supplied by fixture','No real third-party cloud OAuth or remote backend','No manual Explorer shell inspection']};
 let app, page, stateRoot;
 const errors=[];
 const pass = name => {report.checks.push(name); console.log('PASS '+name);};
@@ -35,7 +35,7 @@ async function launch() {
   page.on('pageerror',e=>errors.push(e.message));
   await page.waitForFunction(()=>document.querySelector('#content h1')?.textContent==='我的磁盘');
   const info=await app.evaluate(({app,safeStorage,BrowserWindow})=>({packaged:app.isPackaged,version:app.getVersion(),encryption:safeStorage.isEncryptionAvailable(),root:app.getPath('userData'),prefs:BrowserWindow.getAllWindows()[0].webContents.getLastWebPreferences()}));
-  assert.equal(info.packaged,true); assert.equal(info.version,'0.1.2'); assert.equal(info.encryption,true);
+  assert.equal(info.packaged,true); assert.equal(info.version,report.version); assert.equal(info.encryption,true);
   assert.equal(info.prefs.nodeIntegration,false); assert.equal(info.prefs.contextIsolation,true); assert.equal(info.prefs.sandbox,true);
   stateRoot=info.root;
 }
@@ -75,8 +75,15 @@ async function main(){
   await page.locator('[data-action="pick-folder"]').click();
   await page.locator('[data-action="submit-connection"]').click();
   await page.locator('#overlay').waitFor({state:'hidden'});
+
+  await page.locator('[data-action="connection-detail"]').click();
+  assert.equal(await page.locator('#content input').count(),0);
+  await page.locator('[data-action="rename-connection"]').click();
+  await page.locator('#rename-connection-form input').fill('Windows 连接验证');
+  await page.locator('#rename-connection-form input').press('Enter');
+  await page.waitForFunction(()=>document.querySelector('.ci-connection-hero h1')?.textContent==='Windows 连接验证');
   await page.locator('[data-action="test-connection"]').click();
-  await page.waitForFunction(()=>document.querySelector('#toast').textContent.includes('连接正常'));
+  await page.waitForFunction(()=>document.querySelector('[data-action="test-connection"]').textContent.includes('连接正常'));
   pass('UI creates and checks local storage connection');
   const disks=[];
   for(const [i,mode] of ['direct','juicefs'].entries()){
@@ -105,6 +112,9 @@ async function main(){
     pass(`Packaged UI creates and mounts ${mode}; existing-file semantics, PowerShell read/write, binary hash`);
   }
   await page.locator('.ir-nav [data-nav="activity"]').click();
+  await page.locator('.ci-chart').waitFor();
+  assert.equal(await page.locator('[data-action="speed-test-confirm"]').count(),0);
+  assert.ok((await snapshot()).connections[0].performance.history.length>0);
   await page.screenshot({path:path.join(results,'activity.png')});
   assert.ok(!(await page.locator('body').innerText()).match(/rclone|juicefs/i),'UI must not expose internal engine names');
   // The real window-close handler must leave mounts and the tray process alive.
