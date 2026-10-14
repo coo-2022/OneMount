@@ -24,6 +24,14 @@ async function main() {
   const connectionId = await m.addLocal({name: 'Mount integration', path: backend});
   for (const {mode, writeback} of [{mode:'direct',writeback:false}, {mode:'juicefs',writeback:false}, {mode:'juicefs',writeback:true}]) {
     const id = await m.addDisk({connectionId, name: mode + ' ' + writeback, mode, letter, cacheGiB: 1, writeback});
+    if (mode === 'juicefs' && !writeback) {
+      // Real failed storage probe leaves an unformatted SQLite database + WAL.
+      // The same volume must retry successfully once its gateway becomes available.
+      const d = m.disk(id); d.gatewayPort = await P.freePort(); m.save();
+      await assert.rejects(m.initializeVolume(d, {access: 'test-access', secret: 'test-secret'}));
+      assert.equal(d.initialized, false); assert.equal(d.initializing, true);
+      assert.ok(fs.existsSync(m.paths(d).meta));
+    }
     const files = {'hello.txt': Buffer.from('hello juicefs + rclone'), 'empty': Buffer.alloc(0), '中文 空格/large.bin': crypto.randomBytes(12 * 1024 ** 2 + 137)};
     await m.mount(id);
     assert.equal(m.snapshot().disks.find(d => d.id === id).status, 'mounted');

@@ -16,7 +16,13 @@ test('S3 gateway is local and never has an asynchronous VFS write cache',()=>{
   const a=p.gatewayArgs('/tmp/a b',1234,4567,'/tmp/cache','/tmp/cfg');
   assert.equal(a[a.indexOf('--addr')+1],'127.0.0.1:1234');
   assert.equal(a[a.indexOf('--vfs-cache-mode')+1],'off');
+  assert.ok(a.includes('--no-cleanup'), 'object deletion must not race creation of shared parent directories');
   assert.ok(!a.includes('--auth-key'));
+});
+test('OneDrive volume upload sessions are serialized without changing other backends',()=>{
+  const a=p.juiceMountArgs(d,{cache:'C:\\cache'},1234,{type:'onedrive'});
+  assert.equal(a[a.indexOf('--max-uploads')+1],'1');
+  assert.ok(!p.juiceMountArgs(d,{cache:'C:\\cache'},1234,{type:'baidu'}).includes('--max-uploads'));
 });
 test('Windows ownership uses JuiceFS built-in current-user mapping',()=>{
   const a=p.juiceMountArgs(d,{cache:'C:\\cache'},1234);

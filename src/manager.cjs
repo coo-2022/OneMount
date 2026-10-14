@@ -131,8 +131,7 @@ class Manager extends EventEmitter {
   }
   renameConnection(id, name) {this.connection(id).name = safeName(name); this.save();}
   async addDisk(input) {
-    const c = this.connection(input.connectionId);
-    if (c.type === 'baidu' && input.mode !== 'direct') throw new Error('百度网盘目前支持“网盘直连”，请选择此方式');
+    this.connection(input.connectionId);
     const d = {id: uid(), ...plan.validateDisk(input, this.state.disks), connectionId: input.connectionId, initialized: false};
     const paths = this.paths(d); fs.mkdirSync(paths.cache, {recursive: true, mode: 0o700});
     this.state.disks.push(d); this.save(); return d.id;
@@ -158,7 +157,6 @@ class Manager extends EventEmitter {
   async mount(id) {
     return this.locked(id, async () => {
       const d = this.disk(id), c = this.connection(d.connectionId), p = this.paths(d);
-      if (c.type === 'baidu' && d.mode !== 'direct') throw new Error('百度网盘目前支持“网盘直连”');
       if (this.runtime.has(id)) throw new Error('此磁盘已有后台会话，请先安全卸载');
       if (this.platform !== 'win32') throw new Error('此发行版仅支持 Windows 挂载');
       if (!this.health.winfsp) throw new Error('请先安装磁盘驱动，然后重新打开云屿');
@@ -179,18 +177,13 @@ class Manager extends EventEmitter {
           r.metricsPort = await P.freePort();
           if (!this.secrets.disks[id]) {this.secrets.disks[id] = {access: 'ci' + id.replaceAll('-', '').slice(0, 18), secret: key()}; this.saveSecrets();}
           const credentials = this.secrets.disks[id], root = plan.backendRoot(c, id);
-          if (c.type === 'local') fs.mkdirSync(root, {recursive: true});
+          await this.prepareVolumeBackend(d, c);
           r.proc = this.spawn(id, 'rclone', plan.gatewayArgs(root, d.gatewayPort, r.rcPort, path.join(p.dir, 'gateway-cache'), this.config), p.log,
             this.env({RCLONE_RC_PASS: r.rcPass, RCLONE_AUTH_KEY: `"${credentials.access},${credentials.secret}"`}));
           this.saveRuntime();
           await P.waitFor(async () => {await P.rc(r, 'core/pid'); const s = await fetch(`http://127.0.0.1:${d.gatewayPort}/`, {signal: AbortSignal.timeout(1500)}); return [400,401,403].includes(s.status) && /<Code>(UnsupportedAlgorithm|AccessDenied)<\/Code>/.test(await s.text());});
-          if (!d.initialized) {
-            if (fs.existsSync(p.meta)) throw new Error('发现已有元数据但初始化记录不完整，已停止自动操作。请保留数据目录并检查。');
-            await P.run(this.engine('juicefs'), plan.formatArgs(d.gatewayPort, 'ci' + id.replaceAll('-', '').slice(0, 20)), {cwd: p.dir,
-              env: {ACCESS_KEY: credentials.access, SECRET_KEY: credentials.secret}, timeout: 120000});
-            d.initialized = true; this.save();
-          } else if (!fs.existsSync(p.meta)) throw new Error('卷的元数据文件丢失，不能自动新建覆盖');
-          r.jfs = this.spawn(id, 'juicefs', plan.juiceMountArgs(d, p, r.metricsPort), p.jfsLog, {}, true);
+          await this.initializeVolume(d, credentials);
+          r.jfs = this.spawn(id, 'juicefs', plan.juiceMountArgs(d, p, r.metricsPort, c), p.jfsLog, {}, true);
           this.saveRuntime();
           await P.waitFor(() => fs.existsSync(d.letter + '\\.config') && P.alive(r.jfs.pid), 45000);
           r.everMounted = true;
@@ -199,7 +192,8 @@ class Manager extends EventEmitter {
       } catch (e) {
         r.status = 'error'; r.error = e.message;
         // A partially created mount may still own data. Never kill a mount on a timeout.
-        if (!r.jfs && !r.everMounted) {
+        if (!r.proc && !r.jfs && !r.everMounted) this.runtime.delete(id);
+        else if (!r.jfs && !r.everMounted) {
           if (d.mode === 'direct') {
             try {await this.stopUnstartedDirect(id, r);} catch {}
           } else {
@@ -211,6 +205,38 @@ class Manager extends EventEmitter {
         d.lastError = e.message; this.save(); this.saveRuntime(); throw e;
       }
     });
+  }
+  async prepareVolumeBackend(d, c) {
+    if (d.initialized) return;
+    if (c.type === 'local') {
+      fs.mkdirSync(plan.backendRoot(c, d.id), {recursive: true});
+    } else {
+      // Create within the selected connection root before starting the scoped
+      // gateway. Backends such as Baidu cannot create parents outside their root.
+      plan.backendRoot(c, d.id); // Validate the volume identifier before any mutation.
+      const r = await this.accounts();
+      await P.rc(r, 'operations/mkdir', {fs: c.source, remote: '.cloud-island/' + d.id}, 60000);
+    }
+  }
+  async initializeVolume(d, credentials) {
+    const p = this.paths(d);
+    if (d.initialized) {
+      if (!fs.existsSync(p.meta)) throw new Error('卷的元数据文件丢失，不能自动新建覆盖');
+      return;
+    }
+    if (fs.existsSync(p.meta) && !d.initializing) throw new Error('发现已有元数据但初始化记录不完整，已停止自动操作。请保留数据目录并检查。');
+    // Persist intent before creating metadata. Retry only our own initialization
+    // with --no-update (never --force). Keep SQLite and its WAL at the same path.
+    d.initializing = true; this.save();
+    const name = 'ci' + d.id.replaceAll('-', '').slice(0, 20);
+    await P.run(this.engine('juicefs'), plan.formatArgs(d.gatewayPort, name), {
+      cwd: p.dir, env: {ACCESS_KEY: credentials.access, SECRET_KEY: credentials.secret}, timeout: 180000});
+    const status = JSON.parse(await P.run(this.engine('juicefs'), ['status', 'sqlite3://meta.db'], {cwd: p.dir}));
+    const setting = status.Setting;
+    if (setting?.Name !== name || setting.Storage !== 's3' || setting.Bucket !== `http://127.0.0.1:${d.gatewayPort}/jfs` || !setting.UUID) {
+      throw new Error('卷的元数据与当前磁盘不一致，已保留数据并停止初始化');
+    }
+    d.initialized = true; delete d.initializing; this.save();
   }
   spawn(id, name, args, logfile, env, jfs = false) {
     const d = this.disk(id), r = this.runtime.get(id);

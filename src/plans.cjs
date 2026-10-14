@@ -20,7 +20,7 @@ function backendRoot(connection, diskId) {
 }
 
 function gatewayArgs(root, port, rcPort, cacheDir, config) {
-  return ['serve', 's3', root, '--addr', `127.0.0.1:${port}`, '--vfs-cache-mode', 'off',
+  return ['serve', 's3', root, '--addr', `127.0.0.1:${port}`, '--vfs-cache-mode', 'off', '--no-cleanup',
     '--rc', '--rc-addr', `127.0.0.1:${rcPort}`, '--rc-user', 'cloud-island', '--cache-dir', cacheDir,
     '--config', config, '--log-level', 'INFO'];
 }
@@ -29,7 +29,7 @@ function formatArgs(port, volumeName) {
   return ['format', '--no-update', '--storage', 's3', '--bucket', `http://127.0.0.1:${port}/jfs`, 'sqlite3://meta.db', volumeName];
 }
 
-function juiceMountArgs(disk, paths, metricsPort) {
+function juiceMountArgs(disk, paths, metricsPort, connection = {}) {
   // JuiceFS 1.3.0 --as-root already sets WinFsp uid=-1,gid=-1, which
   // presents ownership as the mounting Windows user while using POSIX root
   // internally. Do not override it: WinFsp explicitly rejects uidmap UID 0.
@@ -37,6 +37,8 @@ function juiceMountArgs(disk, paths, metricsPort) {
     '--cache-dir', paths.cache, '--cache-size', String(disk.cacheGiB * 1024),
     '--metrics', `127.0.0.1:${metricsPort}`];
   if (disk.writeback) args.push('--writeback');
+  // OneDrive's upload sessions are sensitive to bursts of small block uploads.
+  if (connection.type === 'onedrive') args.push('--max-uploads', '1');
   args.push('sqlite3://meta.db', disk.letter);
   return args;
 }

@@ -1,0 +1,58 @@
+package s3
+
+import (
+ "context"
+ "errors"
+ "os"
+ "path/filepath"
+ "strings"
+ "testing"
+ "time"
+)
+
+type blockedFailReader struct { entered, release chan struct{} }
+func (r *blockedFailReader) Read(_ []byte) (int,error) {
+ close(r.entered); <-r.release
+ return 0, errors.New("simulated old upload failure")
+}
+
+func TestOneMountS3RetryCannotDeleteNewObject(t *testing.T) {
+ b, root := newTestBackend(t)
+ first := &blockedFailReader{make(chan struct{}), make(chan struct{})}
+ oldResult, newResult := make(chan error,1),make(chan error,1)
+ go func(){ _,err:=b.PutObject(context.Background(),"bucket","retry.bin",nil,first,1); oldResult<-err }()
+ <-first.entered
+ go func(){ _,err:=b.PutObject(context.Background(),"bucket","retry.bin",nil,strings.NewReader("new data"),8); newResult<-err }()
+ select {
+ case err:=<-newResult: close(first.release); <-oldResult; t.Fatalf("new PUT raced old PUT: %v",err)
+ case <-time.After(100*time.Millisecond):
+ }
+ close(first.release)
+ if err:=<-oldResult;err==nil {t.Fatal("old PUT should fail")}
+ if err:=<-newResult;err!=nil {t.Fatal(err)}
+ data,err:=os.ReadFile(filepath.Join(root,"bucket","retry.bin"))
+ if err!=nil||string(data)!="new data" {t.Fatalf("committed retry lost: %q %v",data,err)}
+}
+
+func TestOneMountS3CancelledRetryDoesNotMutate(t *testing.T) {
+ b, root:=newTestBackend(t)
+ unlock,err:=b.lockObject(context.Background(),"bucket","object.txt");if err!=nil {t.Fatal(err)}
+ defer unlock()
+ ctx,cancel:=context.WithCancel(context.Background());cancel()
+ _,err=b.PutObject(ctx,"bucket","object.txt",nil,strings.NewReader("bad"),3)
+ if !errors.Is(err,context.Canceled){t.Fatal(err)}
+ data,err:=os.ReadFile(filepath.Join(root,"bucket","object.txt"))
+ if err!=nil||string(data)!="normal object" {t.Fatalf("cancelled retry mutated data: %q %v",data,err)}
+}
+
+func TestOneMountS3NoCleanupKeepsParents(t *testing.T) {
+ for _,keep:=range []bool{false,true} {
+  b,root:=newTestBackend(t);b.s.opt.NoCleanup=keep
+  _,err:=b.PutObject(context.Background(),"bucket","nested/child/test.bin",nil,strings.NewReader("data"),4)
+  if err!=nil {t.Fatal(err)}
+  _,err=b.DeleteObject(context.Background(),"bucket","nested/child/test.bin");if err!=nil {t.Fatal(err)}
+  _,err=os.Stat(filepath.Join(root,"bucket","nested","child"))
+  if keep&&err!=nil {t.Fatal("parent should remain",err)}
+  if !keep&&!os.IsNotExist(err){t.Fatal("default cleanup should remain",err)}
+ }
+}
