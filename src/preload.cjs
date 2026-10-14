@@ -1,6 +1,6 @@
 'use strict';
 const {contextBridge, ipcRenderer} = require('electron');
-const commands = new Set(['snapshot','addLocal','connect','answerAuth','cancelAuth','addDisk','updateDisk','removeDisk','mount','unmount','deleteConnection','testConnection','listFolders','setFolder','pickFolder','openDisk','openData','settings','installDriver','quit']);
+const commands = new Set(['snapshot','addLocal','connect','answerAuth','cancelAuth','addDisk','updateDisk','removeDisk','mount','unmount','deleteConnection','testConnection','renameConnection','listFolders','setFolder','pickFolder','openDisk','openData','settings','installDriver','quit']);
 contextBridge.exposeInMainWorld('island', Object.freeze({
   invoke: async (method, ...args) => {
     if (!commands.has(method)) throw new Error('不支持此操作');
