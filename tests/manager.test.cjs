@@ -11,15 +11,15 @@ test('state snapshot never includes encryption keys or RC credentials',t=>{
   const {m}=setup(t);m.secrets.disks.x={secret:'TOPSECRET'};m.runtime.set('unused',{rcPass:'PASSWORD'});const s=JSON.stringify(m.snapshot());assert.ok(!s.includes('TOPSECRET'));assert.ok(!s.includes('PASSWORD'));assert.ok(!s.includes(m.secrets.configPass));
 });
 
-test('Baidu availability needs both application credentials and only allows direct disks',async t=>{
+test('Baidu availability needs both application credentials and supports both disk modes',async t=>{
   const {m}=setup(t); m.oauthClients.baidu={clientId:'PRIVATE_APP'};
   assert.equal(m.snapshot().services.find(s=>s.id==='baidu').available,false);
   m.oauthClients.baidu.clientSecret='PRIVATE_SECRET';
   assert.equal(m.snapshot().services.find(s=>s.id==='baidu').available,true);
   assert.doesNotMatch(JSON.stringify(m.snapshot()),/PRIVATE_/);
   m.state.connections.push({id:'baidu',type:'baidu',name:'百度网盘',source:'test:'});
-  await assert.rejects(m.addDisk({connectionId:'baidu',name:'卷',mode:'juicefs',letter:'Z:',cacheGiB:10}),/网盘直连/);
-  assert.equal(m.state.disks.length,0);
+  const volume=await m.addDisk({connectionId:'baidu',name:'卷',mode:'juicefs',letter:'Y:',cacheGiB:10});
+  assert.equal(m.disk(volume).mode,'juicefs');
   const id=await m.addDisk({connectionId:'baidu',name:'百度网盘',mode:'direct',letter:'Z:',cacheGiB:10});
   assert.equal(m.disk(id).mode,'direct');
 });
@@ -48,4 +48,43 @@ test('disk rename persists without replacing disk identity, source or cached dat
   m.busy.add(id);await assert.rejects(()=>m.updateDisk(id,{name:'处理中'}),/上一个操作/);m.busy.delete(id);
   m.runtime.set(id,{status:'mounted'});await assert.rejects(()=>m.updateDisk(id,{name:'运行中'}),/先卸载/);
   assert.equal(m.disk(id).name,'工作资料');
+});
+
+test('volume cache settings persist across reload and preserve metadata and cached data',async t=>{
+  const {m,base}=setup(t);const connectionId=await m.addLocal({name:'本地',path:base});
+  const id=await m.addDisk({connectionId,name:'卷',mode:'juicefs',letter:'X:',cacheGiB:10});
+  const d=m.disk(id),p=m.paths(d);assert.equal(d.writeback,true);
+  fs.writeFileSync(p.meta,'metadata');fs.writeFileSync(path.join(p.cache,'read-cache'),'cached bytes');
+  await m.updateDisk(id,{writeback:false,cacheGiB:20});
+  const restored=new Manager({root:m.root,engines:m.engines,protect:m.protect,unprotect:m.unprotect});
+  assert.equal(restored.disk(id).writeback,false);assert.equal(restored.disk(id).cacheGiB,20);
+  await restored.updateDisk(id,{name:'改名'});assert.equal(restored.disk(id).writeback,false);
+  await restored.updateDisk(id,{writeback:true});assert.equal(restored.disk(id).writeback,true);
+  assert.deepEqual(restored.paths(restored.disk(id)),p);
+  assert.equal(fs.readFileSync(p.meta,'utf8'),'metadata');assert.equal(fs.readFileSync(path.join(p.cache,'read-cache'),'utf8'),'cached bytes');
+  restored.runtime.set(id,{status:'mounted'});
+  await assert.rejects(restored.updateDisk(id,{writeback:false}),/先卸载/);
+  assert.equal(restored.disk(id).writeback,true);
+});
+
+test('turning off writeback refuses leftover staging data without partially saving settings',async t=>{
+  const {m,base}=setup(t);const connectionId=await m.addLocal({name:'本地',path:base});
+  const id=await m.addDisk({connectionId,name:'卷',mode:'juicefs',letter:'X:',cacheGiB:10});
+  const staging=path.join(m.paths(m.disk(id)).cache,'volume-uuid','rawstaging','chunks','0','0');
+  fs.mkdirSync(staging,{recursive:true});const pending=path.join(staging,'1_0_100');fs.writeFileSync(pending,'pending bytes');
+  const saved=fs.readFileSync(m.file,'utf8');
+  await assert.rejects(m.updateDisk(id,{writeback:false,cacheGiB:20,name:'不应保存'}),/仍有待上传数据/);
+  assert.equal(fs.readFileSync(m.file,'utf8'),saved);assert.equal(m.disk(id).cacheGiB,10);
+  assert.equal(fs.readFileSync(pending,'utf8'),'pending bytes');
+  fs.unlinkSync(pending);await m.updateDisk(id,{writeback:false});assert.equal(m.disk(id).writeback,false);
+});
+
+test('unreadable staging prevents disabling writeback and invalid values never change saved state',async t=>{
+  const {m,base}=setup(t);const connectionId=await m.addLocal({name:'本地',path:base});
+  const id=await m.addDisk({connectionId,name:'卷',mode:'juicefs',letter:'X:',cacheGiB:10});
+  const saved=fs.readFileSync(m.file,'utf8');
+  await assert.rejects(m.updateDisk(id,{writeback:'false'}),/暂存设置/);
+  t.mock.method(fs.promises,'readdir',async()=>{throw Object.assign(Error('denied'),{code:'EACCES'});});
+  await assert.rejects(m.updateDisk(id,{writeback:false}),/无法确认/);
+  assert.equal(m.disk(id).writeback,true);assert.equal(fs.readFileSync(m.file,'utf8'),saved);
 });

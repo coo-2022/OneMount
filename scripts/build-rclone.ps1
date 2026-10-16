@@ -21,6 +21,8 @@ try {
   if ($LASTEXITCODE -ne 0) { throw 'Cannot apply reviewed rclone source patches' }
   go test -mod=readonly -modfile $modfile -tags cmount -run '^TestCmountMkdir' -count=1 .
   if ($LASTEXITCODE -ne 0) { throw 'Patched cmount regression tests failed' }
+  go test -mod=readonly -modfile $modfile -tags cmount -run '^TestOneMountS3' -count=1 github.com/rclone/rclone/cmd/serve/s3
+  if ($LASTEXITCODE -ne 0) { throw 'Patched S3 gateway regression tests failed' }
   New-Item -ItemType Directory -Force -Path $dest | Out-Null
   # Upstream Windows builds use cmount with CGO_ENABLED=0 (cgofuse loads WinFsp at runtime).
   go build -mod=readonly -modfile $modfile -trimpath -buildvcs=false -tags cmount -ldflags '-s -w -X github.com/rclone/rclone/fs.Version=v1.75.0-onemount' -o (Join-Path $dest 'rclone.exe') .

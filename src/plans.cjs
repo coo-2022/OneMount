@@ -10,7 +10,8 @@ function validateDisk(input, disks) {
   if (disks.some(d => d.letter === letter)) throw new Error('这个盘符已分配给其他磁盘');
   const cacheGiB = Number(input.cacheGiB);
   if (!Number.isInteger(cacheGiB) || cacheGiB < 1 || cacheGiB > 2048) throw new Error('缓存上限应为 1–2048 GB');
-  return {name, mode: input.mode, letter, cacheGiB, writeback: input.mode === 'juicefs' && input.writeback === true, autoMount: input.autoMount === true};
+  if (input.writeback !== undefined && typeof input.writeback !== 'boolean') throw new Error('本地暂存设置无效');
+  return {name, mode: input.mode, letter, cacheGiB, writeback: input.mode === 'juicefs' && input.writeback !== false, autoMount: input.autoMount === true};
 }
 
 function backendRoot(connection, diskId) {
@@ -20,7 +21,7 @@ function backendRoot(connection, diskId) {
 }
 
 function gatewayArgs(root, port, rcPort, cacheDir, config) {
-  return ['serve', 's3', root, '--addr', `127.0.0.1:${port}`, '--vfs-cache-mode', 'off',
+  return ['serve', 's3', root, '--addr', `127.0.0.1:${port}`, '--vfs-cache-mode', 'off', '--no-cleanup',
     '--rc', '--rc-addr', `127.0.0.1:${rcPort}`, '--rc-user', 'cloud-island', '--cache-dir', cacheDir,
     '--config', config, '--log-level', 'INFO'];
 }
@@ -29,14 +30,26 @@ function formatArgs(port, volumeName) {
   return ['format', '--no-update', '--storage', 's3', '--bucket', `http://127.0.0.1:${port}/jfs`, 'sqlite3://meta.db', volumeName];
 }
 
-function juiceMountArgs(disk, paths, metricsPort) {
+function juiceMountArgs(disk, paths, metricsPort, connection = {}) {
   // JuiceFS 1.3.0 --as-root already sets WinFsp uid=-1,gid=-1, which
   // presents ownership as the mounting Windows user while using POSIX root
   // internally. Do not override it: WinFsp explicitly rejects uidmap UID 0.
-  const args = ['mount', '--no-usage-report', '--as-root',
+  // JuiceFS 1.3.0 can briefly return the pre-write size from its Windows
+  // attribute cache after close (including size 0 for a new executable).
+  // Metadata is local SQLite, so prefer fresh attributes for correctness.
+  const args = ['mount', '--no-usage-report', '--as-root', '--attr-cache', '0',
+    // Override JuiceFS's default UNC prefix: WinFsp registers an empty prefix
+    // as a local disk. This leaves the built-in ownership mapping intact.
+    '-o', 'VolumePrefix=',
     '--cache-dir', paths.cache, '--cache-size', String(disk.cacheGiB * 1024),
     '--metrics', `127.0.0.1:${metricsPort}`];
   if (disk.writeback) args.push('--writeback');
+  // A 4 MiB block needs about 100 seconds on a 40 KiB/s cloud download.
+  // Keep a bounded deadline, but allow slow transfers to finish instead of
+  // restarting the whole block every 60 seconds.
+  if (connection.type && connection.type !== 'local') args.push('--get-timeout', '5m');
+  // OneDrive's upload sessions are sensitive to bursts of small block uploads.
+  if (connection.type === 'onedrive') args.push('--max-uploads', '1');
   args.push('sqlite3://meta.db', disk.letter);
   return args;
 }

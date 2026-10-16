@@ -17,6 +17,7 @@ function prepare() {
   const build = path.join(source, '.build', 'patched');
   fs.mkdirSync(build, {recursive:true});
   const upstream = path.join(build, 'upstream');
+  if (path.relative(source, upstream) !== path.join('.build', 'patched', 'upstream')) throw Error('Invalid isolated build path');
   fs.rmSync(upstream, {recursive:true, force:true});
   fs.cpSync(dependency.Dir, upstream, {recursive:true});
   const patchedFiles = new Set(), applied = [];
@@ -35,13 +36,22 @@ function prepare() {
     patchedFiles.add(original);
     applied.push({id:patch.id, file:patch.file, sourceSha256:patch.sourceSha256, patchedSha256:sha(output)});
   }
+  const tests = [];
+  for (const test of series.tests || []) {
+    if (!/^[a-zA-Z0-9_-]+\.go\.txt$/.test(test.source) || !/^[a-zA-Z0-9_/-]+_test\.go$/.test(test.file) || test.file.split('/').includes('..')) throw Error('Invalid regression test path');
+    const input = fs.readFileSync(path.join(source, 'patches', test.source));
+    const dest = path.join(upstream, test.file);
+    if (fs.existsSync(dest)) throw Error('Refusing to replace upstream test');
+    fs.writeFileSync(dest, input);
+    tests.push({file:test.file, sha256:sha(input)});
+  }
   // Go disallows overlays beneath GOMODCACHE. A generated -modfile selects
   // this verified build copy; the checked-in go.mod/go.sum remain unchanged.
   const modfile = path.join(build, 'rclone.mod');
   const mod = fs.readFileSync(path.join(source, 'go.mod'), 'utf8');
   fs.writeFileSync(modfile, mod + '\nreplace github.com/rclone/rclone => ' + JSON.stringify(upstream.replace(/\\/g, '/')) + '\n');
   fs.copyFileSync(path.join(source, 'go.sum'), path.join(build, 'rclone.sum'));
-  fs.writeFileSync(path.join(build, 'manifest.json'), JSON.stringify({upstream:series.upstream, seriesSha256:sha(fs.readFileSync(seriesFile)), patches:applied}, null, 2)+'\n');
+  fs.writeFileSync(path.join(build, 'manifest.json'), JSON.stringify({upstream:series.upstream, seriesSha256:sha(fs.readFileSync(seriesFile)), patches:applied, tests}, null, 2)+'\n');
   return modfile;
 }
 if (require.main === module) console.log(prepare());

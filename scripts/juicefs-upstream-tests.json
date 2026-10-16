@@ -1,0 +1,12 @@
+{
+  "commit": "30190ca1094d26e85f19a979ca51b0ea19af1eaa",
+  "directory": "test-results/juicefs-upstream-30190ca",
+  "files": [
+    {"name":"wins_fs_test.py","url":"https://raw.githubusercontent.com/juicedata/juicefs/30190ca1094d26e85f19a979ca51b0ea19af1eaa/.github/scripts/wins_fs_test.py","sha256":"cdd6dd8a35f8286af4e943994c98671aaa41a7a41c40b2519d0726f78d5af9e9"},
+    {"name":"wintest.yml","url":"https://raw.githubusercontent.com/juicedata/juicefs/30190ca1094d26e85f19a979ca51b0ea19af1eaa/.github/workflows/wintest.yml","sha256":"53c99b79bbe48f5d6d56b72be86682054fd575eafeb54332f84f35330095d802"},
+    {"name":"command-win.yml","url":"https://raw.githubusercontent.com/juicedata/juicefs/30190ca1094d26e85f19a979ca51b0ea19af1eaa/.github/workflows/command-win.yml","sha256":"e5d31c4d8cd4b0eb099eea606c6bc19c5461409f9c0b93e2f04710a8783726de"},
+    {"name":"fsx-x64.exe","url":"https://github.com/chenjie4255/fstools/releases/download/v0.0.1/fsx-x64.exe","sha256":"e27719f197c1200e3a51b48f70bdf229f70a933d1834859b0060d45c4dc72a94"},
+    {"name":"winfsp-tests-x64.exe","url":"https://github.com/juicedata/winfsp/releases/download/testing_suit_20250324/winfsp-tests-x64.exe","sha256":"19b938adfe1e662406bd896a620c72aa78b803c8710c0c8f9c64f405cd026f97"},
+    {"name":"TestSuite-x64-v4.zip","url":"https://github.com/juicedata/winfstest/releases/download/testing_20250313/TestSuite-x64-v4.zip","sha256":"645a0e5de833a229dc8a89bf4624f007cfc8f21aa678aef6ab450ef714895de4"}
+  ]
+}

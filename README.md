@@ -2,17 +2,17 @@
 
 Windows 桌面存储管理器。统一管理账号、挂载、缓存与传输状态，用户不用执行命令或编辑底层配置。
 
-当前为 **0.6.0 预览版**。产品界面名为「云屿」，仓库名为 OneMount。
+当前为 **0.7.0 预览版**。产品界面名为「云屿」，仓库名为 OneMount。更新内容与使用边界见 [0.7.0 发布说明](docs/RELEASE-0.7.0.md)。
 
 ![桌面界面](screenshots/desktop.png)
 
 ## 已实现
 
 - **网盘直连**：内部 rclone 1.75.0 + WinFsp，完整读写缓存，文件关闭并空闲 5 秒后上传。
-- **文件系统卷**：内部 JuiceFS 1.3.0，通过本机、需要认证的 S3 网关连接 rclone 后端。网关缓存关闭，避免双重异步写回；卷默认关闭 writeback。
+- **文件系统卷**：内部 JuiceFS 1.3.0，通过本机、需要认证的 S3 网关连接 rclone 后端。网关缓存关闭，避免双重异步写回；新建卷默认启用本地暂存与后台上传。
 - 软件内连接本地文件夹、WebDAV、S3 兼容存储，检查连接与选择目录。
 - 软件接管 OAuth 状态机、系统浏览器授权、问题选择、取消和超时。OneDrive、Google Drive、Dropbox 须先配置发布者自己的 OAuth 应用，才开放登录入口。
-- 百度网盘：自定义开放平台后端，设备码授权，当前开放网盘直连。能力、测试与额外上传临时空间见 [百度后端说明](engine-src/rclone/backend/baidu/README.md)。
+- 百度网盘：自定义开放平台后端，设备码授权，支持网盘直连和文件系统卷。能力、测试与额外上传临时空间见 [百度后端说明](engine-src/rclone/backend/baidu/README.md)。
 - 每个磁盘独立缓存目录；文件系统卷使用独立远端前缀和本地 SQLite 元数据。
 - 直连模式显示文件上传队列；文件系统卷显示待上传块数和字节数。未知状态不会显示成已上传。
 - 安全卸载、托盘后台运行、启动时挂载、Windows 登录后启动。
@@ -91,7 +91,9 @@ npm run engine:rclone:build
 账号连接诊断保存在同目录的 `auth.log`，每行是一条 JSON 记录，包含时间、连接尝试编号、阶段、任务结果及经过筛选的错误诊断（如微软 `AADSTS` 错误码、HTTP 状态和网络错误码）。取消连接或重启软件不会清除这些记录。单个文件最多约 1 MiB，保留 3 个轮转备份（`auth.log.1` 至 `auth.log.3`）。它不记录令牌、授权码、密码、完整授权地址、账号名称或原始服务响应；无法识别的错误记为 `unknown`，仍保留发生阶段。`accounts.log` 继续保存后台账号服务的进程日志。遇到“浏览器已返回，但连接失败”时，可从软件设置打开数据目录，查看最新的 `connection_failed` 记录。
 
 - 直连：`rcd` → `mount/mount`；卸载前检查上传队列、缓存错误和脏缓存元信息，再调用 `mount/unmount`，最后退出后台进程。
-- 文件系统卷：启动独立 `serve s3` → 检查服务 → 仅对全新卷 format → 启动挂载；卸载执行 `umount --flush`，等挂载进程真正退出后才停止网关。
+- 文件系统卷：在所选连接内创建 `.cloud-island/<磁盘 ID>` → 启动独立 `serve s3` → 检查服务 → 初始化新卷并核对元数据身份 → 启动挂载。此目录必须先通过连接根目录创建，避免百度等后端无法创建网关根目录的上级目录。
+- 初始化前保存进行中标记。网络检查失败后可以重试同一个磁盘，始终使用 `format --no-update`，核对卷名、存储类型和端点后才允许挂载；没有初始化标记的已有元数据不会自动接管。SQLite 数据库及 WAL 保持原位，绝不只移动或覆盖数据库主文件。
+- 卸载执行 `umount --flush`，等挂载进程真正退出后才停止网关；失败时保留连接、会话、缓存和元数据。网关没有后台写缓存，上传成功响应必须等待后端完成。
 - 每卷固定本机 S3 端口，重启保持一致。端口被占用时拒绝启动，不偷偷改写已格式化卷的地址。
 - 意外退出后保留缓存与元数据。重新启动会尝试接管仍存活且能够通过认证的后台会话；不通过进程名批量终止程序。
 - 移除磁盘只归档配置，不删除远端数据、元数据和缓存。没有「强制退出并删除缓存」按钮。
@@ -122,3 +124,36 @@ TEST_RCLONE=/absolute/rclone TEST_JUICEFS=/absolute/juicefs node scripts/integra
 源码分工：`src/manager.cjs` 生命周期；`src/accounts.cjs` 账号；`src/plans.cjs` 参数；`src/processes.cjs` 子进程和本机控制接口；`src/main.cjs` 桌面和 IPC；`ui/` 产品界面。
 
 应用源码 MIT；内置组件及图标版权见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
+
+## 用网盘存放文件系统卷
+
+在「我的磁盘 → 添加磁盘」选择「文件系统卷」，再选择已登录的百度网盘、OneDrive 或 Google Drive 连接。网盘保存 JuiceFS 数据块，文件名、目录、空文件和稀疏区域由本机元数据管理；因此百度的直连空文件限制不适用于此模式。网盘里原有的普通文件不会自动导入，不能通过网盘客户端直接编辑这些数据块。
+
+新建卷默认开启「本地暂存与后台上传」，由 JuiceFS 将待上传数据保存在本机磁盘，再后台上传。可在「磁盘详情 → 缓存」调整开关与缓存容量；已有卷保留原设置，安全卸载后修改，下次挂载生效。如果上次异常退出后仍有待上传数据，必须先保持开启、挂载并完成上传，才能关闭。关闭此开关仍保留读取缓存。
+
+本地暂存完成不代表云端已保存，仍需安全卸载。元数据、账号配置和未上传缓存都要保留；仅有网盘里的数据块不能直接恢复挂载。本分支不增加跨设备共享或恢复向导。
+
+OneDrive 卷将同时上传的数据块限制为 1，减少慢响应下上传会话冲突。S3 网关为同一对象的 PUT/DELETE 提供进程内互斥，防止超时重试与旧请求的失败清理互相覆盖；删除块后保留空目录。补丁范围及回归测试见 [网关补丁说明](engine-src/rclone/patches/README.md)。
+
+开发验证（Windows + WinFsp）：
+
+```powershell
+node scripts/windows-mount-integration.cjs
+# 可选的真实网盘测试：需要已有授权，会在每个连接内新建独立测试卷。
+$env:ONEMOUNT_LIVE_PROFILE = Join-Path $env:APPDATA 'CloudIsland'
+& .\node_modules\electron\dist\electron.exe scripts/windows-cloud-volume-integration.cjs
+# 界面测试需要 Playwright，可通过 ONEMOUNT_PLAYWRIGHT 指定已安装模块。
+node scripts/windows-volume-ui-smoke.cjs
+```
+
+真实网盘测试默认覆盖百度、OneDrive、Google Drive，以及关闭/开启后台上传两种模式；可用 `ONEMOUNT_LIVE_TYPES=baidu,drive` 和 `ONEMOUNT_LIVE_WRITEBACK=0,1` 选择范围。测试使用复制的加密账号配置及独立盘符，不复用用户挂载；校验中文路径、跨块数据、随机写、追加、空文件、稀疏文件、截断、重命名、删除和两次冷缓存重启，最后检查远端数据块。报告、元数据、缓存备份均保留在被 Git 忽略的 `test-results/cloud-volume-*/`，远端测试卷也保留供核对。真实账号测试不会随 `npm test` 自动执行。
+
+本次验证记录见 [JuiceFS 网盘后端验证](docs/JUICEFS-CLOUD-VALIDATION-2026-10-14.md)。
+
+文件系统测试基线保存在 [测试矩阵归档（Excel，2026-10-16）](docs/FILESYSTEM-TEST-MATRIX-2026-10-16.xlsx) 和 [当前清单（JSON）](docs/FILESYSTEM-TEST-MATRIX.json)。矩阵按 L1–L5、功能和用例来源分类，包含 364 条主清单，以及固定版本 JuiceFS 的 844 条静态测试目录和 71 个 CI 作业。Excel 保留补测前的 1004 条历史执行记录；JSON 已回填后续补测，共 1149 条执行记录。目录纳入不等于执行通过；失败、超时、跳过、待执行和不适用项分别保留，参数组合与断言不另外计作独立用例。
+
+最新结论见 [2026-10-16 综合验证](docs/FILESYSTEM-VALIDATION-2026-10-16.md)：复用已有网盘、单元和界面测试，补测 37 个 WinFsp 可选入口、命令检查、应用负载及写缓存恢复。完整 Windows 文件语义仍有失败，不能视为文件系统完备性已获保证。
+
+JuiceFS 卷现按 Windows 本地固定磁盘注册，见[本地磁盘变更与定向回归](docs/JUICEFS-LOCAL-DISK-VALIDATION-2026-10-16.md)。综合语义矩阵保留变更前的网络磁盘基准；本地盘模式已验证基本读写、缓存切换及安全卸载，完整上游语义尚未在新挂载类型下重跑。
+
+运行方式见 [JuiceFS 官方 Windows 测试说明](docs/JUICEFS-UPSTREAM-TESTING.md)，结果见 [2026-10-14](docs/JUICEFS-UPSTREAM-VALIDATION-2026-10-14.md) 和 [2026-10-15](docs/JUICEFS-UPSTREAM-VALIDATION-2026-10-15.md)。已确认的截断一致性问题见 [根因与复现](docs/JUICEFS-TRUNCATE-INVESTIGATION-2026-10-15.md) 和 [后续版本核查](docs/JUICEFS-VERSION-CHECK-2026-10-16.md)，这些已知问题尚未在引擎中修复。

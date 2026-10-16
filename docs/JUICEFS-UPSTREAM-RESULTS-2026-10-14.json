@@ -1,0 +1,730 @@
+{
+  "date": "2026-10-14",
+  "productCommit": "e920ead94a8e28f04e326664178b0c9f02d492b1",
+  "branch": "feat/juicefs",
+  "platform": "Windows x64",
+  "winfsp": "2.1.25156.ddca7bd",
+  "juicefs": {
+    "version": "juicefs version 1.3.0+2025-07-03.30190ca",
+    "sha256": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+    "rcloneSha256": "080c018d446081e1b8a725044a88e15e995b08b09ed36dfa7e1b1725e039285e"
+  },
+  "upstreamCommit": "30190ca1094d26e85f19a979ca51b0ea19af1eaa",
+  "toolHashes": {
+    "wins_fs_test.py": "cdd6dd8a35f8286af4e943994c98671aaa41a7a41c40b2519d0726f78d5af9e9",
+    "wintest.yml": "53c99b79bbe48f5d6d56b72be86682054fd575eafeb54332f84f35330095d802",
+    "command-win.yml": "e5d31c4d8cd4b0eb099eea606c6bc19c5461409f9c0b93e2f04710a8783726de",
+    "fsx-x64.exe": "e27719f197c1200e3a51b48f70bdf229f70a933d1834859b0060d45c4dc72a94",
+    "winfsp-tests-x64.exe": "19b938adfe1e662406bd896a620c72aa78b803c8710c0c8f9c64f405cd026f97",
+    "TestSuite-x64-v4.zip": "645a0e5de833a229dc8a89bf4624f007cfc8f21aa678aef6ab450ef714895de4"
+  },
+  "overallPassed": false,
+  "rows": [
+    {
+      "backend": "local",
+      "writeback": false,
+      "volumeId": "f75222da-a4fb-4064-97e8-3cc698f0dac8",
+      "evidenceDirectory": "juicefs-upstream-run-HnBXp9",
+      "started": "2026-10-14T13:19:22.771Z",
+      "finished": "2026-10-14T13:20:56.730Z",
+      "completed": true,
+      "passed": false,
+      "python": {
+        "passed": true,
+        "timedOut": false,
+        "cases": [
+          {
+            "name": "test_basic_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_concurrent_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_directory_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_file_attributes",
+            "status": "passed"
+          },
+          {
+            "name": "test_large_files",
+            "status": "passed"
+          },
+          {
+            "name": "test_long_paths",
+            "status": "passed"
+          },
+          {
+            "name": "test_rename_case_change",
+            "status": "passed"
+          },
+          {
+            "name": "test_special_characters",
+            "status": "passed"
+          },
+          {
+            "name": "test_symlinks",
+            "status": "skipped",
+            "reason": "Windows Do not support"
+          }
+        ],
+        "log": "f75222da-a4fb-4064-97e8-3cc698f0dac8-windows-python.log"
+      },
+      "winfstest": {
+        "passed": false,
+        "successfulAssertions": 151,
+        "totalAssertions": 152,
+        "log": "f75222da-a4fb-4064-97e8-3cc698f0dac8-winfstest.log"
+      },
+      "winfsp": {
+        "planned": 54,
+        "passed": 50,
+        "failed": 4,
+        "incomplete": [],
+        "notRun": [],
+        "failures": [
+          {
+            "name": "winfsp-exec_test",
+            "diagnostics": [
+              "exec_test.............................. KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_delete_test",
+            "diagnostics": [
+              "exec_delete_test....................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_rename_test",
+            "diagnostics": [
+              "exec_rename_test....................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_rename_dir_test",
+            "diagnostics": [
+              "exec_rename_dir_test................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          }
+        ]
+      },
+      "fsx": {
+        "passed": true,
+        "requestedOperations": 10000,
+        "reportedOperations": 10822,
+        "log": "f75222da-a4fb-4064-97e8-3cc698f0dac8-fsx.log"
+      },
+      "coldReadPassed": true,
+      "fsckPassed": true,
+      "safelyUnmounted": true,
+      "aborted": false,
+      "notes": []
+    },
+    {
+      "backend": "local",
+      "writeback": true,
+      "volumeId": "928be4e9-cd2b-41e3-9200-82bbedac417a",
+      "evidenceDirectory": "juicefs-upstream-run-HnBXp9",
+      "started": "2026-10-14T13:20:56.737Z",
+      "finished": "2026-10-14T13:22:28.072Z",
+      "completed": true,
+      "passed": false,
+      "python": {
+        "passed": true,
+        "timedOut": false,
+        "cases": [
+          {
+            "name": "test_basic_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_concurrent_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_directory_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_file_attributes",
+            "status": "passed"
+          },
+          {
+            "name": "test_large_files",
+            "status": "passed"
+          },
+          {
+            "name": "test_long_paths",
+            "status": "passed"
+          },
+          {
+            "name": "test_rename_case_change",
+            "status": "passed"
+          },
+          {
+            "name": "test_special_characters",
+            "status": "passed"
+          },
+          {
+            "name": "test_symlinks",
+            "status": "skipped",
+            "reason": "Windows Do not support"
+          }
+        ],
+        "log": "928be4e9-cd2b-41e3-9200-82bbedac417a-windows-python.log"
+      },
+      "winfstest": {
+        "passed": true,
+        "successfulAssertions": 152,
+        "totalAssertions": 152,
+        "log": "928be4e9-cd2b-41e3-9200-82bbedac417a-winfstest.log"
+      },
+      "winfsp": {
+        "planned": 54,
+        "passed": 50,
+        "failed": 4,
+        "incomplete": [],
+        "notRun": [],
+        "failures": [
+          {
+            "name": "winfsp-exec_test",
+            "diagnostics": [
+              "exec_test.............................. KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_delete_test",
+            "diagnostics": [
+              "exec_delete_test....................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_rename_test",
+            "diagnostics": [
+              "exec_rename_test....................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_rename_dir_test",
+            "diagnostics": [
+              "exec_rename_dir_test................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          }
+        ]
+      },
+      "fsx": {
+        "passed": true,
+        "requestedOperations": 10000,
+        "reportedOperations": 10822,
+        "log": "928be4e9-cd2b-41e3-9200-82bbedac417a-fsx.log"
+      },
+      "coldReadPassed": true,
+      "fsckPassed": true,
+      "safelyUnmounted": true,
+      "aborted": false,
+      "notes": []
+    },
+    {
+      "backend": "baidu",
+      "writeback": false,
+      "volumeId": "ca7c041f-3add-45bc-8ba8-1e780c87bc54",
+      "evidenceDirectory": "juicefs-upstream-run-HnBXp9",
+      "started": "2026-10-14T13:22:28.081Z",
+      "finished": "2026-10-14T13:30:38.572Z",
+      "completed": true,
+      "passed": true,
+      "python": {
+        "passed": true,
+        "timedOut": false,
+        "cases": [
+          {
+            "name": "test_basic_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_concurrent_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_directory_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_file_attributes",
+            "status": "passed"
+          },
+          {
+            "name": "test_large_files",
+            "status": "passed"
+          },
+          {
+            "name": "test_long_paths",
+            "status": "passed"
+          },
+          {
+            "name": "test_rename_case_change",
+            "status": "passed"
+          },
+          {
+            "name": "test_special_characters",
+            "status": "passed"
+          },
+          {
+            "name": "test_symlinks",
+            "status": "skipped",
+            "reason": "Windows Do not support"
+          }
+        ],
+        "log": "ca7c041f-3add-45bc-8ba8-1e780c87bc54-windows-python.log"
+      },
+      "winfstest": {
+        "passed": true,
+        "successfulAssertions": 152,
+        "totalAssertions": 152,
+        "log": "ca7c041f-3add-45bc-8ba8-1e780c87bc54-winfstest.log"
+      },
+      "winfsp": {
+        "planned": 54,
+        "passed": 54,
+        "failed": 0,
+        "incomplete": [],
+        "notRun": [],
+        "failures": []
+      },
+      "fsx": {
+        "passed": true,
+        "requestedOperations": 200,
+        "reportedOperations": 221,
+        "log": "ca7c041f-3add-45bc-8ba8-1e780c87bc54-fsx.log"
+      },
+      "coldReadPassed": true,
+      "fsckPassed": true,
+      "safelyUnmounted": true,
+      "aborted": false,
+      "notes": []
+    },
+    {
+      "backend": "baidu",
+      "writeback": true,
+      "volumeId": "c47f1462-8a39-4c62-bcae-1752c7a6a984",
+      "evidenceDirectory": "juicefs-upstream-run-HnBXp9",
+      "started": "2026-10-14T13:30:38.579Z",
+      "finished": "2026-10-14T13:39:15.154Z",
+      "completed": true,
+      "passed": false,
+      "python": {
+        "passed": true,
+        "timedOut": false,
+        "cases": [
+          {
+            "name": "test_basic_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_concurrent_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_directory_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_file_attributes",
+            "status": "passed"
+          },
+          {
+            "name": "test_large_files",
+            "status": "passed"
+          },
+          {
+            "name": "test_long_paths",
+            "status": "passed"
+          },
+          {
+            "name": "test_rename_case_change",
+            "status": "passed"
+          },
+          {
+            "name": "test_special_characters",
+            "status": "passed"
+          },
+          {
+            "name": "test_symlinks",
+            "status": "skipped",
+            "reason": "Windows Do not support"
+          }
+        ],
+        "log": "c47f1462-8a39-4c62-bcae-1752c7a6a984-windows-python.log"
+      },
+      "winfstest": {
+        "passed": true,
+        "successfulAssertions": 152,
+        "totalAssertions": 152,
+        "log": "c47f1462-8a39-4c62-bcae-1752c7a6a984-winfstest.log"
+      },
+      "winfsp": {
+        "planned": 54,
+        "passed": 50,
+        "failed": 4,
+        "incomplete": [],
+        "notRun": [],
+        "failures": [
+          {
+            "name": "winfsp-exec_test",
+            "diagnostics": [
+              "exec_test.............................. KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_delete_test",
+            "diagnostics": [
+              "exec_delete_test....................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_rename_test",
+            "diagnostics": [
+              "exec_rename_test....................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_rename_dir_test",
+            "diagnostics": [
+              "exec_rename_dir_test................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          }
+        ]
+      },
+      "fsx": {
+        "passed": true,
+        "requestedOperations": 200,
+        "reportedOperations": 221,
+        "log": "c47f1462-8a39-4c62-bcae-1752c7a6a984-fsx.log"
+      },
+      "coldReadPassed": true,
+      "fsckPassed": true,
+      "safelyUnmounted": true,
+      "aborted": false,
+      "notes": [
+        "Initial flush/unmount exceeded 120 seconds; final shutdown completed. Warm-versus-cold hashes and fsck were resumed on the same volume. Original failed report retained."
+      ]
+    },
+    {
+      "backend": "onedrive",
+      "writeback": false,
+      "volumeId": "f84c4169-6bda-4e86-866a-aa60a673bc27",
+      "evidenceDirectory": "juicefs-upstream-run-y4Vrpl",
+      "started": "2026-10-14T13:35:40.592Z",
+      "finished": "2026-10-14T13:57:22.357Z",
+      "completed": false,
+      "passed": false,
+      "python": {
+        "passed": false,
+        "timedOut": true,
+        "cases": null,
+        "log": "f84c4169-6bda-4e86-866a-aa60a673bc27-windows-python.log"
+      },
+      "winfstest": {
+        "passed": true,
+        "successfulAssertions": 152,
+        "totalAssertions": 152,
+        "log": "f84c4169-6bda-4e86-866a-aa60a673bc27-winfstest.log"
+      },
+      "winfsp": {
+        "planned": 54,
+        "passed": 21,
+        "failed": 0,
+        "incomplete": [
+          "winfsp-rename_standby_test"
+        ],
+        "notRun": [
+          "rename_ex_test",
+          "getvolinfo_test",
+          "setvolinfo_test",
+          "getsecurity_test",
+          "rdwr_noncached_test",
+          "rdwr_noncached_overlapped_test",
+          "rdwr_cached_test",
+          "rdwr_cached_append_test",
+          "rdwr_cached_overlapped_test",
+          "rdwr_writethru_test",
+          "rdwr_writethru_append_test",
+          "rdwr_writethru_overlapped_test",
+          "rdwr_mmap_test",
+          "rdwr_mixed_test",
+          "flush_test",
+          "flush_volume_test",
+          "lock_noncached_test",
+          "lock_noncached_overlapped_test",
+          "lock_cached_test",
+          "lock_cached_overlapped_test",
+          "querydir_test",
+          "querydir_expire_cache_test",
+          "querydir_buffer_overflow_test",
+          "querydir_namelen_test",
+          "dirnotify_test",
+          "exec_test",
+          "exec_delete_test",
+          "exec_rename_test",
+          "exec_rename_dir_test",
+          "reparse_nfs_test",
+          "reparse_symlink_test",
+          "reparse_symlink_relative_test"
+        ],
+        "failures": []
+      },
+      "fsx": null,
+      "coldReadPassed": false,
+      "fsckPassed": false,
+      "safelyUnmounted": false,
+      "aborted": true,
+      "notes": [
+        "Basic suite timed out with a large-file read error. Native rename_standby_test remained blocked. Remaining cases were not run; test gateway and mount explicitly aborted with caches/logs retained. No flush or integrity success claimed."
+      ]
+    },
+    {
+      "backend": "onedrive",
+      "writeback": true,
+      "completed": false,
+      "passed": false,
+      "notRun": true,
+      "reason": "Not started after persistent IO timeouts blocked the foreground suite."
+    },
+    {
+      "backend": "drive",
+      "writeback": false,
+      "volumeId": "3f71f1e9-8b4a-431c-bfe8-149e6a75ab94",
+      "evidenceDirectory": "juicefs-upstream-run-XLCGqz",
+      "started": "2026-10-14T13:41:31.597Z",
+      "finished": "2026-10-14T13:54:03.441Z",
+      "completed": true,
+      "passed": false,
+      "python": {
+        "passed": true,
+        "timedOut": false,
+        "cases": [
+          {
+            "name": "test_basic_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_concurrent_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_directory_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_file_attributes",
+            "status": "passed"
+          },
+          {
+            "name": "test_large_files",
+            "status": "passed"
+          },
+          {
+            "name": "test_long_paths",
+            "status": "passed"
+          },
+          {
+            "name": "test_rename_case_change",
+            "status": "passed"
+          },
+          {
+            "name": "test_special_characters",
+            "status": "passed"
+          },
+          {
+            "name": "test_symlinks",
+            "status": "skipped",
+            "reason": "Windows Do not support"
+          }
+        ],
+        "log": "3f71f1e9-8b4a-431c-bfe8-149e6a75ab94-windows-python.log"
+      },
+      "winfstest": {
+        "passed": false,
+        "successfulAssertions": 148,
+        "totalAssertions": 152,
+        "log": "3f71f1e9-8b4a-431c-bfe8-149e6a75ab94-winfstest.log"
+      },
+      "winfsp": {
+        "planned": 54,
+        "passed": 54,
+        "failed": 0,
+        "incomplete": [],
+        "notRun": [],
+        "failures": []
+      },
+      "fsx": {
+        "passed": true,
+        "requestedOperations": 200,
+        "reportedOperations": 221,
+        "log": "3f71f1e9-8b4a-431c-bfe8-149e6a75ab94-fsx.log"
+      },
+      "coldReadPassed": true,
+      "fsckPassed": true,
+      "safelyUnmounted": true,
+      "aborted": false,
+      "notes": []
+    },
+    {
+      "backend": "drive",
+      "writeback": true,
+      "volumeId": "cc25cda0-d689-4f70-af6e-168f9e86ab48",
+      "evidenceDirectory": "juicefs-upstream-run-XLCGqz",
+      "started": "2026-10-14T13:54:03.448Z",
+      "finished": "2026-10-14T13:57:50.811Z",
+      "completed": true,
+      "passed": false,
+      "python": {
+        "passed": true,
+        "timedOut": false,
+        "cases": [
+          {
+            "name": "test_basic_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_concurrent_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_directory_operations",
+            "status": "passed"
+          },
+          {
+            "name": "test_file_attributes",
+            "status": "passed"
+          },
+          {
+            "name": "test_large_files",
+            "status": "passed"
+          },
+          {
+            "name": "test_long_paths",
+            "status": "passed"
+          },
+          {
+            "name": "test_rename_case_change",
+            "status": "passed"
+          },
+          {
+            "name": "test_special_characters",
+            "status": "passed"
+          },
+          {
+            "name": "test_symlinks",
+            "status": "skipped",
+            "reason": "Windows Do not support"
+          }
+        ],
+        "log": "cc25cda0-d689-4f70-af6e-168f9e86ab48-windows-python.log"
+      },
+      "winfstest": {
+        "passed": true,
+        "successfulAssertions": 152,
+        "totalAssertions": 152,
+        "log": "cc25cda0-d689-4f70-af6e-168f9e86ab48-winfstest.log"
+      },
+      "winfsp": {
+        "planned": 54,
+        "passed": 50,
+        "failed": 4,
+        "incomplete": [],
+        "notRun": [],
+        "failures": [
+          {
+            "name": "winfsp-exec_test",
+            "diagnostics": [
+              "exec_test.............................. KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_delete_test",
+            "diagnostics": [
+              "exec_delete_test....................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_rename_test",
+            "diagnostics": [
+              "exec_rename_test....................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          },
+          {
+            "name": "winfsp-exec_rename_dir_test",
+            "diagnostics": [
+              "exec_rename_dir_test................... KO",
+              "    ASSERT(NT_SUCCESS(Result)) failed at exec-test.c:135:ExecHelper (err=106:0)"
+            ]
+          }
+        ]
+      },
+      "fsx": {
+        "passed": true,
+        "requestedOperations": 200,
+        "reportedOperations": 221,
+        "log": "cc25cda0-d689-4f70-af6e-168f9e86ab48-fsx.log"
+      },
+      "coldReadPassed": true,
+      "fsckPassed": true,
+      "safelyUnmounted": true,
+      "aborted": false,
+      "notes": []
+    }
+  ],
+  "diagnostics": {
+    "originalJuicefsLocalControl": [
+      "juicefs-standalone-oTalhC",
+      "juicefs-standalone-FW1Hg7"
+    ],
+    "ntfsSharingControl": {
+      "directory": "juicefs-ntfs-sharing-to4n0n",
+      "runs": 50,
+      "failedRuns": 1,
+      "failedAssertion": "09.t #1 expected ERROR_SHARING_VIOLATION but got ERROR_FILE_NOT_FOUND"
+    },
+    "ntfsExecControl": "exec_test passed",
+    "ntfsFullAttempt": "Stopped at create_test: expected ERROR_INVALID_NAME, got ERROR_DIRECTORY; not used as a passed full-suite baseline.",
+    "baiduResume": {
+      "evidence": "juicefs-upstream-run-HnBXp9/resume-baidu-writeback.json",
+      "passed": true
+    },
+    "onedriveAbort": {
+      "evidence": "juicefs-upstream-run-y4Vrpl/abort-report.json",
+      "gatewayStopped": true,
+      "mountStopped": true,
+      "driveRemoved": true,
+      "accountServerStopped": true,
+      "logsAndCacheRetained": true
+    }
+  },
+  "limitations": [
+    "Windows upstream default FUSE profile only; Linux POSIX pjdfstest/LTP not run.",
+    "Python symlink test skipped by upstream; WinFsp symlink cases are separate.",
+    "FSX finite random-operation tests, not long-duration stress or speed measurements.",
+    "OneDrive read integrity, fsck and background mode were not completed.",
+    "All original failures remain failures; no retry replaces the first result."
+  ]
+}

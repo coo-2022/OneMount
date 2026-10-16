@@ -7,6 +7,14 @@ test('drive input and duplicates rejected', () => {
   for (const patch of [{letter:'C:'},{letter:'X: & cmd.exe'},{cacheGiB:0},{cacheGiB:NaN},{mode:'shell'},{name:''}]) assert.throws(()=>p.validateDisk({...d,...patch},[]));
   assert.throws(()=>p.validateDisk(d,[d]));
 });
+
+test('new volumes default to disk writeback while explicit synchronous mode and direct mode are preserved',()=>{
+  const input={...d};delete input.writeback;
+  assert.equal(p.validateDisk(input,[]).writeback,true);
+  assert.equal(p.validateDisk({...input,writeback:false},[]).writeback,false);
+  assert.equal(p.validateDisk({...input,mode:'direct'},[]).writeback,false);
+  for(const writeback of ['false','true',0,null])assert.throws(()=>p.validateDisk({...input,writeback},[]),/暂存设置/);
+});
 test('each volume gets an isolated backend prefix',()=>{
   assert.equal(p.backendRoot({type:'s3',source:'cloud:bucket'},d.id),`cloud:bucket/.cloud-island/${d.id}`);
   assert.equal(p.backendRoot({type:'webdav',source:'cloud:'},d.id),`cloud:.cloud-island/${d.id}`);
@@ -16,13 +24,19 @@ test('S3 gateway is local and never has an asynchronous VFS write cache',()=>{
   const a=p.gatewayArgs('/tmp/a b',1234,4567,'/tmp/cache','/tmp/cfg');
   assert.equal(a[a.indexOf('--addr')+1],'127.0.0.1:1234');
   assert.equal(a[a.indexOf('--vfs-cache-mode')+1],'off');
+  assert.ok(a.includes('--no-cleanup'), 'object deletion must not race creation of shared parent directories');
   assert.ok(!a.includes('--auth-key'));
+});
+test('OneDrive volume upload sessions are serialized without changing other backends',()=>{
+  const a=p.juiceMountArgs(d,{cache:'C:\\cache'},1234,{type:'onedrive'});
+  assert.equal(a[a.indexOf('--max-uploads')+1],'1');
+  assert.ok(!p.juiceMountArgs(d,{cache:'C:\\cache'},1234,{type:'baidu'}).includes('--max-uploads'));
 });
 test('Windows ownership uses JuiceFS built-in current-user mapping',()=>{
   const a=p.juiceMountArgs(d,{cache:'C:\\cache'},1234);
   assert.ok(a.includes('--no-usage-report'));assert.ok(a.includes('--as-root'));
   assert.ok(!a.includes('--umask'), 'Windows JuiceFS rejects the Unix-only umask flag');
-  assert.ok(!a.includes('-o'), 'Do not override the built-in uid=-1,gid=-1 mapping');
+  assert.ok(!a.some(x=>/(?:^|,)(?:uid|gid|uidmap|gidmap)=/.test(x)), 'Do not override the built-in uid=-1,gid=-1 mapping');
   assert.ok(!a.some(x=>x.includes('uidmap=')), 'WinFsp rejects explicit UID 0 mapping');
   assert.ok(!a.includes('--writeback'));assert.ok(p.juiceMountArgs({...d,writeback:true},{cache:'C:\\cache'},1234).includes('--writeback'));
   assert.ok(p.formatArgs(1234,'test').includes('--no-update'));

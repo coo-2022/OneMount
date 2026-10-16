@@ -15,6 +15,47 @@
           "after": "\t// VFS.Mkdir is intentionally idempotent for internal rclone callers.\n\t// The filesystem boundary must reject an existing name. Serialize the\n\t// check/create pair so concurrent requests through this mount have one winner.\n\tfsys.mkdirMu.Lock()\n\tdefer fsys.mkdirMu.Unlock()\n\tif _, err := parentDir.Stat(leaf); err == nil {\n\t\treturn -fuse.EEXIST\n\t} else if err != vfs.ENOENT {\n\t\treturn translateError(err)\n\t}\n\t_, err := parentDir.Mkdir(leaf)\n\treturn translateError(err)\n}"
         }
       ]
+    },
+    {
+      "id": "s3-serialized-object-mutations",
+      "file": "cmd/serve/s3/backend.go",
+      "sourceSha256": "f7800ddf53de95288b757569dae812644f8ce8e1f98d48a50b87404f6054da3d",
+      "replacements": [
+        {
+          "before": "\tmeta *sync.Map\n",
+          "after": "\tmeta *sync.Map\n\tmkdirMu sync.Mutex\n\tobjectLocks [64]chan struct{}\n"
+        },
+        {
+          "before": "\treturn &s3Backend{\n\t\ts:    s,\n\t\tmeta: new(sync.Map),\n\t}\n",
+          "after": "\tb := &s3Backend{\n\t\ts: s,\n\t\tmeta: new(sync.Map),\n\t}\n\tfor i := range b.objectLocks { b.objectLocks[i] = make(chan struct{}, 1) }\n\treturn b\n"
+        },
+        {
+          "before": "// ListBuckets always returns the default bucket.",
+          "after": "// Serialize retries so an older failed PUT cannot remove newer committed data.\nfunc (b *s3Backend) lockObject(ctx context.Context, bucket, object string) (func(), error) {\n h := uint32(2166136261)\n for _, c := range []byte(bucket + \"\\x00\" + object) { h = (h ^ uint32(c)) * 16777619 }\n ch := b.objectLocks[h % uint32(len(b.objectLocks))]\n select {\n case ch <- struct{}{}:\n  if err := ctx.Err(); err != nil { <-ch; return nil, err }\n  return func() { <-ch }, nil\n case <-ctx.Done(): return nil, ctx.Err()\n }\n}\n\n// ListBuckets always returns the default bucket."
+        },
+        {
+          "before": "\tinput io.Reader, size int64,\n) (result gofakes3.PutObjectResult, err error) {\n\t_vfs, err := b.s.getVFS(ctx)",
+          "after": "\tinput io.Reader, size int64,\n) (result gofakes3.PutObjectResult, err error) {\n\tunlock, err := b.lockObject(ctx, bucketName, objectName)\n\tif err != nil { return result, err }\n\tdefer unlock()\n\t_vfs, err := b.s.getVFS(ctx)"
+        },
+        {
+          "before": "\t\tif err := mkdirRecursive(objectDir, _vfs); err != nil {\n\t\t\treturn result, err\n\t\t}",
+          "after": "\t\tb.mkdirMu.Lock()\n\t\terr := mkdirRecursive(objectDir, _vfs)\n\t\tb.mkdirMu.Unlock()\n\t\tif err != nil { return result, err }"
+        },
+        {
+          "before": "func (b *s3Backend) deleteObject(ctx context.Context, bucketName, objectName string) error {\n",
+          "after": "func (b *s3Backend) deleteObject(ctx context.Context, bucketName, objectName string) error {\n\tunlock, err := b.lockObject(ctx, bucketName, objectName)\n\tif err != nil { return err }\n\tdefer unlock()\n"
+        },
+        {
+          "before": "\t// FIXME: unsafe operation\n\trmdirRecursive(fp, _vfs)",
+          "after": "\tif !b.s.opt.NoCleanup {\n\t\tb.mkdirMu.Lock()\n\t\trmdirRecursive(fp, _vfs)\n\t\tb.mkdirMu.Unlock()\n\t}"
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "source": "s3-gateway_test.go.txt",
+      "file": "cmd/serve/s3/onemount_test.go"
     }
   ]
 }
