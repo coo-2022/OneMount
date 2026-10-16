@@ -33,6 +33,9 @@ jobs:
       - name: Exercise real Windows filesystem mounts
         timeout-minutes: 8
         run: node scripts/windows-mount-integration.cjs
+      - name: Verify JuiceFS local disks and persistent cache transitions
+        timeout-minutes: 5
+        run: node scripts/windows-cache-settings-integration.cjs
       - name: Build portable Windows application
         run: npm run package:win
       - name: Install isolated desktop test tools
