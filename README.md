@@ -9,7 +9,7 @@ Windows 桌面存储管理器。统一管理账号、挂载、缓存与传输状
 ## 已实现
 
 - **网盘直连**：内部 rclone 1.75.0 + WinFsp，完整读写缓存，文件关闭并空闲 5 秒后上传。
-- **文件系统卷**：内部 JuiceFS 1.3.0，通过本机、需要认证的 S3 网关连接 rclone 后端。网关缓存关闭，避免双重异步写回；卷默认关闭 writeback。
+- **文件系统卷**：内部 JuiceFS 1.3.0，通过本机、需要认证的 S3 网关连接 rclone 后端。网关缓存关闭，避免双重异步写回；新建卷默认启用本地暂存与后台上传。
 - 软件内连接本地文件夹、WebDAV、S3 兼容存储，检查连接与选择目录。
 - 软件接管 OAuth 状态机、系统浏览器授权、问题选择、取消和超时。OneDrive、Google Drive、Dropbox 须先配置发布者自己的 OAuth 应用，才开放登录入口。
 - 百度网盘：自定义开放平台后端，设备码授权，支持网盘直连和文件系统卷。能力、测试与额外上传临时空间见 [百度后端说明](engine-src/rclone/backend/baidu/README.md)。
@@ -129,7 +129,9 @@ TEST_RCLONE=/absolute/rclone TEST_JUICEFS=/absolute/juicefs node scripts/integra
 
 在「我的磁盘 → 添加磁盘」选择「文件系统卷」，再选择已登录的百度网盘、OneDrive 或 Google Drive 连接。网盘保存 JuiceFS 数据块，文件名、目录、空文件和稀疏区域由本机元数据管理；因此百度的直连空文件限制不适用于此模式。网盘里原有的普通文件不会自动导入，不能通过网盘客户端直接编辑这些数据块。
 
-默认关闭后台上传。开启后由 JuiceFS 的本地暂存负责上传，仍需安全卸载。元数据、账号配置和未上传缓存都要保留；仅有网盘里的数据块不能直接恢复挂载。本分支不增加跨设备共享或恢复向导。
+新建卷默认开启「本地暂存与后台上传」，由 JuiceFS 将待上传数据保存在本机磁盘，再后台上传。可在「磁盘详情 → 缓存」调整开关与缓存容量；已有卷保留原设置，安全卸载后修改，下次挂载生效。如果上次异常退出后仍有待上传数据，必须先保持开启、挂载并完成上传，才能关闭。关闭此开关仍保留读取缓存。
+
+本地暂存完成不代表云端已保存，仍需安全卸载。元数据、账号配置和未上传缓存都要保留；仅有网盘里的数据块不能直接恢复挂载。本分支不增加跨设备共享或恢复向导。
 
 OneDrive 卷将同时上传的数据块限制为 1，减少慢响应下上传会话冲突。S3 网关为同一对象的 PUT/DELETE 提供进程内互斥，防止超时重试与旧请求的失败清理互相覆盖；删除块后保留空目录。补丁范围及回归测试见 [网关补丁说明](engine-src/rclone/patches/README.md)。
 
@@ -147,3 +149,7 @@ node scripts/windows-volume-ui-smoke.cjs
 真实网盘测试默认覆盖百度、OneDrive、Google Drive，以及关闭/开启后台上传两种模式；可用 `ONEMOUNT_LIVE_TYPES=baidu,drive` 和 `ONEMOUNT_LIVE_WRITEBACK=0,1` 选择范围。测试使用复制的加密账号配置及独立盘符，不复用用户挂载；校验中文路径、跨块数据、随机写、追加、空文件、稀疏文件、截断、重命名、删除和两次冷缓存重启，最后检查远端数据块。报告、元数据、缓存备份均保留在被 Git 忽略的 `test-results/cloud-volume-*/`，远端测试卷也保留供核对。真实账号测试不会随 `npm test` 自动执行。
 
 本次验证记录见 [JuiceFS 网盘后端验证](docs/JUICEFS-CLOUD-VALIDATION-2026-10-14.md)。
+
+文件系统测试基线保存在 [测试矩阵（Excel，2026-10-16）](docs/FILESYSTEM-TEST-MATRIX-2026-10-16.xlsx) 和 [可维护清单（JSON）](docs/FILESYSTEM-TEST-MATRIX.json)。矩阵按 L1–L5、功能和用例来源分类，包含 364 条主清单、1004 条历史执行记录，以及固定版本 JuiceFS 的 844 条静态测试目录和 71 个 CI 作业。目录纳入不等于执行通过；失败、超时、跳过、待执行和不适用项分别保留，参数组合与断言不另外计作独立用例。
+
+运行方式见 [JuiceFS 官方 Windows 测试说明](docs/JUICEFS-UPSTREAM-TESTING.md)，结果见 [2026-10-14](docs/JUICEFS-UPSTREAM-VALIDATION-2026-10-14.md) 和 [2026-10-15](docs/JUICEFS-UPSTREAM-VALIDATION-2026-10-15.md)。已确认的截断一致性问题见 [根因与复现](docs/JUICEFS-TRUNCATE-INVESTIGATION-2026-10-15.md) 和 [后续版本核查](docs/JUICEFS-VERSION-CHECK-2026-10-16.md)，这些已知问题尚未在引擎中修复。

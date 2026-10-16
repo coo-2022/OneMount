@@ -141,8 +141,12 @@ class Manager extends EventEmitter {
       const d = this.disk(id); if (this.runtime.has(id)) throw new Error('请先卸载磁盘再调整设置');
       const next = plan.validateDisk({...d,
         name: input.name === undefined ? d.name : input.name,
+        writeback: input.writeback === undefined ? d.writeback === true : input.writeback,
         cacheGiB: input.cacheGiB === undefined ? d.cacheGiB : input.cacheGiB}, []);
-      d.name = next.name; d.cacheGiB = next.cacheGiB;
+      if (d.mode === 'juicefs' && input.writeback === false && await this.hasStagedUploads(this.paths(d).cache)) {
+        throw new Error('本地仍有待上传数据。请保持后台上传开启，挂载并完成上传、安全卸载后再关闭。');
+      }
+      d.name = next.name; d.cacheGiB = next.cacheGiB; d.writeback = next.writeback;
       if (typeof input.autoMount === 'boolean') d.autoMount = input.autoMount;
       this.save();
     });
@@ -282,6 +286,31 @@ class Manager extends EventEmitter {
       else {let v; try {v = JSON.parse(await fsp.readFile(p, 'utf8'));} catch (err) {if (err.code === 'ENOENT') continue; throw new Error('暂时无法确认缓存状态，请稍后重试');} if (v.Dirty) dirty++;}
     }
     return dirty;
+  }
+  async hasStagedUploads(cacheDir) {
+    // JuiceFS 1.3 stores durable pending blocks under <cache>/<volume UUID>/rawstaging.
+    // Inspect only staging, never the potentially large disposable read cache.
+    const entries = async dir => {
+      try {return await fsp.readdir(dir, {withFileTypes: true});}
+      catch (e) {if (e.code === 'ENOENT') return []; throw new Error('暂时无法确认本地待上传数据，已保留原设置。请检查缓存目录后重试。');}
+    };
+    const containsFile = async dir => {
+      for (const entry of await entries(dir)) {
+        if (!entry.isDirectory() || entry.isSymbolicLink()) return true;
+        if (await containsFile(path.join(dir, entry.name))) return true;
+      }
+      return false;
+    };
+    for (const entry of await entries(cacheDir)) {
+      if (entry.isSymbolicLink()) throw new Error('缓存目录结构异常，已保留原设置。');
+      if (entry.isDirectory()) {
+        const staging = path.join(cacheDir, entry.name, 'rawstaging');
+        try {if ((await fsp.lstat(staging)).isSymbolicLink()) throw new Error('缓存目录结构异常，已保留原设置。');}
+        catch (e) {if (e.code !== 'ENOENT') throw e;}
+        if (await containsFile(staging)) return true;
+      }
+    }
+    return false;
   }
   async stopUnstartedDirect(id, r) {
     const d = this.disk(id);

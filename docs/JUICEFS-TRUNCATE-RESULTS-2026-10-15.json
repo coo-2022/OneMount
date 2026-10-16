@@ -1,0 +1,187 @@
+{
+  "date": "2026-10-15",
+  "status": "confirmed_unfixed_engine_defect",
+  "upstreamCommit": "30190ca1094d26e85f19a979ca51b0ea19af1eaa",
+  "rootCause": "VFS.Truncate discards writer.Flush EIO and truncates metadata while an older slice is pending. Its later commit extends the file again.",
+  "originalFailure": {
+    "source": "juicefs-upstream-run-folzy6",
+    "inode": 771,
+    "slices": [
+      {
+        "pos": 0,
+        "id": 285,
+        "size": 100000,
+        "off": 0,
+        "len": 100000
+      },
+      {
+        "pos": 25248,
+        "id": 0,
+        "size": 0,
+        "off": 0,
+        "len": 74752
+      },
+      {
+        "pos": 49152,
+        "id": 286,
+        "size": 49152,
+        "off": 0,
+        "len": 49152
+      }
+    ],
+    "blocks": [
+      {
+        "name": "285_0_100000",
+        "payloadSize": 100000,
+        "cacheSize": 100016,
+        "cacheSha256": "8d65ee318884abd0834eec8bc9adc89f1206fe31e2a3fb41c7295cd0f4274afd",
+        "warmEqualsCold": true
+      },
+      {
+        "name": "286_0_49152",
+        "payloadSize": 49152,
+        "cacheSize": 49160,
+        "cacheSha256": "47b7a5c15c85e95105dba59f652f05518731c1336277cee1d0c71d0123642992",
+        "warmEqualsCold": true
+      }
+    ],
+    "warm": {
+      "bytes": 25248,
+      "sha256": "cefe5d986341da7b84bdf5afbbd5844dc3ca41ec44e70fe1bf7ebff3cdf56c24"
+    },
+    "cold": {
+      "bytes": 98304,
+      "sha256": "1e494cef93b0b179e78b755ff6c9611291032625471849baac068614b628ac84"
+    },
+    "preservedPrefix": true,
+    "zeroGap": [
+      25248,
+      49152
+    ],
+    "lateWrite": [
+      49152,
+      98304
+    ],
+    "mappedWriteOperation": 206,
+    "bothOriginalDigestsReproduced": true
+  },
+  "localFaultReproduction": {
+    "directory": "juicefs-truncate-fault-1zMiy6",
+    "engineSha256": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+    "started": "2026-10-15T14:47:51.297Z",
+    "finished": "2026-10-15T14:53:45.099Z",
+    "workerExit": 0,
+    "completed": true,
+    "forcedTermination": false,
+    "truncate": {
+      "name": "truncate_returned",
+      "time": 1792075974.1553135,
+      "event": "truncate_returned",
+      "elapsed": 300.81200000000536,
+      "size": 25248
+    },
+    "snapshots": [
+      {
+        "label": "baseline",
+        "time": "2026-10-15T14:47:53.347Z",
+        "inode": 2,
+        "length": 100000,
+        "slices": "000000000000000000000001000186A000000000000186A0"
+      },
+      {
+        "label": "truncate_before_release",
+        "time": "2026-10-15T14:52:54.566Z",
+        "inode": 2,
+        "length": 25248,
+        "slices": "000000000000000000000001000186A000000000000186A0000062A00000000000000000000000000000000000012400"
+      },
+      {
+        "label": "after_close",
+        "time": "2026-10-15T14:53:43.521Z",
+        "inode": 2,
+        "length": 98304,
+        "slices": "000000000000000000000001000186A000000000000186A0000062A000000000000000000000000000000000000124000000C00000000000000000020000C000000000000000C000"
+      },
+      {
+        "label": "warm",
+        "time": "2026-10-15T14:53:43.530Z",
+        "size": 98304,
+        "sha256": "bc6a4dbde1c3dab9a28124d9a76165bd94a6af65e06e38638eccf67ac7ab8d94"
+      },
+      {
+        "label": "after_unmount",
+        "time": "2026-10-15T14:53:44.127Z",
+        "inode": 2,
+        "length": 98304,
+        "slices": "000000000000000000000001000186A000000000000186A0000062A000000000000000000000000000000000000124000000C00000000000000000020000C000000000000000C000"
+      },
+      {
+        "label": "cold",
+        "time": "2026-10-15T14:53:44.551Z",
+        "size": 98304,
+        "sha256": "bc6a4dbde1c3dab9a28124d9a76165bd94a6af65e06e38638eccf67ac7ab8d94"
+      }
+    ],
+    "heldPutAttempts": 7
+  },
+  "localControl": {
+    "directory": "juicefs-truncate-fault-44vSzl",
+    "engineSha256": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+    "started": "2026-10-15T14:54:29.478Z",
+    "finished": "2026-10-15T14:54:32.807Z",
+    "workerExit": 0,
+    "completed": true,
+    "forcedTermination": false,
+    "truncate": {
+      "name": "truncate_returned",
+      "time": 1792076071.386318,
+      "event": "truncate_returned",
+      "elapsed": 0.01600000000325963,
+      "size": 25248
+    },
+    "snapshots": [
+      {
+        "label": "baseline",
+        "time": "2026-10-15T14:54:31.379Z",
+        "inode": 2,
+        "length": 100000,
+        "slices": "000000000000000000000001000186A000000000000186A0"
+      },
+      {
+        "label": "truncate_before_release",
+        "time": "2026-10-15T14:54:31.387Z",
+        "inode": 2,
+        "length": 25248,
+        "slices": "000000000000000000000001000186A000000000000186A00000C00000000000000000030000C000000000000000C000000062A00000000000000000000000000000000000012400"
+      },
+      {
+        "label": "after_close",
+        "time": "2026-10-15T14:54:31.398Z",
+        "inode": 2,
+        "length": 25248,
+        "slices": "000000000000000000000001000186A000000000000186A00000C00000000000000000030000C000000000000000C000000062A00000000000000000000000000000000000012400"
+      },
+      {
+        "label": "warm",
+        "time": "2026-10-15T14:54:31.401Z",
+        "size": 25248,
+        "sha256": "1213b157d2e5e10d7bca6d3039ec905566c309592400d0ecf2839058affe31e5"
+      },
+      {
+        "label": "after_unmount",
+        "time": "2026-10-15T14:54:31.893Z",
+        "inode": 2,
+        "length": 25248,
+        "slices": "000000000000000000000001000186A000000000000186A00000C00000000000000000030000C000000000000000C000000062A00000000000000000000000000000000000012400"
+      },
+      {
+        "label": "cold",
+        "time": "2026-10-15T14:54:32.304Z",
+        "size": 25248,
+        "sha256": "1213b157d2e5e10d7bca6d3039ec905566c309592400d0ecf2839058affe31e5"
+      }
+    ],
+    "heldPutAttempts": 0
+  },
+  "productionEngineModified": false
+}

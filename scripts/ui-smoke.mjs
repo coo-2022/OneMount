@@ -20,8 +20,8 @@ try{
  await p.locator('#add-disk-form [name="name"]').fill('我的资料');await p.getByRole('button',{name:'创建磁盘',exact:true}).click();await p.getByRole('heading',{name:'我的资料',exact:true}).waitFor();
  let snapshot=await p.evaluate(()=>window.island.invoke('snapshot'));assert.equal(snapshot.disks[0].mode,'direct');assert.equal(snapshot.disks[0].letter,'X:');
  await p.locator('.ir-nav [data-nav="home"]').click();await p.getByRole('button',{name:'添加磁盘',exact:true}).click();await p.locator('[data-mode="juicefs"]').click();await p.locator('#add-disk-form [name="name"]').fill('工作空间');await p.getByRole('button',{name:'创建磁盘',exact:true}).click();await p.getByRole('heading',{name:'工作空间',exact:true}).waitFor();
- snapshot=await p.evaluate(()=>window.island.invoke('snapshot'));assert.equal(snapshot.disks[1].mode,'juicefs');assert.equal(snapshot.disks[1].writeback,false);assert.equal(snapshot.disks[1].letter,'Y:');
- await p.locator('[data-tab="advanced"]').click();await p.locator('#disk-settings [name="cacheGiB"]').fill('20');await p.getByRole('button',{name:'保存设置',exact:true}).click();snapshot=await p.evaluate(()=>window.island.invoke('snapshot'));assert.equal(snapshot.disks[1].cacheGiB,20);
+ snapshot=await p.evaluate(()=>window.island.invoke('snapshot'));assert.equal(snapshot.disks[1].mode,'juicefs');assert.equal(snapshot.disks[1].writeback,true);assert.equal(snapshot.disks[1].letter,'Y:');
+ await p.locator('[data-tab="cache"]').click();await p.locator('#cache-settings [name="cacheGiB"]').fill('20');await p.getByRole('button',{name:'保存缓存设置',exact:true}).click();snapshot=await p.evaluate(()=>window.island.invoke('snapshot'));assert.equal(snapshot.disks[1].cacheGiB,20);
  await p.locator('.ir-nav [data-nav="home"]').click();
  fs.mkdirSync(path.join(root,'screenshots'),{recursive:true});await p.locator('#toast').evaluate(el=>el.hidden=true);await p.screenshot({path:path.join(root,'screenshots/desktop.png')});
  await p.getByRole('button',{name:'添加磁盘',exact:true}).click();await p.screenshot({path:path.join(root,'screenshots/create-disk.png')});await p.getByRole('button',{name:'取消',exact:true}).click();

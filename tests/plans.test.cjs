@@ -7,6 +7,14 @@ test('drive input and duplicates rejected', () => {
   for (const patch of [{letter:'C:'},{letter:'X: & cmd.exe'},{cacheGiB:0},{cacheGiB:NaN},{mode:'shell'},{name:''}]) assert.throws(()=>p.validateDisk({...d,...patch},[]));
   assert.throws(()=>p.validateDisk(d,[d]));
 });
+
+test('new volumes default to disk writeback while explicit synchronous mode and direct mode are preserved',()=>{
+  const input={...d};delete input.writeback;
+  assert.equal(p.validateDisk(input,[]).writeback,true);
+  assert.equal(p.validateDisk({...input,writeback:false},[]).writeback,false);
+  assert.equal(p.validateDisk({...input,mode:'direct'},[]).writeback,false);
+  for(const writeback of ['false','true',0,null])assert.throws(()=>p.validateDisk({...input,writeback},[]),/暂存设置/);
+});
 test('each volume gets an isolated backend prefix',()=>{
   assert.equal(p.backendRoot({type:'s3',source:'cloud:bucket'},d.id),`cloud:bucket/.cloud-island/${d.id}`);
   assert.equal(p.backendRoot({type:'webdav',source:'cloud:'},d.id),`cloud:.cloud-island/${d.id}`);

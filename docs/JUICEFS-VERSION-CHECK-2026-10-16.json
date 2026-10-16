@@ -1,0 +1,132 @@
+{
+  "checkedAt": "2026-10-16T02:36:25.613Z",
+  "date": "2026-10-16",
+  "latestStable": "v1.4.1",
+  "mainCommit": "2553b958a6f4bb58d86ac7adff4789a9cb82c32f",
+  "mainCommittedAt": "2026-10-16T01:53:44Z",
+  "originalTruncateFunctionSha256": "19ea838a2c4ce0df8ba297e6efb6177aa53ae69775c6b1dc5d53ba61b7b6d249",
+  "versions": [
+    {
+      "ref": "v1.3.3",
+      "truncateSha256": "19ea838a2c4ce0df8ba297e6efb6177aa53ae69775c6b1dc5d53ba61b7b6d249",
+      "discardFlushError": true,
+      "flushHasFiveMinuteMinimum": true,
+      "flushReturnsEio": true,
+      "flushLine": 611,
+      "lengthExtension": true,
+      "identicalTruncateFunctionTo130": true,
+      "sourceFiles": [
+        {
+          "name": "vfs.go",
+          "sha256": "5e5031e3abbc2be9d8e2e93335b96279feb40dbbab852907e73b9edcc44f5aa8"
+        },
+        {
+          "name": "writer.go",
+          "sha256": "41f15d8615d20d4eab272509f982b423bf42db762d396768fc9e62183eb3d28b"
+        },
+        {
+          "name": "sql.go",
+          "sha256": "2a013bf3376cf1f02ea3612fef47c7b4a4251e09f373107db0a53eedf97c6a34"
+        }
+      ],
+      "publishedAt": "2026-08-07T09:12:29Z",
+      "archiveUrl": "https://github.com/juicedata/juicefs/releases/download/v1.3.3/juicefs-1.3.3-windows-amd64.tar.gz",
+      "archiveSha256": "sha256:2f184730503aec5d003e8da74d85a4d2cedd4c7257317734693a75ec9d7ce17d",
+      "verifiedArchiveDigest": "2f184730503aec5d003e8da74d85a4d2cedd4c7257317734693a75ec9d7ce17d"
+    },
+    {
+      "ref": "v1.4.1",
+      "truncateSha256": "19ea838a2c4ce0df8ba297e6efb6177aa53ae69775c6b1dc5d53ba61b7b6d249",
+      "discardFlushError": true,
+      "flushHasFiveMinuteMinimum": true,
+      "flushReturnsEio": true,
+      "flushLine": 619,
+      "lengthExtension": true,
+      "identicalTruncateFunctionTo130": true,
+      "sourceFiles": [
+        {
+          "name": "vfs.go",
+          "sha256": "c5a565bcad64375c39b7ba2c3f3caefb57bb28b4a50360e5fdce5d52a4c9bbbc"
+        },
+        {
+          "name": "writer.go",
+          "sha256": "ea349dfecd7a787cbebb7e5f10dc05cdf4af146361856e67ecd0ed7e6aa838fe"
+        },
+        {
+          "name": "sql.go",
+          "sha256": "653807edd8bd488b0fecacb7d5e758dd0d0758d28c1fab7c419625c71e966d45"
+        }
+      ],
+      "publishedAt": "2026-07-30T08:03:19Z",
+      "archiveUrl": "https://github.com/juicedata/juicefs/releases/download/v1.4.1/juicefs-1.4.1-windows-amd64.tar.gz",
+      "archiveSha256": "sha256:461d8c0c159d8c06f8a48778ef213ce26104afbe2b4c110afd0def0187d6cde6",
+      "verifiedArchiveDigest": "461d8c0c159d8c06f8a48778ef213ce26104afbe2b4c110afd0def0187d6cde6"
+    },
+    {
+      "ref": "main",
+      "truncateSha256": "19ea838a2c4ce0df8ba297e6efb6177aa53ae69775c6b1dc5d53ba61b7b6d249",
+      "discardFlushError": true,
+      "flushHasFiveMinuteMinimum": true,
+      "flushReturnsEio": true,
+      "flushLine": 627,
+      "lengthExtension": true,
+      "identicalTruncateFunctionTo130": true,
+      "sourceFiles": [
+        {
+          "name": "vfs.go",
+          "sha256": "45811f2e60f150e71181d1f39beeb7ebca5212cb2f56b641d49ea309363d48cb"
+        },
+        {
+          "name": "writer.go",
+          "sha256": "8e029050d2f57fccaac51c750bf4cbe17143ae8fcd27b389a84dbceee3e505e8"
+        },
+        {
+          "name": "sql.go",
+          "sha256": "f293f7ddd361d4b26f6f0b481d3ecd26604229d66906d79bcafa34c4d7c5e9fe"
+        }
+      ]
+    }
+  ],
+  "completedAt": "2026-10-16T02:41:13.340Z",
+  "conclusion": "not_fixed",
+  "runtimeTests": [
+    {
+      "releaseTag": "v1.3.3",
+      "engineVersion": "juicefs version 1.3.2+2026-08-07.f65ce9b",
+      "engineSha256": "14dc65ecaec707707ad8431c2472a5d370a38c791ab52be080cd2b0995412ee2",
+      "evidenceDirectory": "juicefs-truncate-fault-7UQmHH",
+      "started": "2026-10-16T02:34:59.217Z",
+      "finished": "2026-10-16T02:40:05.647Z",
+      "truncateReturnedSuccess": true,
+      "truncateWaitSeconds": 300.68700000000536,
+      "truncateSize": 25248,
+      "finalSize": 98304,
+      "coldSha256": "bc6a4dbde1c3dab9a28124d9a76165bd94a6af65e06e38638eccf67ac7ab8d94",
+      "workerExit": 0,
+      "forcedTermination": false,
+      "defectReproduced": true
+    },
+    {
+      "releaseTag": "v1.4.1",
+      "engineVersion": "juicefs version 1.4.1+2026-07-30.0b90c7d",
+      "engineSha256": "5d19acaded4428e2848075b86f9110393c19a1df894876189aeeb278026f571d",
+      "evidenceDirectory": "juicefs-truncate-fault-qbwApl",
+      "started": "2026-10-16T02:34:59.164Z",
+      "finished": "2026-10-16T02:40:04.518Z",
+      "truncateReturnedSuccess": true,
+      "truncateWaitSeconds": 300.0469999999914,
+      "truncateSize": 25248,
+      "finalSize": 98304,
+      "coldSha256": "bc6a4dbde1c3dab9a28124d9a76165bd94a6af65e06e38638eccf67ac7ab8d94",
+      "workerExit": 0,
+      "forcedTermination": false,
+      "defectReproduced": true
+    }
+  ],
+  "mainRuntimeTested": false,
+  "latestMainChange": {
+    "pr": 7693,
+    "scope": "Rate-limit diagnostic stack dumps only; EIO and truncate handling unchanged"
+  },
+  "productionEngineUnchanged": true
+}
