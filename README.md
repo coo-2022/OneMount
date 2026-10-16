@@ -150,6 +150,10 @@ node scripts/windows-volume-ui-smoke.cjs
 
 本次验证记录见 [JuiceFS 网盘后端验证](docs/JUICEFS-CLOUD-VALIDATION-2026-10-14.md)。
 
-文件系统测试基线保存在 [测试矩阵（Excel，2026-10-16）](docs/FILESYSTEM-TEST-MATRIX-2026-10-16.xlsx) 和 [可维护清单（JSON）](docs/FILESYSTEM-TEST-MATRIX.json)。矩阵按 L1–L5、功能和用例来源分类，包含 364 条主清单、1004 条历史执行记录，以及固定版本 JuiceFS 的 844 条静态测试目录和 71 个 CI 作业。目录纳入不等于执行通过；失败、超时、跳过、待执行和不适用项分别保留，参数组合与断言不另外计作独立用例。
+文件系统测试基线保存在 [测试矩阵归档（Excel，2026-10-16）](docs/FILESYSTEM-TEST-MATRIX-2026-10-16.xlsx) 和 [当前清单（JSON）](docs/FILESYSTEM-TEST-MATRIX.json)。矩阵按 L1–L5、功能和用例来源分类，包含 364 条主清单，以及固定版本 JuiceFS 的 844 条静态测试目录和 71 个 CI 作业。Excel 保留补测前的 1004 条历史执行记录；JSON 已回填后续补测，共 1149 条执行记录。目录纳入不等于执行通过；失败、超时、跳过、待执行和不适用项分别保留，参数组合与断言不另外计作独立用例。
+
+最新结论见 [2026-10-16 综合验证](docs/FILESYSTEM-VALIDATION-2026-10-16.md)：复用已有网盘、单元和界面测试，补测 37 个 WinFsp 可选入口、命令检查、应用负载及写缓存恢复。完整 Windows 文件语义仍有失败，不能视为文件系统完备性已获保证。
+
+JuiceFS 卷现按 Windows 本地固定磁盘注册，见[本地磁盘变更与定向回归](docs/JUICEFS-LOCAL-DISK-VALIDATION-2026-10-16.md)。综合语义矩阵保留变更前的网络磁盘基准；本地盘模式已验证基本读写、缓存切换及安全卸载，完整上游语义尚未在新挂载类型下重跑。
 
 运行方式见 [JuiceFS 官方 Windows 测试说明](docs/JUICEFS-UPSTREAM-TESTING.md)，结果见 [2026-10-14](docs/JUICEFS-UPSTREAM-VALIDATION-2026-10-14.md) 和 [2026-10-15](docs/JUICEFS-UPSTREAM-VALIDATION-2026-10-15.md)。已确认的截断一致性问题见 [根因与复现](docs/JUICEFS-TRUNCATE-INVESTIGATION-2026-10-15.md) 和 [后续版本核查](docs/JUICEFS-VERSION-CHECK-2026-10-16.md)，这些已知问题尚未在引擎中修复。

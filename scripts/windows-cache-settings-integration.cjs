@@ -15,6 +15,11 @@ const report={started:new Date().toISOString(),fixture:base,checks:[],passed:fal
 const save=()=>fs.writeFileSync(path.join(base,'report.json'),JSON.stringify(report,null,2)+'\n');
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const check=name=>{report.checks.push(name);console.log('PASS '+name);save();};
+async function assertLocalDisk(){
+  const info=JSON.parse(await P.run('powershell.exe',['-NoProfile','-NonInteractive','-Command',
+    `$d=[System.IO.DriveInfo]::new('${letter}:\\'); @{type=$d.DriveType.ToString();format=$d.DriveFormat;ready=$d.IsReady}|ConvertTo-Json -Compress`]));
+  assert.deepEqual(info,{type:'Fixed',format:'JuiceFS',ready:true},'JuiceFS must be a ready local disk');
+}
 async function main(){
   save();console.log('Fixture: '+base);await m.init();assert.ok(m.health.winfsp);
   const connectionId=await m.addLocal({name:'Cache settings test',path:backend});
@@ -24,11 +29,16 @@ async function main(){
   for(const [iteration,enabled] of [true,false,true].entries()){
     if(iteration)await m.updateDisk(id,{writeback:enabled,cacheGiB:2});
     await m.mount(id);
+    await assertLocalDisk();
     assert.equal(m.runtime.get(id).jfs.spawnargs.includes('--writeback'),enabled);
     await assert.rejects(m.updateDisk(id,{writeback:!enabled}),/先卸载/);
     if(!iteration){fs.writeFileSync(file,data);gatewayPort=d.gatewayPort;}
     else {assert.equal(d.gatewayPort,gatewayPort);assert.equal(hash(fs.readFileSync(file)),expected);}
     fs.appendFileSync(file,Buffer.from('\nmode='+enabled));expected=hash(fs.readFileSync(file));
+    const original=letter+':\\permission-check.txt',renamed=letter+':\\renamed-check.txt';
+    fs.writeFileSync(original,'current-user write');fs.accessSync(original,fs.constants.R_OK|fs.constants.W_OK);
+    fs.renameSync(original,renamed);assert.equal(fs.readFileSync(renamed,'utf8'),'current-user write');
+    fs.unlinkSync(renamed);assert.ok(!fs.existsSync(renamed));
     await P.waitFor(async()=>{await m.poll();const s=m.runtime.get(id)?.stats;return s?.known&&s.pendingBlocks===0&&s.pendingBytes===0;},90000);
     await m.unmount(id);assert.ok(!fs.existsSync(letter+':\\'));
     assert.ok(fs.statSync(paths.meta).size>0);assert.equal(await m.hasStagedUploads(paths.cache),false);
@@ -36,9 +46,9 @@ async function main(){
     const from=path.resolve(paths.cache),to=path.resolve(paths.dir,'cache-verified-'+iteration);
     for(const target of [from,to])assert.ok(target.startsWith(path.resolve(base)+path.sep));
     fs.renameSync(from,to);fs.mkdirSync(from);
-    check('writeback='+enabled+': real mount, writes, mounted edit blocked, uploads drained, safe unmount'+(iteration?', cold read hash verified':''));
+    check('writeback='+enabled+': local Fixed disk, current-user read/write, rename/delete, mounted edit blocked, uploads drained, safe unmount'+(iteration?', cold read hash verified':''));
   }
-  await m.mount(id);assert.equal(hash(fs.readFileSync(file)),expected);await m.unmount(id);
+  await m.mount(id);await assertLocalDisk();assert.equal(hash(fs.readFileSync(file)),expected);await m.unmount(id);
   check('final cold read matches after both cache-mode transitions');
   report.passed=true;
 }

@@ -1,0 +1,2813 @@
+{
+  "date": "2026-10-16",
+  "productCommit": "e5460c303ad1baf16212e3fbafdd9ed321fc8beb",
+  "sourcePolicy": "Raw reports retained unchanged. Outcome parsers corrected from original logs, never by rerunning a failed assertion.",
+  "engineSha256": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+  "rcloneSha256": "080c018d446081e1b8a725044a88e15e995b08b09ed36dfa7e1b1725e039285e",
+  "native": [
+    {
+      "target": "ntfs",
+      "evidence": "test-results/filesystem-gaps-ntfs-2uIIwa/report.json",
+      "reportSha256": "7153510e4fee48a55a36a04b2c4ea60d0316f99786550c507ee9eed7e5485ada",
+      "nativeToolSha256": "19b938adfe1e662406bd896a620c72aa78b803c8710c0c8f9c64f405cd026f97",
+      "safelyUnmounted": null,
+      "cases": [
+        {
+          "id": "WFP-OPT-04",
+          "title": "getfileinfo_name_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+getfileinfo_name_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.087,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-04.log",
+          "logSha256": "1186824d13149afa8f9a039f3fef936213022927b9e3bfaa771e741799a2b24a",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-07",
+          "title": "querydir_nodup_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+querydir_nodup_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.471,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-07.log",
+          "logSha256": "95acc57d11861b4340b07b156b5aba9dd0ce6a9b622879c92d0f2de44e419590",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-08",
+          "title": "querydir_single_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+querydir_single_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.728,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-08.log",
+          "logSha256": "093e62dedc2bf2912614f21f334a44a90df5db2bffe30456d8e2d0e8cac76730",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-01",
+          "title": "create_allocation_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+create_allocation_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.116,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-01.log",
+          "logSha256": "099ec30272118484eb8db7c13fe13e6f8244e124be91abceb6bb8f1b56c09cb9",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-02",
+          "title": "create_notraverse_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+create_notraverse_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.104,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-02.log",
+          "logSha256": "4e1f1b71fff029ded706aaa46dfb0baec58cadc4e607e6ba6cfe317222b04442",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-03",
+          "title": "getfileattr_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+getfileattr_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.098,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-03.log",
+          "logSha256": "07219f0553fe2bf93c0b7f5bf228e52bfc328aa309346a2dfd43f50faf3cba13",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-05",
+          "title": "setsecurity_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+setsecurity_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.105,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-05.log",
+          "logSha256": "ba600d918ad2a03366b65df2ff41d376c4f9595225f8f297d6dde27a146bb1b8",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-06",
+          "title": "security_stress_meta_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+security_stress_meta_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.16,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-06.log",
+          "logSha256": "4b793c3455df96963973db027d4fa89eec05f11d230b801e88247cf3da656e3b",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-16",
+          "title": "stream_create_sd_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_sd_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.089,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-16.log",
+          "logSha256": "560259d9677c4e481247ddc5dbf93f737e4a1a0979e19c24de1353a10a29c6e8",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-23",
+          "title": "stream_getsecurity_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getsecurity_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.105,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-23.log",
+          "logSha256": "c71210fa6d1c511639a858e1a784d793b41dcd4f62ecd3be591fc6b26765eb36",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-24",
+          "title": "stream_setsecurity_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_setsecurity_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.182,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-24.log",
+          "logSha256": "f074a62f79563e3b63138ed572ab40def56f3825d3febbde119fd8a652a5244a",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-17",
+          "title": "stream_create_share_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_share_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.119,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-17.log",
+          "logSha256": "0bd264931a4a1a1c6e53edcd76450e76790893a164a0cdddedfb28a3ead1fc85",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-28",
+          "title": "oplock_level1_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_level1_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 1.362,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-28.log",
+          "logSha256": "17fda57795bd829ac3e054d7708fb9699c03f1b52782469a2d6148faedba51cc",
+          "failure": [
+            "oplock_level1_test..................... KO",
+            "    ASSERT(ERROR_IO_PENDING == GetLastError()) failed at oplock-test.c:128:RequestOplock (err=c00000e2:300)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-29",
+          "title": "oplock_level2_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_level2_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.588,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-29.log",
+          "logSha256": "7357a5de1c91b26493ea6d0837725ae1d17bff8d797eeb0ea6e42c0eb25f74ab",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-30",
+          "title": "oplock_batch_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_batch_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.332,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-30.log",
+          "logSha256": "b054c4fb06cbf341c560849aeefc6abdfb73ce450abf4ee335a7417ef56dafee",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-31",
+          "title": "oplock_filter_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_filter_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.335,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-31.log",
+          "logSha256": "4a101619007d24dd6e40d2ff2e526f138e1605ce7847744d0717f4b74452b17d",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-32",
+          "title": "oplock_rwh_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_rwh_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.433,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-32.log",
+          "logSha256": "70dff67104bfe1ce4788f66eaccf27b19ad60578acb9ba73f474b330174dd70f",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-33",
+          "title": "oplock_rw_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_rw_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.337,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-33.log",
+          "logSha256": "f3e9cc068371ec15d7dabfabbca9eb83c65c058ed25813f50be29b233c8711ba",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-34",
+          "title": "oplock_rh_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_rh_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.571,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-34.log",
+          "logSha256": "0413956bb0607335d84769b20935b1696bcf8b11cb8a91493183430186b6ebb2",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-35",
+          "title": "oplock_r_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_r_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.574,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-35.log",
+          "logSha256": "f5ef09e1533732a5991b428e82b1b92b9903aba5999aa5023e5ac3295e0a73be",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-36",
+          "title": "oplock_not_granted_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_not_granted_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.095,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-36.log",
+          "logSha256": "846c6f7d19954f9c465b2597ba3427e3e0dc783b8f9b134ce3143edd9b08488f",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-13",
+          "title": "stream_create_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.096,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-13.log",
+          "logSha256": "cbbc688d9737b22fd263039ad5e865b1e1f8b08e09814765b9a05a2cbac95dca",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-14",
+          "title": "stream_create_overwrite_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_overwrite_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.1,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-14.log",
+          "logSha256": "aa828932ea6102ac2ebbd93e33f6912e9e52f908828ca62569c4a0c0155f5340",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-15",
+          "title": "stream_create_related_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_related_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.089,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-15.log",
+          "logSha256": "c3b1fa43406a7c0c08e928f9b907e54c132d63b9ab9948ff3caab812d75a53e8",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-18",
+          "title": "stream_getfileinfo_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getfileinfo_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.096,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-18.log",
+          "logSha256": "215e5908b018018080c21e6bd63d70c7a51323255e114e70ba26073e59d71f88",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-19",
+          "title": "stream_setfileinfo_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_setfileinfo_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.096,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-19.log",
+          "logSha256": "862b7847cdfc94ccbfd14997a56ab32cdcd26facc49a86ab7ff55dc860dcc698",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-20",
+          "title": "stream_delete_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_delete_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.107,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-20.log",
+          "logSha256": "8dec7ad3b0e8ae51bdf2266a75d4579923cf67fea1d42c1042a54c6e306e0c06",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-21",
+          "title": "stream_delete_pending_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_delete_pending_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.097,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-21.log",
+          "logSha256": "beec6c409c98496aecc716b0ca20da27c86a15880a948cbc0f90fbd81d94218a",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-22",
+          "title": "stream_rename_flipflop_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_rename_flipflop_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.122,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-22.log",
+          "logSha256": "f0596a772df57af1566acbac2f8de3b2b888f55826e7bc50769c5831182c6887",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-25",
+          "title": "stream_getstreaminfo_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getstreaminfo_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.137,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-25.log",
+          "logSha256": "468a639cbb7c83486f9dbd054d690d608d42c696a0e09bfbdede97585460bc86",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-26",
+          "title": "stream_getstreaminfo_expire_cache_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getstreaminfo_expire_cache_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.093,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-26.log",
+          "logSha256": "6080e8fa487c49d08b374c73b09e21cd83a09df485a92132bf9ebb9c848d0657",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-27",
+          "title": "stream_dirnotify_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_dirnotify_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.108,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-27.log",
+          "logSha256": "0c6b56e2cedb2927691e183bf45b26833ce36fc78e4983196cb5a1ba841ffec2",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-10",
+          "title": "ea_create_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+ea_create_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.103,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-10.log",
+          "logSha256": "bae3470ad6a5a1467142d644035aacb62bbbec43e28baaceaeb49fd82ddee871",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-11",
+          "title": "ea_overwrite_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+ea_overwrite_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.095,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-11.log",
+          "logSha256": "1e0692cbd20b004145c8b16cbf3c444737bae2bed34aff8950226202aaae6265",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-12",
+          "title": "ea_getset_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+ea_getset_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.104,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-12.log",
+          "logSha256": "6e29e54390ff92bf70c483535880f0de323217e52d872236f97ec28feebee160",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-09",
+          "title": "reparse_guid_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+reparse_guid_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.098,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-09.log",
+          "logSha256": "74c451f636c3cceb6a755f54ad67d2a95af459b2b53dff26e3dd84a5953c1192",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-37",
+          "title": "wsl_stat_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+wsl_stat_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.101,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-ntfs-2uIIwa/WFP-OPT-37.log",
+          "logSha256": "9ff479527593517046e58549153996f4adc4197c3b1d8583efe6cc857e21888f",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        }
+      ],
+      "nativeCounts": {
+        "passed": 36,
+        "failed": 1
+      },
+      "cliCounts": {}
+    },
+    {
+      "target": "juicefs",
+      "evidence": "test-results/filesystem-gaps-juicefs-rZjZcC/report.json",
+      "reportSha256": "582652562762b323c4ab764cfd11a27fcaacfc05f49a0d8eae21f8b6100af6d8",
+      "nativeToolSha256": "19b938adfe1e662406bd896a620c72aa78b803c8710c0c8f9c64f405cd026f97",
+      "safelyUnmounted": true,
+      "cases": [
+        {
+          "id": "WFP-OPT-04",
+          "title": "getfileinfo_name_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+getfileinfo_name_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.59,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-04.log",
+          "logSha256": "0756dccc00a3243d6cdf0e77572a06473ee6bf7bf4ab19eec7cd852f0d9ec366",
+          "failure": [
+            "getfileinfo_name_test.................. KO",
+            "    ASSERT(0 == wcscmp(OrigPath, FinalPath)) failed at info-test.c:359:getfileinfo_name_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-07",
+          "title": "querydir_nodup_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+querydir_nodup_test"
+          ],
+          "exitCode": 0,
+          "seconds": 13.668,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-07.log",
+          "logSha256": "425c4a20a12c027ea00c885b2b00a4cf053a6ee60362adbfdea6c00c65cfaf08",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-08",
+          "title": "querydir_single_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+querydir_single_test"
+          ],
+          "exitCode": 0,
+          "seconds": 27.15,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-08.log",
+          "logSha256": "c400815f63ec7a5baf6a3778eac8beb837534f2dbb4425f3879467c66cf70906",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-01",
+          "title": "create_allocation_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+create_allocation_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.536,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-01.log",
+          "logSha256": "ef14f17989dfbf4625be77733536b82655633147d9acae4cb74f44dcb26e6fa6",
+          "failure": [
+            "create_allocation_test................. KO",
+            "    ASSERT(65536 == StandardInfo.AllocationSize.QuadPart) failed at create-test.c:526:create_allocation_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-02",
+          "title": "create_notraverse_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+create_notraverse_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.379,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-02.log",
+          "logSha256": "d3f543af9959b490a46dcb90c285e21de70381b24ab10ffa52a9e26f7700e86a",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-03",
+          "title": "getfileattr_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+getfileattr_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.525,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-03.log",
+          "logSha256": "14cf6ccbeda62e010379d75ca2cab14c54c2933343f7fa67192d3a137c98cb1b",
+          "failure": [
+            "getfileattr_test....................... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at info-test.c:84:getfileattr_dotest (err=c0000022:5)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-05",
+          "title": "setsecurity_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+setsecurity_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.615,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-05.log",
+          "logSha256": "c1893dcc2ab2c6cc4ca4a398e9cd5c91b316d1b537b3696a1c5d36bc7475a03f",
+          "failure": [
+            "setsecurity_test....................... KO",
+            "    ASSERT(0 == wcscmp(L\"D:P(A;;FA;;;SY)(A;;FA;;;BA)\", ConvertedSddl)) failed at security-test.c:231:setsecurity_dotest (err=c0000023:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-06",
+          "title": "security_stress_meta_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+security_stress_meta_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.588,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-06.log",
+          "logSha256": "b7e119e1c88427ef2c6d8c12c5cb2b8593d9479b9d848096ab1cfcc2d97e2f63",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-16",
+          "title": "stream_create_sd_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_sd_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.662,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-16.log",
+          "logSha256": "24ed9a80fd92d3878b3492483c23f1c03ce9abe6fb9dd1d605062a8329a0ae2b",
+          "failure": [
+            "stream_create_sd_test.................. KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:553:stream_create_sd_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-23",
+          "title": "stream_getsecurity_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getsecurity_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.694,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-23.log",
+          "logSha256": "f4396ef683d12a0ead72f46a23f0aa25c45b6f7c4c5c0a47ddd6ec64d468dc12",
+          "failure": [
+            "stream_getsecurity_test................ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1659:stream_getsecurity_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-24",
+          "title": "stream_setsecurity_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_setsecurity_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.631,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-24.log",
+          "logSha256": "5905f1b6d27f8632702b543694cd70efdcee2d5e3f768e545667f79e2bad1712",
+          "failure": [
+            "stream_setsecurity_test................ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != StreamHandle) failed at stream-tests.c:1830:stream_setsecurity_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-17",
+          "title": "stream_create_share_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_share_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.509,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-17.log",
+          "logSha256": "0a34f03975f02a5b25c7149720c9411c24412bee24dd5811ed07c94056991644",
+          "failure": [
+            "stream_create_share_test............... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle1) failed at stream-tests.c:627:stream_create_share_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-28",
+          "title": "oplock_level1_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_level1_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.502,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-28.log",
+          "logSha256": "0bc2987d68cd3133c5f83c3285ce3909ed71bda2cecd0795563cd90ff9197dff",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-29",
+          "title": "oplock_level2_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_level2_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.792,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-29.log",
+          "logSha256": "343201688630bc09b599bf2b357c81ceaa1e2a6f8c81e7c20d2a38e50b31755e",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-30",
+          "title": "oplock_batch_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_batch_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.665,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-30.log",
+          "logSha256": "16bad9b29c2b4063205eff22c83058675e9cccf7be88a1e17a757bcee8cdc4ab",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-31",
+          "title": "oplock_filter_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_filter_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.571,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-31.log",
+          "logSha256": "4a101619007d24dd6e40d2ff2e526f138e1605ce7847744d0717f4b74452b17d",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-32",
+          "title": "oplock_rwh_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_rwh_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.548,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-32.log",
+          "logSha256": "ecef31c56a32c2c3b950c641ae5d0b15dc759348a3eaf6d4da01b7c6a4b19af4",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-33",
+          "title": "oplock_rw_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_rw_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.563,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-33.log",
+          "logSha256": "f3e9cc068371ec15d7dabfabbca9eb83c65c058ed25813f50be29b233c8711ba",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-34",
+          "title": "oplock_rh_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_rh_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.778,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-34.log",
+          "logSha256": "8b83d23d39ef97e67fcb25bdff4907a8d1ac7b150d384336b9ded2ac67dda595",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-35",
+          "title": "oplock_r_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_r_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.782,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-35.log",
+          "logSha256": "23240f5ad66eef50f0c7a63e5dfa65ee83a1bc70512769e13b25c23584c3841c",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-36",
+          "title": "oplock_not_granted_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_not_granted_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.313,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-36.log",
+          "logSha256": "846c6f7d19954f9c465b2597ba3427e3e0dc783b8f9b134ce3143edd9b08488f",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-13",
+          "title": "stream_create_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.542,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-13.log",
+          "logSha256": "6cc4fb1a098ca2a6c7bc3f81915d1ab1b41545a347d41244ac10a6619403f224",
+          "failure": [
+            "stream_create_test..................... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:46:stream_create_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-14",
+          "title": "stream_create_overwrite_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_overwrite_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.483,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-14.log",
+          "logSha256": "b740ea88d7c073199a3addff80e834e92fbf3428fde7157c78e0f9326d437d53",
+          "failure": [
+            "stream_create_overwrite_test........... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:381:stream_create_overwrite_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-15",
+          "title": "stream_create_related_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_related_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.544,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-15.log",
+          "logSha256": "0e53f0dc5cf2f47ac57a8c94645be80d8e8c01f1aa09e24392ce4034e82b5155",
+          "failure": [
+            "stream_create_related_test............. KO",
+            "    ASSERT(STATUS_SUCCESS == Result) failed at stream-tests.c:495:stream_create_related_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-18",
+          "title": "stream_getfileinfo_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getfileinfo_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.507,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-18.log",
+          "logSha256": "2f7eb0e472c7c978d6102b077f5cd1857d27829c248b8b8738ddf8c4211a1277",
+          "failure": [
+            "stream_getfileinfo_test................ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:957:stream_getfileinfo_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-19",
+          "title": "stream_setfileinfo_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_setfileinfo_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.478,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-19.log",
+          "logSha256": "1bcd43381e3c1a86fb601d14c8c3d8bdb7891d9cd2e3654d39f2c026332b2182",
+          "failure": [
+            "stream_setfileinfo_test................ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != StreamHandle) failed at stream-tests.c:1188:stream_setfileinfo_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-20",
+          "title": "stream_delete_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_delete_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.447,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-20.log",
+          "logSha256": "c498064f9405de37fbc15f6d731068a9a8a79fba98d8a5d2223b76ba6043f223",
+          "failure": [
+            "stream_delete_test..................... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1329:stream_delete_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-21",
+          "title": "stream_delete_pending_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_delete_pending_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.434,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-21.log",
+          "logSha256": "91c5c6e750b7ef806b64f07395cc14b6251b30b0fc68bcb9433a1df5b41d089f",
+          "failure": [
+            "stream_delete_pending_test............. KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1413:stream_delete_pending_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-22",
+          "title": "stream_rename_flipflop_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_rename_flipflop_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.401,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-22.log",
+          "logSha256": "295f3fa74bd6fdb3eafb99b776f56fb0f2ceaca5f2db1dff0dddfd13b8b2c54a",
+          "failure": [
+            "stream_rename_flipflop_test............ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1523:stream_rename_flipflop_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-25",
+          "title": "stream_getstreaminfo_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getstreaminfo_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.53,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-25.log",
+          "logSha256": "ba3cffc051794ec9a240a5a9cb1eafa43e2b6b8ef117be3df0c8e9c2f552485f",
+          "failure": [
+            "stream_getstreaminfo_test.............. KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1966:stream_getstreaminfo_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-26",
+          "title": "stream_getstreaminfo_expire_cache_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getstreaminfo_expire_cache_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.332,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-26.log",
+          "logSha256": "6080e8fa487c49d08b374c73b09e21cd83a09df485a92132bf9ebb9c848d0657",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-27",
+          "title": "stream_dirnotify_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_dirnotify_test"
+          ],
+          "exitCode": null,
+          "seconds": 90.041,
+          "status": "timeout",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-27.log",
+          "logSha256": "bdfa0c2cd43104da8ebcd140039c1072464673cfe123ef9b97754456e276a240",
+          "failure": []
+        },
+        {
+          "id": "WFP-OPT-10",
+          "title": "ea_create_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+ea_create_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.513,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-10.log",
+          "logSha256": "093d8ff6aa6f051a03577143967e869a518e3db5c6b69b4f42f4f01142c47d10",
+          "failure": [
+            "ea_create_test......................... KO",
+            "    ASSERT(STATUS_INVALID_EA_NAME == Result) failed at ea-test.c:707:ea_create_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-11",
+          "title": "ea_overwrite_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+ea_overwrite_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.492,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-11.log",
+          "logSha256": "6323fcd744459ded14efdce4c299334c4539395bdacc787560695dada180953f",
+          "failure": [
+            "ea_overwrite_test...................... KO",
+            "    ASSERT(STATUS_SUCCESS == Result) failed at ea-test.c:830:ea_overwrite_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-12",
+          "title": "ea_getset_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+ea_getset_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.523,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-12.log",
+          "logSha256": "11674d0bca5bc303469ca250e903fded3bdc39c326af63e790c1d4e8328a121f",
+          "failure": [
+            "ea_getset_test......................... KO",
+            "    ASSERT(STATUS_INVALID_EA_NAME == Result) failed at ea-test.c:906:ea_getset_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-09",
+          "title": "reparse_guid_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+reparse_guid_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.518,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-09.log",
+          "logSha256": "bece577b0abccc34f651e3ed6f91510fdf251505e488d33c614f072dc6b1b266",
+          "failure": [
+            "reparse_guid_test...................... KO",
+            "    ASSERT(Success) failed at reparse-test.c:65:reparse_guid_dotest (err=c0000277:4394)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-37",
+          "title": "wsl_stat_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+wsl_stat_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.557,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/WFP-OPT-37.log",
+          "logSha256": "499bbf08570a09f046075bec5dc6b5a588ec4484081b9e7e31f1650b5b3c6ba8",
+          "failure": [
+            "wsl_stat_test.......................... KO",
+            "    ASSERT(STATUS_INVALID_INFO_CLASS == Result || STATUS_NOT_IMPLEMENTED == Result) failed at wsl-test.c:155:wsl_stat_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "JFS-SMOKE-01",
+          "title": "info",
+          "args": [
+            "info",
+            "Q:\\cli-smoke\\hi.txt"
+          ],
+          "exitCode": 0,
+          "seconds": 0.58,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/JFS-SMOKE-01.log",
+          "logSha256": "7c884d7d986af2df16ae027d57a3404d5c7e93e839ae4b95686295442736ccd3"
+        },
+        {
+          "id": "JFS-SMOKE-02",
+          "title": "status (SQLite adaptation)",
+          "args": [
+            "status",
+            "sqlite3://meta.db"
+          ],
+          "exitCode": 0,
+          "seconds": 0.196,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/JFS-SMOKE-02.log",
+          "logSha256": "09f0a98db22d22a2ff7905739d2f1a7c022bdcc3232f2755f15d32f7e422787e",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Parse stdout JSON independently of stderr diagnostic timestamps."
+        },
+        {
+          "id": "JFS-SMOKE-03",
+          "title": "debug",
+          "args": [
+            "debug",
+            "--out-dir",
+            "C:\\Users\\coo\\Documents\\ChatGPT\\OpenEarth-Data\\OneMount\\test-results\\filesystem-gaps-juicefs-rZjZcC\\debug",
+            "Q:\\"
+          ],
+          "exitCode": 1,
+          "seconds": 5.757,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/JFS-SMOKE-03.log",
+          "logSha256": "3129cfb902cb3220ffc30fc26f1bb63f6a32e8bfa8ca65e5921345d012ba8199",
+          "failure": [
+            "2026/10/16 21:24:02.004337 juicefs[47488] <FATAL>: failed to get mount command: failed to run command line: wmic process where ProcessID=50196 get CommandLine, exec: \"wmic\": executable file not found in %PATH% [main@main.go:31]"
+          ],
+          "classification": "environment dependency: wmic unavailable"
+        },
+        {
+          "id": "JFS-SMOKE-04",
+          "title": "summary",
+          "args": [
+            "summary",
+            "Q:\\cli-smoke\\summary"
+          ],
+          "exitCode": 0,
+          "seconds": 0.51,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/JFS-SMOKE-04.log",
+          "logSha256": "fa54b43068484234631bc3c2241656002e4682db603ad57437058b0b30e5cce9",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "summary reports allocated space; validate one directory and two files, not logical byte count."
+        },
+        {
+          "id": "JFS-SMOKE-05",
+          "title": "stats",
+          "args": [
+            "stats",
+            "Q:\\",
+            "-c",
+            "5"
+          ],
+          "exitCode": 0,
+          "seconds": 4.236,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-rZjZcC/JFS-SMOKE-05.log",
+          "logSha256": "7f20ab059e43ffd5bfe541f8ee06f75231904e848f90650e3d83599d91e272cf"
+        }
+      ],
+      "nativeCounts": {
+        "failed": 22,
+        "passed": 14,
+        "timeout": 1
+      },
+      "cliCounts": {
+        "passed": 4,
+        "failed": 1
+      }
+    },
+    {
+      "target": "juicefs-writeback",
+      "evidence": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/report.json",
+      "reportSha256": "00be64c3fbc3f969d35404a021ee15ff8a30cc07712862c3684113abf37c8081",
+      "nativeToolSha256": "19b938adfe1e662406bd896a620c72aa78b803c8710c0c8f9c64f405cd026f97",
+      "safelyUnmounted": true,
+      "cases": [
+        {
+          "id": "WFP-OPT-04",
+          "title": "getfileinfo_name_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+getfileinfo_name_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.58,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-04.log",
+          "logSha256": "0756dccc00a3243d6cdf0e77572a06473ee6bf7bf4ab19eec7cd852f0d9ec366",
+          "failure": [
+            "getfileinfo_name_test.................. KO",
+            "    ASSERT(0 == wcscmp(OrigPath, FinalPath)) failed at info-test.c:359:getfileinfo_name_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-07",
+          "title": "querydir_nodup_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+querydir_nodup_test"
+          ],
+          "exitCode": 0,
+          "seconds": 13.51,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-07.log",
+          "logSha256": "6a78bb5f04ed629aa15c0680ec80fa3fa124f4b5db8b4d6ea2e4f774673d0e7a",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-08",
+          "title": "querydir_single_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+querydir_single_test"
+          ],
+          "exitCode": 0,
+          "seconds": 26.914,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-08.log",
+          "logSha256": "f799d8e52c47b9a81b9b2ef482813cb6d7e5455690f0b22e3114d3d27b228c94",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-01",
+          "title": "create_allocation_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+create_allocation_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.519,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-01.log",
+          "logSha256": "ef14f17989dfbf4625be77733536b82655633147d9acae4cb74f44dcb26e6fa6",
+          "failure": [
+            "create_allocation_test................. KO",
+            "    ASSERT(65536 == StandardInfo.AllocationSize.QuadPart) failed at create-test.c:526:create_allocation_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-02",
+          "title": "create_notraverse_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+create_notraverse_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.368,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-02.log",
+          "logSha256": "d3f543af9959b490a46dcb90c285e21de70381b24ab10ffa52a9e26f7700e86a",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-03",
+          "title": "getfileattr_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+getfileattr_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.555,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-03.log",
+          "logSha256": "14cf6ccbeda62e010379d75ca2cab14c54c2933343f7fa67192d3a137c98cb1b",
+          "failure": [
+            "getfileattr_test....................... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at info-test.c:84:getfileattr_dotest (err=c0000022:5)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-05",
+          "title": "setsecurity_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+setsecurity_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.545,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-05.log",
+          "logSha256": "c1893dcc2ab2c6cc4ca4a398e9cd5c91b316d1b537b3696a1c5d36bc7475a03f",
+          "failure": [
+            "setsecurity_test....................... KO",
+            "    ASSERT(0 == wcscmp(L\"D:P(A;;FA;;;SY)(A;;FA;;;BA)\", ConvertedSddl)) failed at security-test.c:231:setsecurity_dotest (err=c0000023:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-06",
+          "title": "security_stress_meta_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+security_stress_meta_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.582,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-06.log",
+          "logSha256": "9b61e360a7b33c926a3df0b9db4be62688bcdfb439cb4e7f54298c63f14017b9",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-16",
+          "title": "stream_create_sd_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_sd_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.635,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-16.log",
+          "logSha256": "24ed9a80fd92d3878b3492483c23f1c03ce9abe6fb9dd1d605062a8329a0ae2b",
+          "failure": [
+            "stream_create_sd_test.................. KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:553:stream_create_sd_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-23",
+          "title": "stream_getsecurity_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getsecurity_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.636,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-23.log",
+          "logSha256": "f4396ef683d12a0ead72f46a23f0aa25c45b6f7c4c5c0a47ddd6ec64d468dc12",
+          "failure": [
+            "stream_getsecurity_test................ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1659:stream_getsecurity_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-24",
+          "title": "stream_setsecurity_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_setsecurity_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.618,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-24.log",
+          "logSha256": "5905f1b6d27f8632702b543694cd70efdcee2d5e3f768e545667f79e2bad1712",
+          "failure": [
+            "stream_setsecurity_test................ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != StreamHandle) failed at stream-tests.c:1830:stream_setsecurity_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-17",
+          "title": "stream_create_share_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_share_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.537,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-17.log",
+          "logSha256": "0a34f03975f02a5b25c7149720c9411c24412bee24dd5811ed07c94056991644",
+          "failure": [
+            "stream_create_share_test............... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle1) failed at stream-tests.c:627:stream_create_share_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-28",
+          "title": "oplock_level1_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_level1_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.556,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-28.log",
+          "logSha256": "ad2691f6e61e900564c1c56855b7bb2ac356b84f7f676e243b9628d07107b504",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-29",
+          "title": "oplock_level2_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_level2_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.804,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-29.log",
+          "logSha256": "343201688630bc09b599bf2b357c81ceaa1e2a6f8c81e7c20d2a38e50b31755e",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-30",
+          "title": "oplock_batch_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_batch_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.717,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-30.log",
+          "logSha256": "0202a84e8c5dd0dbf62034b61379fc132636037fb02319d0ffb44b42b4995bad",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-31",
+          "title": "oplock_filter_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_filter_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.627,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-31.log",
+          "logSha256": "6f1c1931a10dfd87be637c19f802fbe5615369d95830056c0fe632cbb9f1f86c",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-32",
+          "title": "oplock_rwh_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_rwh_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.554,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-32.log",
+          "logSha256": "416210901e87e5797eb5bad09e51fa244ef6b4b62a9eefdf5fc3ad3de9f294b6",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-33",
+          "title": "oplock_rw_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_rw_test"
+          ],
+          "exitCode": 0,
+          "seconds": 1.622,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-33.log",
+          "logSha256": "f3e9cc068371ec15d7dabfabbca9eb83c65c058ed25813f50be29b233c8711ba",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-34",
+          "title": "oplock_rh_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_rh_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.823,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-34.log",
+          "logSha256": "90385e6d982d1372105eeaf502912b9c911a1c4b3b3349e2f441649f577c6db9",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-35",
+          "title": "oplock_r_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_r_test"
+          ],
+          "exitCode": 0,
+          "seconds": 2.789,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-35.log",
+          "logSha256": "6ea41e9755161b252337eaba85f10f64214249842c1a8d9a1a3e8cb1f9a27de3",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-36",
+          "title": "oplock_not_granted_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+oplock_not_granted_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.299,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-36.log",
+          "logSha256": "b0195775cd4cc5f0114ea5da50d1efdbb5c7ba6183e5e7be73b9701f194ad6e3",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-13",
+          "title": "stream_create_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.574,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-13.log",
+          "logSha256": "6cc4fb1a098ca2a6c7bc3f81915d1ab1b41545a347d41244ac10a6619403f224",
+          "failure": [
+            "stream_create_test..................... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:46:stream_create_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-14",
+          "title": "stream_create_overwrite_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_overwrite_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.488,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-14.log",
+          "logSha256": "b740ea88d7c073199a3addff80e834e92fbf3428fde7157c78e0f9326d437d53",
+          "failure": [
+            "stream_create_overwrite_test........... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:381:stream_create_overwrite_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-15",
+          "title": "stream_create_related_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_create_related_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.491,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-15.log",
+          "logSha256": "0e53f0dc5cf2f47ac57a8c94645be80d8e8c01f1aa09e24392ce4034e82b5155",
+          "failure": [
+            "stream_create_related_test............. KO",
+            "    ASSERT(STATUS_SUCCESS == Result) failed at stream-tests.c:495:stream_create_related_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-18",
+          "title": "stream_getfileinfo_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getfileinfo_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.524,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-18.log",
+          "logSha256": "2f7eb0e472c7c978d6102b077f5cd1857d27829c248b8b8738ddf8c4211a1277",
+          "failure": [
+            "stream_getfileinfo_test................ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:957:stream_getfileinfo_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-19",
+          "title": "stream_setfileinfo_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_setfileinfo_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.524,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-19.log",
+          "logSha256": "1bcd43381e3c1a86fb601d14c8c3d8bdb7891d9cd2e3654d39f2c026332b2182",
+          "failure": [
+            "stream_setfileinfo_test................ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != StreamHandle) failed at stream-tests.c:1188:stream_setfileinfo_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-20",
+          "title": "stream_delete_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_delete_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.468,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-20.log",
+          "logSha256": "c498064f9405de37fbc15f6d731068a9a8a79fba98d8a5d2223b76ba6043f223",
+          "failure": [
+            "stream_delete_test..................... KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1329:stream_delete_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-21",
+          "title": "stream_delete_pending_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_delete_pending_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.443,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-21.log",
+          "logSha256": "91c5c6e750b7ef806b64f07395cc14b6251b30b0fc68bcb9433a1df5b41d089f",
+          "failure": [
+            "stream_delete_pending_test............. KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1413:stream_delete_pending_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-22",
+          "title": "stream_rename_flipflop_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_rename_flipflop_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.403,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-22.log",
+          "logSha256": "295f3fa74bd6fdb3eafb99b776f56fb0f2ceaca5f2db1dff0dddfd13b8b2c54a",
+          "failure": [
+            "stream_rename_flipflop_test............ KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1523:stream_rename_flipflop_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-25",
+          "title": "stream_getstreaminfo_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getstreaminfo_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.518,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-25.log",
+          "logSha256": "ba3cffc051794ec9a240a5a9cb1eafa43e2b6b8ef117be3df0c8e9c2f552485f",
+          "failure": [
+            "stream_getstreaminfo_test.............. KO",
+            "    ASSERT(INVALID_HANDLE_VALUE != Handle) failed at stream-tests.c:1966:stream_getstreaminfo_dotest (err=c0000033:123)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-26",
+          "title": "stream_getstreaminfo_expire_cache_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_getstreaminfo_expire_cache_test"
+          ],
+          "exitCode": 0,
+          "seconds": 0.355,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-26.log",
+          "logSha256": "6080e8fa487c49d08b374c73b09e21cd83a09df485a92132bf9ebb9c848d0657",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Native output pads case names with dots, not whitespace."
+        },
+        {
+          "id": "WFP-OPT-27",
+          "title": "stream_dirnotify_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+stream_dirnotify_test"
+          ],
+          "exitCode": null,
+          "seconds": 90.032,
+          "status": "timeout",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-27.log",
+          "logSha256": "bdfa0c2cd43104da8ebcd140039c1072464673cfe123ef9b97754456e276a240",
+          "failure": []
+        },
+        {
+          "id": "WFP-OPT-10",
+          "title": "ea_create_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+ea_create_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.554,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-10.log",
+          "logSha256": "093d8ff6aa6f051a03577143967e869a518e3db5c6b69b4f42f4f01142c47d10",
+          "failure": [
+            "ea_create_test......................... KO",
+            "    ASSERT(STATUS_INVALID_EA_NAME == Result) failed at ea-test.c:707:ea_create_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-11",
+          "title": "ea_overwrite_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+ea_overwrite_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.525,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-11.log",
+          "logSha256": "6323fcd744459ded14efdce4c299334c4539395bdacc787560695dada180953f",
+          "failure": [
+            "ea_overwrite_test...................... KO",
+            "    ASSERT(STATUS_SUCCESS == Result) failed at ea-test.c:830:ea_overwrite_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-12",
+          "title": "ea_getset_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+ea_getset_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.525,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-12.log",
+          "logSha256": "11674d0bca5bc303469ca250e903fded3bdc39c326af63e790c1d4e8328a121f",
+          "failure": [
+            "ea_getset_test......................... KO",
+            "    ASSERT(STATUS_INVALID_EA_NAME == Result) failed at ea-test.c:906:ea_getset_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-09",
+          "title": "reparse_guid_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+reparse_guid_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.556,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-09.log",
+          "logSha256": "bece577b0abccc34f651e3ed6f91510fdf251505e488d33c614f072dc6b1b266",
+          "failure": [
+            "reparse_guid_test...................... KO",
+            "    ASSERT(Success) failed at reparse-test.c:65:reparse_guid_dotest (err=c0000277:4394)"
+          ]
+        },
+        {
+          "id": "WFP-OPT-37",
+          "title": "wsl_stat_test",
+          "args": [
+            "--external",
+            "--resilient",
+            "--case-insensitive-cmp",
+            "+wsl_stat_test"
+          ],
+          "exitCode": 3221226505,
+          "seconds": 0.53,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/WFP-OPT-37.log",
+          "logSha256": "499bbf08570a09f046075bec5dc6b5a588ec4484081b9e7e31f1650b5b3c6ba8",
+          "failure": [
+            "wsl_stat_test.......................... KO",
+            "    ASSERT(STATUS_INVALID_INFO_CLASS == Result || STATUS_NOT_IMPLEMENTED == Result) failed at wsl-test.c:155:wsl_stat_dotest (err=106:0)"
+          ]
+        },
+        {
+          "id": "JFS-SMOKE-01",
+          "title": "info",
+          "args": [
+            "info",
+            "R:\\cli-smoke\\hi.txt"
+          ],
+          "exitCode": 0,
+          "seconds": 0.603,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/JFS-SMOKE-01.log",
+          "logSha256": "92f44276f16d0e70c0958a4c6613fa681892df94507dce4afcc46b94376dff60"
+        },
+        {
+          "id": "JFS-SMOKE-02",
+          "title": "status (SQLite adaptation)",
+          "args": [
+            "status",
+            "sqlite3://meta.db"
+          ],
+          "exitCode": 0,
+          "seconds": 0.194,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/JFS-SMOKE-02.log",
+          "logSha256": "daf36a6e8bc16dd7ab4639c7089d8f7b68976875e6556953e8989a8111c22023",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "Parse stdout JSON independently of stderr diagnostic timestamps."
+        },
+        {
+          "id": "JFS-SMOKE-03",
+          "title": "debug",
+          "args": [
+            "debug",
+            "--out-dir",
+            "C:\\Users\\coo\\Documents\\ChatGPT\\OpenEarth-Data\\OneMount\\test-results\\filesystem-gaps-juicefs-writeback-kAesOQ\\debug",
+            "R:\\"
+          ],
+          "exitCode": 1,
+          "seconds": 5.773,
+          "status": "failed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/JFS-SMOKE-03.log",
+          "logSha256": "47a201325b96b58a002c32097265270daa3412593376f2e089bac26537bd668d",
+          "failure": [
+            "2026/10/16 21:24:02.017721 juicefs[48412] <FATAL>: failed to get mount command: failed to run command line: wmic process where ProcessID=16948 get CommandLine, exec: \"wmic\": executable file not found in %PATH% [main@main.go:31]"
+          ],
+          "classification": "environment dependency: wmic unavailable"
+        },
+        {
+          "id": "JFS-SMOKE-04",
+          "title": "summary",
+          "args": [
+            "summary",
+            "R:\\cli-smoke\\summary"
+          ],
+          "exitCode": 0,
+          "seconds": 0.496,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/JFS-SMOKE-04.log",
+          "logSha256": "fa54b43068484234631bc3c2241656002e4682db603ad57437058b0b30e5cce9",
+          "initialHarnessStatus": "failed",
+          "parserCorrection": "summary reports allocated space; validate one directory and two files, not logical byte count."
+        },
+        {
+          "id": "JFS-SMOKE-05",
+          "title": "stats",
+          "args": [
+            "stats",
+            "R:\\",
+            "-c",
+            "5"
+          ],
+          "exitCode": 0,
+          "seconds": 4.205,
+          "status": "passed",
+          "log": "test-results/filesystem-gaps-juicefs-writeback-kAesOQ/JFS-SMOKE-05.log",
+          "logSha256": "4ba7e22c7e1380a7788025713cdb2f596f04a19f8be23552b31eb22f09539c64"
+        }
+      ],
+      "nativeCounts": {
+        "failed": 22,
+        "passed": 14,
+        "timeout": 1
+      },
+      "cliCounts": {
+        "passed": 4,
+        "failed": 1
+      }
+    }
+  ],
+  "applications": [
+    {
+      "target": "ntfs",
+      "initialEvidence": "test-results/application-fs-ntfs-uiQmbJ/report.json",
+      "followupEvidence": "test-results/application-fs-ntfs-uiQmbJ/followup-report.json",
+      "initialReportSha256": "377ce99e12d96174a7041470975dbab0a551541dbea0d674e58d0a3afc4de4c6",
+      "followupReportSha256": "96dd51627e45577062cdf039dca8151c334e17198a1a6e0b3c3472a08f319126",
+      "manifestSha256": "a95341a81b4d050c290ad1140b794995c558e0b717413c08f0be0145a8f3a80a",
+      "checks": [
+        "128 MiB, 32 JuiceFS blocks, deterministic hash and cross-block random writes",
+        "5 GiB sparse logical size and writes above 32-bit offsets",
+        "1000 Unicode files across 50 directories",
+        "24-level directory tree",
+        "Git init/add/two commits/fsck and editor-style atomic save"
+      ],
+      "coldFilesVerified": 1002,
+      "sparseLogicalBytes": 5368710293,
+      "initialOutcome": "failed",
+      "followupOutcome": "passed",
+      "concurrentReplace": "EPERM on NTFS and both JuiceFS modes; retained as a failed strict workload, not attributed to JuiceFS alone",
+      "safelyUnmounted": null
+    },
+    {
+      "target": "juicefs",
+      "initialEvidence": "test-results/application-fs-juicefs-miYOXR/report.json",
+      "followupEvidence": "test-results/application-fs-juicefs-miYOXR/followup-report.json",
+      "initialReportSha256": "6d61026185cd5cd63fec0988bdea018ec265124e269b0ac9e0fd9e13d28b1543",
+      "followupReportSha256": "e594b979ac6d1a40d740db59a6a20963fa5ffe09ea3c109d9e2bb94644594cdb",
+      "manifestSha256": "a95341a81b4d050c290ad1140b794995c558e0b717413c08f0be0145a8f3a80a",
+      "checks": [
+        "128 MiB, 32 JuiceFS blocks, deterministic hash and cross-block random writes",
+        "5 GiB sparse logical size and writes above 32-bit offsets",
+        "1000 Unicode files across 50 directories",
+        "24-level directory tree",
+        "Git init/add/two commits/fsck and editor-style atomic save"
+      ],
+      "coldFilesVerified": 1002,
+      "sparseLogicalBytes": 5368710293,
+      "initialOutcome": "failed",
+      "followupOutcome": "passed",
+      "concurrentReplace": "EPERM on NTFS and both JuiceFS modes; retained as a failed strict workload, not attributed to JuiceFS alone",
+      "safelyUnmounted": true
+    },
+    {
+      "target": "juicefs-writeback",
+      "initialEvidence": "test-results/application-fs-juicefs-writeback-WdDYMd/report.json",
+      "followupEvidence": "test-results/application-fs-juicefs-writeback-WdDYMd/followup-report.json",
+      "initialReportSha256": "b0dbdfdf03940df4565b46e90683b0f630b5762ee71d8c8eddafabc732329ab7",
+      "followupReportSha256": "82b9db753391b6582c667bfd9e222e4c624182cfcbc13773a60315760cde4e3f",
+      "manifestSha256": "a95341a81b4d050c290ad1140b794995c558e0b717413c08f0be0145a8f3a80a",
+      "checks": [
+        "128 MiB, 32 JuiceFS blocks, deterministic hash and cross-block random writes",
+        "5 GiB sparse logical size and writes above 32-bit offsets",
+        "1000 Unicode files across 50 directories",
+        "24-level directory tree",
+        "Git init/add/two commits/fsck and editor-style atomic save"
+      ],
+      "coldFilesVerified": 1002,
+      "sparseLogicalBytes": 5368710293,
+      "initialOutcome": "failed",
+      "followupOutcome": "passed",
+      "concurrentReplace": "EPERM on NTFS and both JuiceFS modes; retained as a failed strict workload, not attributed to JuiceFS alone",
+      "safelyUnmounted": true
+    }
+  ],
+  "recovery": {
+    "evidence": "test-results/writeback-recovery-i8aV2p/report.json",
+    "reportSha256": "7979da5f2e40421d21b272bc164534b2d6b126a4391c59735c38c9a13cd72bdd",
+    "limits": [
+      "Local fault proxy only, not a real cloud disconnection",
+      "Process termination after fsync/close, not host power loss or volatile-memory writes",
+      "Uses the real bundled JuiceFS/rclone with SQLite and --writeback; application session adoption is not tested"
+    ],
+    "cases": [
+      {
+        "scenario": "unavailable-then-recover",
+        "passed": true,
+        "faultRequests": 18,
+        "putRequests": 24,
+        "droppedResponses": 0,
+        "stagedAfterClose": 6,
+        "coldReadPassed": true,
+        "safelyStopped": true,
+        "matrixId": "PLAN-006"
+      },
+      {
+        "scenario": "lost-upload-response",
+        "passed": true,
+        "faultRequests": 0,
+        "putRequests": 7,
+        "droppedResponses": 1,
+        "stagedAfterClose": 3,
+        "coldReadPassed": true,
+        "safelyStopped": true,
+        "matrixId": "PLAN-007"
+      },
+      {
+        "scenario": "client-crash-after-fsync",
+        "passed": true,
+        "faultRequests": 6,
+        "putRequests": 12,
+        "droppedResponses": 0,
+        "stagedAfterClose": 6,
+        "coldReadPassed": true,
+        "safelyStopped": true,
+        "matrixId": "PLAN-001",
+        "stagedAfterCrash": 6
+      }
+    ]
+  },
+  "reused": [
+    {
+      "evidence": "docs/JUICEFS-UPSTREAM-RESULTS-2026-10-15.json",
+      "sha256": "278edd21bc1bf83b0079104257bbb9b52ebadef290a1091153dc6a348a6dca71",
+      "scope": "8 historical backend/mode groups; default 54-case fork suite, Python, winfstest, bounded FSX, cold reads and fsck",
+      "kind": "historical reuse, not a new run"
+    },
+    {
+      "evidence": "docs/JUICEFS-CLOUD-RESULTS-2026-10-14.json",
+      "sha256": "e6507469eee8caf02b2d46c52a4da84c09d10fc020048b3886cd6ac14ea6a6d6",
+      "scope": "3 cloud backends, 2 write policies, gateway and initialization recovery",
+      "kind": "historical reuse, not a new run"
+    },
+    {
+      "evidence": "docs/RCLONE-DIRECT-FIX-RESULTS-2026-10-10.json",
+      "sha256": "20fdf45d3c22df60194eae44a0ced157b1abc967c19515385d996b342f277284",
+      "scope": "Direct mode strict baseline: 68 pass, 48 fail, 1 timeout",
+      "kind": "historical reuse, not a new run"
+    },
+    {
+      "evidence": "docs/JUICEFS-TRUNCATE-RESULTS-2026-10-15.json",
+      "sha256": "eef42751636664451b84879cfeaf2c09efe486b2e945287ba80f527ac153d266",
+      "scope": "Confirmed truncate-after-flush-timeout defect; not fixed",
+      "kind": "historical reuse, not a new run"
+    },
+    {
+      "evidence": "test-results/prepush-unit.log",
+      "sha256": "b2e1e706b23c4f33fe8d99ea9fae8fb0609b59218b52b2e282e3dc70aa3a4e3d",
+      "scope": "63 current-product unit tests passed",
+      "kind": "historical reuse, not a new run"
+    },
+    {
+      "evidence": "test-results/cache-settings-g9qbn9/report.json",
+      "sha256": "1b640987faa3b8752bd2ccc29b8b12460b2db85f566220e6c9e1f9505c48ed33",
+      "scope": "Current cache setting transition / real mount / cold read",
+      "kind": "historical reuse, not a new run"
+    },
+    {
+      "evidence": "test-results/cache-settings-ui-final.log",
+      "sha256": "bc0c004554f9cbe9f4bef292b011c7718894aa736502df843ba216d62a605c33",
+      "scope": "Source UI / real IPC",
+      "kind": "historical reuse, not a new run"
+    },
+    {
+      "evidence": "test-results/cache-settings-packaged-pass.log",
+      "sha256": "a2fab6fc45f0c5dd41d94645b811407a457b619465f1456ad09cb5950b046c92",
+      "scope": "Packaged UI / real IPC",
+      "kind": "historical reuse, not a new run"
+    }
+  ],
+  "reuseAudit": [
+    {
+      "backend": "local",
+      "writeback": false,
+      "engineHash": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+      "mountArgsMatch": null
+    },
+    {
+      "backend": "local",
+      "writeback": true,
+      "engineHash": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+      "mountArgsMatch": null
+    },
+    {
+      "backend": "baidu",
+      "writeback": false,
+      "engineHash": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+      "mountArgsMatch": null
+    },
+    {
+      "backend": "baidu",
+      "writeback": true,
+      "engineHash": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+      "mountArgsMatch": null
+    },
+    {
+      "backend": "drive",
+      "writeback": false,
+      "engineHash": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+      "mountArgsMatch": true
+    },
+    {
+      "backend": "drive",
+      "writeback": true,
+      "engineHash": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+      "mountArgsMatch": true
+    },
+    {
+      "backend": "onedrive",
+      "writeback": false,
+      "engineHash": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+      "mountArgsMatch": true
+    },
+    {
+      "backend": "onedrive",
+      "writeback": true,
+      "engineHash": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+      "mountArgsMatch": true
+    }
+  ],
+  "newExecutionRecords": 145,
+  "newExecutionCounts": {
+    "已通过": 93,
+    "已失败": 50,
+    "已超时": 2
+  },
+  "shutdownAudit": {
+    "checkedAt": "2026-10-16T13:46:45.0121037Z",
+    "liveOwnedProcesses": [],
+    "remainingTestMounts": []
+  },
+  "matrixCounts": {
+    "total": 364,
+    "levels": {
+      "L1": 71,
+      "L2": 163,
+      "L3": 73,
+      "L4": 4,
+      "L5": 53
+    },
+    "status": {
+      "待补充": 31,
+      "已通过": 194,
+      "已失败": 68,
+      "待执行": 16,
+      "已跳过": 2,
+      "已超时": 2,
+      "范围外": 3,
+      "不适用": 48
+    },
+    "source": {
+      "A JuiceFS 官方 Windows": 39,
+      "B Windows / WinFsp": 260,
+      "C 项目补充": 60,
+      "D 外部基准补充": 5
+    }
+  },
+  "pending": [
+    {
+      "id": "BASE-001",
+      "level": "L1",
+      "title": "fio 内容校验与冷重挂载",
+      "status": "待补充",
+      "scope": "Windows fio；固定块大小、并发深度、种子",
+      "remaining": "未实现完整入口"
+    },
+    {
+      "id": "BASE-005",
+      "level": "L1",
+      "title": "独立 JuiceFS／网关／网盘分层对照",
+      "status": "待补充",
+      "scope": "NTFS；独立 JuiceFS 本地；网关本地；三网盘",
+      "remaining": "未实现完整入口"
+    },
+    {
+      "id": "PLAN-009",
+      "level": "L1",
+      "title": "损坏或截短的对象/缓存检测",
+      "status": "待补充",
+      "scope": "隔离故障副本",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-010",
+      "level": "L1",
+      "title": "多进程同文件竞争与原子替换",
+      "status": "待补充",
+      "scope": "本地及三网盘；同步/后台",
+      "remaining": "本轮三写进程替换测试在 NTFS/两种 JuiceFS 均 EPERM；保留失败，完整共享访问/锁/截断组合仍待定义与补测"
+    },
+    {
+      "id": "BASE-003",
+      "level": "L1",
+      "title": "Windows 刷新与异常恢复契约",
+      "status": "待补充",
+      "scope": "WriteFile / FlushFileBuffers / CloseHandle；同步及后台",
+      "remaining": "未实现完整入口"
+    },
+    {
+      "id": "PLAN-008",
+      "level": "L1",
+      "title": "待上传时覆盖、改名、删除重建组合",
+      "status": "待补充",
+      "scope": "故障代理；同步/后台",
+      "remaining": "本轮后台暂存期间覆盖、改名、删除重建冷读通过；其他模式/时序待测"
+    },
+    {
+      "id": "JFS-CLI-06",
+      "level": "L1",
+      "title": "打开文件的元数据导出导入",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-07",
+      "level": "L1",
+      "title": "复制块后的元数据导出导入",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-08",
+      "level": "L1",
+      "title": "含配额的元数据导出导入",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-17",
+      "level": "L1",
+      "title": "压缩后块延迟删除",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-18",
+      "level": "L1",
+      "title": "回收站块垃圾回收",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "PLAN-011",
+      "level": "L1",
+      "title": "异常卸载、重启与残留会话恢复",
+      "status": "待补充",
+      "scope": "真实挂载；网关/引擎异常",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-006",
+      "level": "L1",
+      "title": "持续断网、反复重连与积压恢复",
+      "status": "待补充",
+      "scope": "故障代理；三网盘；后台重点",
+      "remaining": "本轮本地代理 18 次 503 后恢复通过；长期断网、反复重连和三网盘仍待测"
+    },
+    {
+      "id": "PLAN-001",
+      "level": "L1",
+      "title": "写入各阶段进程崩溃恢复",
+      "status": "待补充",
+      "scope": "隔离本地故障环境，之后覆盖三网盘；同步/后台",
+      "remaining": "本轮验证 fsync/关闭后、6 个暂存块尚未上传时终止客户端并恢复；其他写入阶段及整机断电未测"
+    },
+    {
+      "id": "PLAN-002",
+      "level": "L1",
+      "title": "异常重启与断电恢复",
+      "status": "待补充",
+      "scope": "隔离虚拟机或专用测试环境",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-003",
+      "level": "L1",
+      "title": "缓存磁盘耗尽与恢复",
+      "status": "待补充",
+      "scope": "有容量限制的测试卷；同步/后台",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-004",
+      "level": "L1",
+      "title": "元数据磁盘耗尽与 WAL 恢复",
+      "status": "待补充",
+      "scope": "独立元数据测试卷",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-005",
+      "level": "L1",
+      "title": "云端配额耗尽与恢复",
+      "status": "待补充",
+      "scope": "故障注入 + 隔离真实测试账号",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-014",
+      "level": "L2",
+      "title": "名称与路径长度边界",
+      "status": "待补充",
+      "scope": "Windows 支持配置；本地和网盘",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-012",
+      "level": "L2",
+      "title": "故障时队列与界面状态一致",
+      "status": "待补充",
+      "scope": "真实挂载；注入超时和未知指标",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "JFS-CLI-02",
+      "level": "L2",
+      "title": "克隆源码目录",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-03",
+      "level": "L2",
+      "title": "克隆大量小文件",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-04",
+      "level": "L2",
+      "title": "正常挂载诊断",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-05",
+      "level": "L2",
+      "title": "异常挂载诊断",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-09",
+      "level": "L2",
+      "title": "中断压力后修复目录统计",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "PLAN-015",
+      "level": "L2",
+      "title": "多卷并发挂载、退出与缓存竞争",
+      "status": "待补充",
+      "scope": "同一缓存磁盘，多后端同步运行",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-027",
+      "level": "L2",
+      "title": "发布候选版本八组完整复测",
+      "status": "待补充",
+      "scope": "四后端 × 同步/后台",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-013",
+      "level": "L2",
+      "title": "长时间令牌刷新与撤销授权",
+      "status": "待补充",
+      "scope": "三网盘隔离账号",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "JFS-CLI-20",
+      "level": "L2",
+      "title": "文件系统总容量配额",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-21",
+      "level": "L2",
+      "title": "文件系统 inode 配额",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-22",
+      "level": "L2",
+      "title": "删除与恢复目录配额",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-23",
+      "level": "L2",
+      "title": "目录容量配额",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "JFS-CLI-24",
+      "level": "L2",
+      "title": "目录 inode 配额",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "BASE-004",
+      "level": "L2",
+      "title": "Git 与编辑器原子保存回归",
+      "status": "待补充",
+      "scope": "隔离 Git 仓库、编辑器保存流程",
+      "remaining": "本轮 Git init/add/两次 commit/fsck 与模拟编辑器替换通过；checkout/锁冲突/真实编辑器待测"
+    },
+    {
+      "id": "PLAN-019",
+      "level": "L2",
+      "title": "真实应用的临时文件替换保存",
+      "status": "待补充",
+      "scope": "Office/编辑器，按支持清单选取",
+      "remaining": "本轮仅 Git 加模拟保存；Office/真实编辑器及崩溃保存未测"
+    },
+    {
+      "id": "PLAN-016",
+      "level": "L2",
+      "title": "大文件与多块长序列正确性",
+      "status": "待补充",
+      "scope": "本地及三网盘",
+      "remaining": "本轮 128 MiB 实体数据跨块写入及 5 GiB 稀疏文件冷读通过；数 GiB 实体内容和云端长序列待测"
+    },
+    {
+      "id": "PLAN-017",
+      "level": "L2",
+      "title": "海量文件与深目录规模正确性",
+      "status": "待补充",
+      "scope": "本地优先，三网盘抽样",
+      "remaining": "本轮 1000 文件、50 目录、24 层目录及冷读通过；更大规模/移动删除组合/云端待测"
+    },
+    {
+      "id": "PLAN-018",
+      "level": "L2",
+      "title": "多随机种子和持续压力",
+      "status": "待补充",
+      "scope": "本地长跑，三网盘有界长跑",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "BASE-002",
+      "level": "L2",
+      "title": "微软 IFS／HLK 适用项目",
+      "status": "待补充",
+      "scope": "专用 Windows 测试环境；按平台和组件选项筛选",
+      "remaining": "未实现完整入口"
+    },
+    {
+      "id": "PLAN-020",
+      "level": "L3",
+      "title": "资源管理器与解压缩工作流",
+      "status": "待补充",
+      "scope": "资源管理器/压缩工具",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-023",
+      "level": "L3",
+      "title": "安装、升级与普通用户运行",
+      "status": "待补充",
+      "scope": "支持的 Windows/WinFsp 版本",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-021",
+      "level": "L3",
+      "title": "完整 Windows 语义支持契约核对",
+      "status": "待补充",
+      "scope": "当前 Windows 产品支持范围",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-022",
+      "level": "L3",
+      "title": "链接、替代数据流、ACL 继承边界",
+      "status": "待补充",
+      "scope": "按声明支持的 Windows 功能",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-026",
+      "level": "L4",
+      "title": "读缓存淘汰与读写竞争效率",
+      "status": "待补充",
+      "scope": "工作集大于缓存目标",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "JFS-CLI-19",
+      "level": "L4",
+      "title": "分析性能日志",
+      "status": "待执行",
+      "scope": "Windows；原流程 Redis；SQLite 适配需另行记录",
+      "remaining": "本轮未执行"
+    },
+    {
+      "id": "PLAN-024",
+      "level": "L4",
+      "title": "读写吞吐与延迟基线",
+      "status": "待补充",
+      "scope": "各后端；冷/热缓存；同步/后台",
+      "remaining": "本轮仅补充矩阵，未复测"
+    },
+    {
+      "id": "PLAN-025",
+      "level": "L4",
+      "title": "CPU、内存、句柄与磁盘占用",
+      "status": "待补充",
+      "scope": "持续负载和空闲阶段",
+      "remaining": "本轮仅补充矩阵，未复测"
+    }
+  ]
+}

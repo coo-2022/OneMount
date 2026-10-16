@@ -36,7 +36,7 @@ test('Windows ownership uses JuiceFS built-in current-user mapping',()=>{
   const a=p.juiceMountArgs(d,{cache:'C:\\cache'},1234);
   assert.ok(a.includes('--no-usage-report'));assert.ok(a.includes('--as-root'));
   assert.ok(!a.includes('--umask'), 'Windows JuiceFS rejects the Unix-only umask flag');
-  assert.ok(!a.includes('-o'), 'Do not override the built-in uid=-1,gid=-1 mapping');
+  assert.ok(!a.some(x=>/(?:^|,)(?:uid|gid|uidmap|gidmap)=/.test(x)), 'Do not override the built-in uid=-1,gid=-1 mapping');
   assert.ok(!a.some(x=>x.includes('uidmap=')), 'WinFsp rejects explicit UID 0 mapping');
   assert.ok(!a.includes('--writeback'));assert.ok(p.juiceMountArgs({...d,writeback:true},{cache:'C:\\cache'},1234).includes('--writeback'));
   assert.ok(p.formatArgs(1234,'test').includes('--no-update'));

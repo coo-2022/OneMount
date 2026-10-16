@@ -38,6 +38,9 @@ function juiceMountArgs(disk, paths, metricsPort, connection = {}) {
   // attribute cache after close (including size 0 for a new executable).
   // Metadata is local SQLite, so prefer fresh attributes for correctness.
   const args = ['mount', '--no-usage-report', '--as-root', '--attr-cache', '0',
+    // Override JuiceFS's default UNC prefix: WinFsp registers an empty prefix
+    // as a local disk. This leaves the built-in ownership mapping intact.
+    '-o', 'VolumePrefix=',
     '--cache-dir', paths.cache, '--cache-size', String(disk.cacheGiB * 1024),
     '--metrics', `127.0.0.1:${metricsPort}`];
   if (disk.writeback) args.push('--writeback');

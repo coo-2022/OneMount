@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "date": "2026-10-16",
+  "tag": "juicefs-preview-20261016",
+  "baseCommit": "e5460c303ad1baf16212e3fbafdd9ed321fc8beb",
+  "sourceSha256": {
+    "src/plans.cjs": "bb065dd166fe4c1282c4bae215fb852b334da7def02600ac5cea80c37c90207e",
+    "src/manager.cjs": "5cd548b3971e1e30ec8a3f4e83057a70e42fa651a45b7f968ed41c609c36b815",
+    "src/processes.cjs": "6e51942ba88dc0cb8a19da4a087c47f4db8f450f01558914763eb30f8259caf0",
+    "tests/plans.test.cjs": "65cfb7f9655f3d1b6ad010d5c2d54cca880b909d8f2cae55f1e09a6bc72e793c",
+    "scripts/windows-cache-settings-integration.cjs": "fe8cb4a0ff0a86592e9856ee274daee0e031ed9aaa1add7a7be78fa53fb2b548"
+  },
+  "engineSha256": {
+    "engines/juicefs.exe": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c",
+    "engines/rclone.exe": "080c018d446081e1b8a725044a88e15e995b08b09ed36dfa7e1b1725e039285e"
+  },
+  "change": {
+    "mountOption": "VolumePrefix=",
+    "driveType": "Fixed",
+    "fileSystem": "JuiceFS"
+  },
+  "unit": {
+    "tests": 63,
+    "passed": 63,
+    "failed": 0
+  },
+  "integration": {
+    "started": "2026-10-16T14:18:13.370Z",
+    "finished": "2026-10-16T14:18:29.876Z",
+    "passed": true,
+    "checks": [
+      "writeback=true: local Fixed disk, current-user read/write, rename/delete, mounted edit blocked, uploads drained, safe unmount",
+      "writeback=false: local Fixed disk, current-user read/write, rename/delete, mounted edit blocked, uploads drained, safe unmount, cold read hash verified",
+      "writeback=true: local Fixed disk, current-user read/write, rename/delete, mounted edit blocked, uploads drained, safe unmount, cold read hash verified",
+      "final cold read matches after both cache-mode transitions"
+    ],
+    "mounts": 4,
+    "backend": "isolated local S3 gateway",
+    "writebackSequence": [
+      true,
+      false,
+      true
+    ]
+  },
+  "existingUserVolumes": [
+    {
+      "DeviceID": "X:",
+      "DriveType": 3,
+      "ProviderName": null,
+      "FileSystem": "FUSE-rclone"
+    },
+    {
+      "DeviceID": "Y:",
+      "DriveType": 3,
+      "ProviderName": null,
+      "FileSystem": "JuiceFS"
+    },
+    {
+      "DeviceID": "Z:",
+      "DriveType": 3,
+      "ProviderName": null,
+      "FileSystem": "FUSE-rclone"
+    }
+  ],
+  "userVolumeScope": "Mount/type verification only; no write or delete tests on user volumes.",
+  "evidenceSha256": {
+    "test-results/local-disk-unit-host.log": "0753582be91b8402195256381bd39af040ff00e9b8eca747f28cc9c1c8e6f410",
+    "test-results/local-disk-integration.log": "a322df0888f2e2b394f79c26fda327f7d4f88ebfcdb6b112e97f57f867db2dfd",
+    "test-results/cache-settings-C8gs4b/report.json": "344932904a7fd9ee449d637890fb01757d8310113bc1bff870441376a966bdd7",
+    "test-results/local-disk-package-host.log": "2a6aabc14a27cf5ae50e7772d205a9f618ff4a4f0540c065bb3068102447856b",
+    "test-results/local-disk-live-volumes.json": "3dfbfa3a2145b3afd34abb9cd908ef4652e84b94ad9dbdf18b39920ca75e79bd"
+  },
+  "package": "dist/juicefs-local-disk-20261016/CloudIsland-win32-x64",
+  "packageSha256": {
+    "CloudIsland.exe": "861e2936e52d02a98457ea624e464a602a147ed17e91fc68362dd29956872986",
+    "resources/app.asar": "dc598c27258c3b8036f1e5b42010497705075b3658241805ee22325a11129dd7",
+    "resources/engines/rclone.exe": "080c018d446081e1b8a725044a88e15e995b08b09ed36dfa7e1b1725e039285e",
+    "resources/engines/juicefs.exe": "ad1c2096241b3430908d7d3e6eae1671fd58e6946b3320ab8a6bf566ca58f31c"
+  },
+  "limits": [
+    "The comprehensive semantic assessment predates the local-disk change and remains a historical network-disk baseline.",
+    "No full upstream suite rerun after this mount-type change; existing defects remain unresolved."
+  ]
+}
