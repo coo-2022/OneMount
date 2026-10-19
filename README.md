@@ -1,8 +1,8 @@
-# OneMount · 云屿
+# OneMount
 
 Windows 桌面存储管理器。统一管理账号、挂载、缓存与传输状态，用户不用执行命令或编辑底层配置。
 
-当前为 **0.7.0 预览版**。产品界面名为「云屿」，仓库名为 OneMount。更新内容与使用边界见 [0.7.0 发布说明](docs/RELEASE-0.7.0.md)。
+当前为 **0.7.0 预览版**。产品名称统一为 OneMount。更新内容与使用边界见 [0.7.0 发布说明](docs/RELEASE-0.7.0.md)。
 
 ![桌面界面](screenshots/desktop.png)
 
@@ -21,7 +21,7 @@ Windows 桌面存储管理器。统一管理账号、挂载、缓存与传输状
 
 ## 使用 Windows 软件包
 
-1. 完整解压 Windows x64 软件包，双击 `CloudIsland.exe`。不需要安装 Node.js，也不需要单独下载两个引擎。
+1. 完整解压 Windows x64 软件包，双击 `OneMount.exe`。不需要安装 Node.js，也不需要单独下载两个引擎。
 2. 如提示缺少磁盘驱动，点击「安装驱动」，从官方页面安装 WinFsp 后重启软件。它是系统驱动依赖，不包含在此便携包中。
 3. 「存储连接 → 添加连接 → 本地文件夹」，选择一个空目录作为验证后端。
 4. 「我的磁盘 → 添加磁盘」，分别创建网盘直连 X: 和文件系统卷 Y:，点击「挂载磁盘」。
@@ -33,7 +33,7 @@ Windows 桌面存储管理器。统一管理账号、挂载、缓存与传输状
 
 在「设置 → 网络代理」选择连接方式：**直接连接（默认）**不使用应用层代理；**手动代理**使用填写的 HTTP、HTTPS 或 SOCKS5 地址（例如 `http://127.0.0.1:7892`）。不会自动继承启动环境中的代理变量。目前不支持带账号密码的代理地址。旧版的“默认连接”自动按直连处理，已保存的手动代理配置保留。
 
-设置保存在本机，安全退出并重新打开云屿后生效；已运行的挂载和上传不会被自动重启。代理应用于 rclone 的网盘挂载、连接检查、目录浏览和 OAuth 请求，覆盖所有网盘及文件系统卷的远端网关；本机控制接口和回环网关始终直连。系统浏览器以及百度设备授权请求不受此配置控制。
+设置保存在本机，安全退出并重新打开OneMount后生效；已运行的挂载和上传不会被自动重启。代理应用于 rclone 的网盘挂载、连接检查、目录浏览和 OAuth 请求，覆盖所有网盘及文件系统卷的远端网关；本机控制接口和回环网关始终直连。系统浏览器以及百度设备授权请求不受此配置控制。
 
 Google Drive 授权成功但连接或挂载超时时，可填写本机代理软件提供的地址，并保持代理软件运行。重新打开后，可先在存储连接中检查连接，再挂载磁盘。
 
@@ -56,7 +56,7 @@ npm start
 npm run package:win
 ```
 
-便携软件输出到 `dist/CloudIsland-win32-x64/`。整个目录一起分发。两个引擎包含在 `resources/engines/`；rclone 从固定依赖的 Go 模块编译，JuiceFS 按固定版本及 SHA-256 下载。定制引擎的版本和校验记录保存在 `rclone-build.json`。Git 不保存大体积引擎二进制，避免超过 GitHub 单文件限制。
+便携软件输出到 `dist/OneMount-win32-x64/`。整个目录一起分发。两个引擎包含在 `resources/engines/`；rclone 从固定依赖的 Go 模块编译，JuiceFS 按固定版本及 SHA-256 下载。定制引擎的版本和校验记录保存在 `rclone-build.json`。Git 不保存大体积引擎二进制，避免超过 GitHub 单文件限制。
 
 推送 main 或手动运行 GitHub Actions 后，可在成功的 `Windows preview build` 工作流的 Artifacts 中下载 `OneMount-Windows-x64-preview`。该工作流安装 WinFsp，执行真实挂载、PowerShell 读写、冷缓存重挂校验以及打包 EXE 界面测试；另以独立普通用户重复验收。所有门禁通过后才上传软件包，日志和界面截图在 `Windows-validation-evidence` 中。
 
@@ -72,9 +72,25 @@ npm run engine:rclone:build
 
 ## 自有品牌账号授权
 
+### 控制展示哪些网盘
+
+`provider-config.json` 独立控制允许新增的存储服务，不需要删除 OAuth 凭据。源码运行时读取项目根目录文件；便携包优先读取 `OneMount.exe` 同目录文件，缺失时读取包内默认配置。修改后安全退出并重新启动。
+
+例如只提供百度网盘：
+
+```json
+{"enabledProviders": ["baidu"]}
+```
+
+支持的标识为 `onedrive`、`drive`（Google Drive）、`baidu`、`dropbox`、`webdav`、`s3`、`local`。不在列表里的服务不展示，也不能通过新增连接或新增磁盘接口绕过。空列表关闭全部新增入口；无效 JSON、未知标识和重复标识会报错，不会自动恢复全部开启。
+
+入口开启后，仍需配齐该服务的登录凭据，否则显示「等待发布者开放登录」。已保存的连接和磁盘继续展示、使用和安全卸载，避免入口调整影响已有数据；这个配置用于产品入口控制，不是数据访问权限隔离。
+
+构建工作副本中可设置 `ONEMOUNT_ENABLED_PROVIDERS=baidu`，再运行 `npm run release:config`；多个服务用逗号分隔。默认开放全部已集成的服务入口。115 仍保留在独立开发分支，不在此配置支持范围内。
+
 最终用户的流程是「添加服务 → 浏览器授权 → 选择目录」。不提供导入底层配置、执行命令行或显示原始配置问答的入口。
 
-第三方授权页展示的应用名由 OAuth 注册决定。默认构建不使用 rclone 内置的公共 Client ID，避免授权页出现不属于本产品的名称。发布者应注册自己的桌面 OAuth 应用，把显示名设为「云屿」或 OneMount，配置相应权限与重定向地址。
+第三方授权页展示的应用名由 OAuth 注册决定。默认构建不使用 rclone 内置的公共 Client ID，避免授权页出现不属于本产品的名称。发布者应注册自己的桌面 OAuth 应用，把显示名设为 OneMount，配置相应权限与重定向地址。
 
 1. 按 `oauth-clients.json` 格式新建 `oauth-clients.local.json`（已被 Git 忽略）。
 2. 填写 `onedrive`、`drive`、`dropbox` 或 `baidu` 对应的 `clientId`、`clientSecret`；百度对应 AppKey / SecretKey。构建工作副本中执行 `npm run release:config`，注意此命令会将私有配置写入 `oauth-clients.json`，不得提交含密钥的生成文件。
@@ -86,7 +102,7 @@ npm run engine:rclone:build
 
 ## 数据与生命周期
 
-默认数据在 `%APPDATA%/CloudIsland`。账号密文、磁盘配置、元数据和缓存均保留在当前账户下。
+为兼容旧版，更名后默认数据仍在 `%APPDATA%/CloudIsland`，继续使用原有单实例锁；Windows 应用标识和远端 `.cloud-island` 前缀也保留，不迁移或新建已有卷的数据。账号密文、磁盘配置、元数据和缓存均保留在当前账户下。
 
 账号连接诊断保存在同目录的 `auth.log`，每行是一条 JSON 记录，包含时间、连接尝试编号、阶段、任务结果及经过筛选的错误诊断（如微软 `AADSTS` 错误码、HTTP 状态和网络错误码）。取消连接或重启软件不会清除这些记录。单个文件最多约 1 MiB，保留 3 个轮转备份（`auth.log.1` 至 `auth.log.3`）。它不记录令牌、授权码、密码、完整授权地址、账号名称或原始服务响应；无法识别的错误记为 `unknown`，仍保留发生阶段。`accounts.log` 继续保存后台账号服务的进程日志。遇到“浏览器已返回，但连接失败”时，可从软件设置打开数据目录，查看最新的 `connection_failed` 记录。
 
@@ -110,6 +126,8 @@ npm run engine:rclone:build
 ## 验证与结构
 
 `npm test`：配置校验、磁盘冲突、Windows 挂载参数、私有端点、未知状态、卸载队列保护、数据归档与 IPC 安全约束。
+
+2026-10-19 的 OneMount 更名与入口配置验证：70 项自动测试全部通过；独立临时配置下的 5 项安装包检查通过，包括旧版与新版的单实例互斥、Windows 加密配置兼容、关闭服务后的接口限制、仅展示百度入口以及全部关闭时的空状态。安装包检查使用隐藏窗口 DOM 断言，未连接真实网盘或创建挂载；文件系统功能沿用 0.7.0 验证基线。可运行 `scripts/windows-provider-config-smoke.cjs` 复查，设置 `ONEMOUNT_PLAYWRIGHT`，可选 `ONEMOUNT_TEST_EXE` 和 `ONEMOUNT_PREVIOUS_EXE` 指定新旧安装包。
 
 Linux 无 FUSE 的集成验证：
 

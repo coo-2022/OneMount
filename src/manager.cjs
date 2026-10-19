@@ -8,6 +8,7 @@ const P = require('./processes.cjs');
 const plan = require('./plans.cjs');
 const {normalizeProxy, proxyEnv} = require('./proxy.cjs');
 const perf = require('./telemetry.cjs');
+const {normalizeProviderConfig, listServices} = require('./providers.cjs');
 const uid = () => crypto.randomUUID();
 const key = () => crypto.randomBytes(32).toString('hex');
 
@@ -22,8 +23,9 @@ function containsPath(base, target) {const r = path.relative(base, target); retu
 function displayError(message) {return /rclone|juicefs|token|secret|password|Authorization|client_id|access_key/i.test(message || '') ? '连接或磁盘操作未完成。请检查网络、账号信息与磁盘驱动后重试。' : String(message || '').replace(/https?:\/\/[^\s]+/g, '[服务地址]').slice(0,500);}
 
 class Manager extends EventEmitter {
-  constructor({root, engines, protect, unprotect, oauthClients = {}, openExternal = async () => {}, platform = process.platform}) {
+  constructor({root, engines, protect, unprotect, oauthClients = {}, providerConfig = require('../provider-config.json'), openExternal = async () => {}, platform = process.platform}) {
     super(); Object.assign(this, {root, engines, protect, unprotect, oauthClients, openExternal, platform});
+    this.providerConfig = normalizeProviderConfig(providerConfig);
     fs.mkdirSync(root, {recursive: true, mode: 0o700});
     this.file = path.join(root, 'disks.json'); this.config = path.join(root, 'accounts.conf');
     this.state = read(this.file, {version: 1, connections: [], disks: [], settings: {loginStart: false}});
@@ -48,6 +50,9 @@ class Manager extends EventEmitter {
   engine(name) {return path.join(this.engines, name + (this.platform === 'win32' ? '.exe' : ''));}
   disk(id) {const d = this.state.disks.find(d => d.id === id); if (!d) throw new Error('找不到此磁盘'); return d;}
   connection(id) {const c = this.state.connections.find(c => c.id === id); if (!c) throw new Error('找不到此存储连接'); return c;}
+  assertProviderEnabled(type) {
+    if (!this.providerConfig.enabledProviders.includes(type)) throw new Error('此版本未开放新增该服务，请联系发布者。');
+  }
   env(extra = {}) {return {...proxyEnv(this.activeProxy), RCLONE_CONFIG_PASS: this.secrets.configPass, ...extra};}
   updateSettings(input = {}) {
     const next = {...this.state.settings};
@@ -90,15 +95,13 @@ class Manager extends EventEmitter {
   snapshot() {
     return {version: require('../package.json').version, health: this.health, settings: this.state.settings, root: this.root,
       proxyRestartRequired: JSON.stringify(this.state.settings.proxy) !== JSON.stringify(this.activeProxy),
-      services: [
-        {id: 'local', name: '本地文件夹', available: true}, {id: 'webdav', name: 'WebDAV', available: true},
-        {id: 's3', name: 'S3 兼容存储', available: true},
-        ...['onedrive', 'drive', 'dropbox', 'baidu'].map(id => ({id, name: {onedrive: 'OneDrive', drive: 'Google Drive', dropbox: 'Dropbox', baidu: '百度网盘'}[id], available: !!this.oauthClients[id]?.clientId && (id !== 'baidu' || !!this.oauthClients[id]?.clientSecret)}))],
+      services: listServices(this.providerConfig, this.oauthClients),
       connections: this.state.connections.map(c => ({id: c.id, name: c.name, type: c.type, folder: c.folder || '/', localPath: c.type === 'local' ? c.source : undefined, performance:{...perf.sample(c.id,this.state.disks,this.runtime),history:this.performanceHistory.get(c.id)}})),
       disks: this.state.disks.map(d => {const r = this.runtime.get(d.id); return {...d, lastError: displayError(d.lastError), paths: this.paths(d), status: r?.status || 'unmounted', error: displayError(r?.error), stats: r?.stats || null, busy: this.busy.has(d.id)};}),
       auth: this.auth ? {id: this.auth.id, status: this.auth.status, service: this.auth.type, question: this.auth.question, error: this.auth.error, device: this.auth.device} : null};
   }
   async addLocal(input) {
+    this.assertProviderEnabled('local');
     const name = safeName(input.name), source = path.resolve(String(input.path || ''));
     if (!input.path || !directoryExists(source)) throw new Error('请选择一个已存在的本地文件夹');
     if (containsPath(this.root, source) || containsPath(source, this.root)) throw new Error('请选择不包含软件数据目录的独立文件夹');
@@ -131,7 +134,7 @@ class Manager extends EventEmitter {
   }
   renameConnection(id, name) {this.connection(id).name = safeName(name); this.save();}
   async addDisk(input) {
-    this.connection(input.connectionId);
+    this.assertProviderEnabled(this.connection(input.connectionId).type);
     const d = {id: uid(), ...plan.validateDisk(input, this.state.disks), connectionId: input.connectionId, initialized: false};
     const paths = this.paths(d); fs.mkdirSync(paths.cache, {recursive: true, mode: 0o700});
     this.state.disks.push(d); this.save(); return d.id;
@@ -163,7 +166,7 @@ class Manager extends EventEmitter {
       const d = this.disk(id), c = this.connection(d.connectionId), p = this.paths(d);
       if (this.runtime.has(id)) throw new Error('此磁盘已有后台会话，请先安全卸载');
       if (this.platform !== 'win32') throw new Error('此发行版仅支持 Windows 挂载');
-      if (!this.health.winfsp) throw new Error('请先安装磁盘驱动，然后重新打开云屿');
+      if (!this.health.winfsp) throw new Error('请先安装磁盘驱动，然后重新打开 OneMount');
       if (fs.existsSync(d.letter + '\\')) throw new Error('此盘符已被占用，请使用其他盘符');
       // Prevent two writable direct mounts from using independent caches against the same source.
       if (d.mode === 'direct' && [...this.runtime.keys()].some(i => {const other = this.disk(i); return other.mode === 'direct' && this.connection(other.connectionId).source === c.source;})) throw new Error('这个存储目录已经挂载，请使用已有磁盘');
