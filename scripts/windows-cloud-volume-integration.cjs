@@ -5,7 +5,7 @@
 const {app,safeStorage}=require('electron');
 const fs=require('node:fs'),fsp=fs.promises,path=require('node:path'),crypto=require('node:crypto');
 const assert=require('node:assert/strict');
-const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs');
+const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs'),{loadProviderConfig}=require('../src/providers.cjs');
 if(process.platform!=='win32'||!process.env.ONEMOUNT_LIVE_PROFILE)throw Error('Windows, WinFsp and ONEMOUNT_LIVE_PROFILE are required');
 const repo=path.resolve(__dirname,'..'),original=path.resolve(process.env.ONEMOUNT_LIVE_PROFILE);
 const results=path.join(repo,'test-results');fs.mkdirSync(results,{recursive:true});
@@ -16,7 +16,7 @@ const report={started:new Date().toISOString(),profile,results:[]};
 const reportFile=path.join(profile,'report.json');
 const save=()=>fs.writeFileSync(reportFile,JSON.stringify(report,null,2));
 const hash=data=>crypto.createHash('sha256').update(data).digest('hex');
-const makeManager=()=>new Manager({root:profile,engines:path.join(repo,'engines'),
+const makeManager=()=>new Manager({root:profile,engines:path.join(repo,'engines'),providerConfig:loadProviderConfig(),
   protect:s=>safeStorage.encryptString(s).toString('base64'),unprotect:s=>safeStorage.decryptString(Buffer.from(s,'base64'))});
 let m;
 async function coldRestart(id,round) {

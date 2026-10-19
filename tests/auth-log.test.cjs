@@ -22,7 +22,8 @@ test('failed async OAuth task is persisted with useful identifiers and no creden
   });
   await new Promise(r=>server.listen(0,'127.0.0.1',r));
   t.after(()=>new Promise(r=>server.close(r)));
-  const m=new Manager({root,engines:root,protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString(),
+  const m=new Manager({root,engines:root,providerConfig:{enabledProviders:['onedrive']},
+    protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString(),
     oauthClients:{onedrive:{clientId:'test-id',clientSecret:'PRIVATE_CLIENT_SECRET'}},openExternal:async()=>{}});
   m.accounts=async()=>({rcPort:server.address().port,rcPass:'PRIVATE_RC_PASSWORD'});
   const id=await m.connect({type:'onedrive',name:'PRIVATE_ACCOUNT_NAME'});

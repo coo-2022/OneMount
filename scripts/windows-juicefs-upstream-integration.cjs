@@ -4,7 +4,7 @@
 const {app,safeStorage}=require('electron');
 const fs=require('node:fs'),fsp=fs.promises,path=require('node:path'),crypto=require('node:crypto');
 const {spawn}=require('node:child_process'),assert=require('node:assert/strict');
-const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs');
+const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs'),{loadProviderConfig}=require('../src/providers.cjs');
 const repo=path.resolve(__dirname,'..'),manifest=require('./juicefs-upstream-tests.json');
 const tools=path.join(repo,manifest.directory);
 const python=process.env.ONEMOUNT_TEST_PYTHON;
@@ -21,7 +21,7 @@ const report={started:new Date().toISOString(),upstreamCommit:manifest.commit,
 const save=()=>fs.writeFileSync(path.join(profile,'report.json'),JSON.stringify(report,null,2));
 let m;
 const manager=()=>{
-  const instance=new Manager({root:profile,engines:path.join(repo,'engines'),
+  const instance=new Manager({root:profile,engines:path.join(repo,'engines'),providerConfig:loadProviderConfig(),
     protect:s=>safeStorage.encryptString(s).toString('base64'),unprotect:s=>safeStorage.decryptString(Buffer.from(s,'base64'))});
   if(process.env.ONEMOUNT_UPSTREAM_DEBUG==='1'){
     const spawn=instance.spawn.bind(instance);

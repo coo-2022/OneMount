@@ -44,7 +44,7 @@ test('new and legacy default settings explicitly use direct access', () => {
 test('settings persist across restart, preserve login setting and never change running engines', t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ci-proxy-'));
   t.after(() => fs.rmSync(root, {recursive:true,force:true}));
-  const options = {root, engines:root, protect:s=>s, unprotect:s=>s};
+  const options = {root, engines:root, providerConfig: {enabledProviders: []}, protect:s=>s, unprotect:s=>s};
   const m = new Manager(options);
   assert.equal(m.snapshot().settings.proxy.mode, 'direct');
   m.updateSettings({loginStart:true});

@@ -6,7 +6,7 @@ const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs');
 async function fixture(t) {
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'ci-volume-'));
   t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
-  const m=new Manager({root,engines:root,protect:s=>s,unprotect:s=>s});
+  const m=new Manager({root,engines:root,providerConfig:{enabledProviders:['local','baidu']},protect:s=>s,unprotect:s=>s});
   const c={id:'cloud',type:'baidu',source:'cloud:chosen/中文',name:'Cloud'};
   m.state.connections.push(c);
   const id=await m.addDisk({connectionId:c.id,name:'Volume',mode:'juicefs',letter:'Q:',cacheGiB:1});

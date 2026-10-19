@@ -2,7 +2,7 @@
 // Fresh local fixtures; bounded application workloads, not a power-loss certification.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 const {spawn,execFileSync}=require('node:child_process'),{setTimeout:delay}=require('node:timers/promises');
-const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs');
+const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs'),{loadProviderConfig}=require('../src/providers.cjs');
 const repo=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 function digest(file){const h=crypto.createHash('sha256'),buf=Buffer.alloc(1024*1024),fd=fs.openSync(file,'r');try{let n;while((n=fs.readSync(fd,buf,0,buf.length,null)))h.update(buf.subarray(0,n));return h.digest('hex');}finally{fs.closeSync(fd);}}
 const blockKey=crypto.createHash('sha256').update('OneMount bounded filesystem baseline 20261016').digest();
@@ -69,7 +69,7 @@ async function main(){
   try{
     if(mode==='ntfs')folder=path.join(base,'workload');
     else{
-      m=new Manager({root:path.join(base,'profile'),engines:path.join(repo,'engines'),protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});await m.init();assert.ok(m.health.winfsp);
+      m=new Manager({root:path.join(base,'profile'),engines:path.join(repo,'engines'),providerConfig:loadProviderConfig(),protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});await m.init();assert.ok(m.health.winfsp);
       if(resume){assert.equal(m.state.disks.length,1);id=m.state.disks[0].id;assert.equal(m.disk(id).name,'Application filesystem test');assert.ok(!fs.existsSync(m.disk(id).letter+'\\'));}
       else{const backend=path.join(base,'backend');fs.mkdirSync(backend);const connectionId=await m.addLocal({name:'Application fixture',path:backend});
         const letter=process.env.ONEMOUNT_TEST_LETTER||[...'STUVWY'].find(c=>!fs.existsSync(c+':\\'));assert.match(letter,/^[D-Z]$/);assert.ok(!fs.existsSync(letter+':\\'));

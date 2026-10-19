@@ -2,7 +2,7 @@
 // Real Windows mount: default writeback, both transitions, and remote reads after
 // moving each clean read cache aside. Uses only a fresh local-backend fixture.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs');
+const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs'),{loadProviderConfig}=require('../src/providers.cjs');
 if(process.platform!=='win32')throw Error('Windows with WinFsp required');
 const root=path.resolve(__dirname,'..'),results=path.join(root,'test-results');
 fs.mkdirSync(results,{recursive:true});
@@ -10,7 +10,7 @@ const base=fs.mkdtempSync(path.join(results,'cache-settings-'));
 const backend=path.join(base,'backend');fs.mkdirSync(backend);
 const letter=[...'QRSUVWYZ'].find(c=>!fs.existsSync(c+':\\'));
 assert.ok(letter,'A free test drive is required');
-const m=new Manager({root:path.join(base,'profile'),engines:path.join(root,'engines'),protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});
+const m=new Manager({root:path.join(base,'profile'),engines:path.join(root,'engines'),providerConfig:loadProviderConfig(),protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});
 const report={started:new Date().toISOString(),fixture:base,checks:[],passed:false};
 const save=()=>fs.writeFileSync(path.join(base,'report.json'),JSON.stringify(report,null,2)+'\n');
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');

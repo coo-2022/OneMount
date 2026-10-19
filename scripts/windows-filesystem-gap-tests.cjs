@@ -2,7 +2,7 @@
 // Supplemental coverage on fresh local fixtures only. Never point this at a user mount.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const assert=require('node:assert/strict'),{spawn,execFileSync}=require('node:child_process');
-const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs');
+const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs'),{loadProviderConfig}=require('../src/providers.cjs');
 const root=path.resolve(__dirname,'..'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const target=process.argv[2];
 assert.equal(process.platform,'win32');
@@ -66,7 +66,7 @@ async function main(){
   report.catalog=optional.map(r=>({id:r.id,name:r.locator}));save();
   if(target==='ntfs'){mountRoot=path.join(base,'ntfs');fs.mkdirSync(mountRoot);}
   else {
-    manager=new Manager({root:path.join(base,'profile'),engines:path.join(root,'engines'),protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});
+    manager=new Manager({root:path.join(base,'profile'),engines:path.join(root,'engines'),providerConfig:loadProviderConfig(),protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});
     await manager.init();assert.ok(manager.health.winfsp);
     const backend=path.join(base,'backend');fs.mkdirSync(backend);
     const connectionId=await manager.addLocal({name:'Isolated gap tests',path:backend});

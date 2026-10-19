@@ -27,7 +27,7 @@ test('history retains five minutes, records unknown gaps, removes deleted connec
 });
 test('renaming persists without changing remote identity and rejects invalid names',t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'ci-rename-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
-  const options={root,engines:root,protect:s=>s,unprotect:s=>s};const m=new Manager(options);
+  const options={root,engines:root,providerConfig:{enabledProviders:[]},protect:s=>s,unprotect:s=>s};const m=new Manager(options);
   m.state.connections.push({id:'c',name:'Old',type:'drive',remote:'remote-id',source:'remote-id:folder'});
   m.renameConnection('c',' 新名称 ');assert.equal(m.connection('c').name,'新名称');
   assert.throws(()=>m.renameConnection('c',' '));assert.throws(()=>m.renameConnection('c','x'.repeat(49)));assert.throws(()=>m.renameConnection('missing','ok'));
@@ -35,6 +35,6 @@ test('renaming persists without changing remote identity and rejects invalid nam
 });
 test('background polling records idle connections without mounts',async t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'ci-history-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
-  const m=new Manager({root,engines:root,protect:s=>s,unprotect:s=>s});m.state.connections.push({id:'c',name:'Idle',type:'local',source:root});
+  const m=new Manager({root,engines:root,providerConfig:{enabledProviders:['local']},protect:s=>s,unprotect:s=>s});m.state.connections.push({id:'c',name:'Idle',type:'local',source:root});
   await m.poll();const p=m.snapshot().connections[0].performance;assert.equal(p.history.length,1);assert.equal(p.total,0);assert.equal(p.known,true);
 });

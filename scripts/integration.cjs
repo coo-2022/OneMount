@@ -1,13 +1,13 @@
 'use strict';
 // Headless integration: real engine binaries, real encrypted config, real S3 data, no FUSE requirement.
 const fs=require('node:fs');const os=require('node:os');const path=require('node:path');const assert=require('node:assert/strict');const crypto=require('node:crypto');
-const {Manager}=require('../src/manager.cjs');require('../src/accounts.cjs').installAccounts(Manager);
+const {Manager}=require('../src/manager.cjs');const {loadProviderConfig}=require('../src/providers.cjs');require('../src/accounts.cjs').installAccounts(Manager);
 const P=require('../src/processes.cjs');const plan=require('../src/plans.cjs');
 const base=fs.mkdtempSync(path.join(os.tmpdir(),'ci-integration-'));const bin=path.join(base,'engines');fs.mkdirSync(bin);
 const rclone=process.env.TEST_RCLONE,juicefs=process.env.TEST_JUICEFS;
 if(!rclone||!juicefs)throw new Error('Set TEST_RCLONE and TEST_JUICEFS to absolute Linux binary paths');
 fs.symlinkSync(rclone,path.join(bin,'rclone'));fs.symlinkSync(juicefs,path.join(bin,'juicefs'));
-const m=new Manager({root:path.join(base,'state'),engines:bin,protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString(),platform:'linux'});
+const m=new Manager({root:path.join(base,'state'),engines:bin,providerConfig:loadProviderConfig(),protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString(),platform:'linux'});
 let gateway;const report=[];
 const pass=s=>{report.push(s);console.log('PASS '+s);};
 async function stopGateway(){if(gateway){await P.rc(gateway,'core/quit');await P.waitExit(gateway.proc,10000);gateway=null;}}
