@@ -6,6 +6,7 @@ const {app,safeStorage}=require('electron');
 const fs=require('node:fs'),fsp=fs.promises,path=require('node:path'),crypto=require('node:crypto');
 const assert=require('node:assert/strict');
 const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs');
+const providerConfig=require('./cloud-test-providers.cjs').cloudVolumeProviders();
 if(process.platform!=='win32'||!process.env.ONEMOUNT_LIVE_PROFILE)throw Error('Windows, WinFsp and ONEMOUNT_LIVE_PROFILE are required');
 const repo=path.resolve(__dirname,'..'),original=path.resolve(process.env.ONEMOUNT_LIVE_PROFILE);
 const results=path.join(repo,'test-results');fs.mkdirSync(results,{recursive:true});
@@ -16,7 +17,7 @@ const report={started:new Date().toISOString(),profile,results:[]};
 const reportFile=path.join(profile,'report.json');
 const save=()=>fs.writeFileSync(reportFile,JSON.stringify(report,null,2));
 const hash=data=>crypto.createHash('sha256').update(data).digest('hex');
-const makeManager=()=>new Manager({root:profile,engines:path.join(repo,'engines'),
+const makeManager=()=>new Manager({root:profile,engines:path.join(repo,'engines'),providerConfig,
   protect:s=>safeStorage.encryptString(s).toString('base64'),unprotect:s=>safeStorage.decryptString(Buffer.from(s,'base64'))});
 let m;
 async function coldRestart(id,round) {
@@ -77,8 +78,7 @@ async function exercise(c,writeback) {
 }
 app.whenReady().then(async()=>{
   const state=JSON.parse(fs.readFileSync(path.join(original,'disks.json'),'utf8'));
-  const types=(process.env.ONEMOUNT_LIVE_TYPES||'baidu,onedrive,drive').split(',');
-  const connections=types.map(type=>{const c=state.connections.find(c=>c.type===type);assert.ok(c,'signed-in '+type+' connection required');return c;});
+  const connections=providerConfig.enabledProviders.map(type=>{const c=state.connections.find(c=>c.type===type);assert.ok(c,'signed-in '+type+' connection required');return c;});
   fs.writeFileSync(path.join(profile,'disks.json'),JSON.stringify({...state,connections,disks:[],settings:{...state.settings,loginStart:false}}));
   m=makeManager();await m.init();assert.ok(m.health.winfsp,'WinFsp is required');
   const modes=(process.env.ONEMOUNT_LIVE_WRITEBACK||'0,1').split(',');

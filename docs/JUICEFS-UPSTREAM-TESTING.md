@@ -64,13 +64,15 @@ $run = Start-Process ./node_modules/electron/dist/electron.exe `
 if ($run.ExitCode -ne 0) { throw '官方测试未全部通过，请查看 report.json 和日志' }
 ```
 
-真实网盘测试需要现有已登录的云屿账户：
+真实网盘测试需要现有已登录的 OneMount 账户：
 
 ```powershell
 $env:ONEMOUNT_LIVE_PROFILE = Join-Path $env:APPDATA 'CloudIsland'
 $env:ONEMOUNT_UPSTREAM_TYPES = 'baidu,onedrive,drive'
 # 再执行上面的 Start-Process 运行段，为本轮生成新的日志前缀。
 ```
+
+此测试脚本按 `ONEMOUNT_UPSTREAM_TYPES` 为独立测试配置开放服务，冷重启时保持一致，不读取或修改产品的 `provider-config.json`。未设置时测试范围为 `local,baidu,onedrive,drive`；仅测试本地时应显式设置为 `local`。选中的网盘仍需已有授权，未知或重复的服务标识会在测试开始前报错。
 
 可用 `ONEMOUNT_FSX_OPS` 显式覆盖 FSX 操作次数。增加次数会显著增加真实网盘
 的小对象上传量和测试时间。

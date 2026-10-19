@@ -5,6 +5,7 @@ const {app,safeStorage}=require('electron');
 const fs=require('node:fs'),fsp=fs.promises,path=require('node:path'),crypto=require('node:crypto');
 const {spawn}=require('node:child_process'),assert=require('node:assert/strict');
 const {Manager}=require('../src/manager.cjs'),P=require('../src/processes.cjs');
+const providerConfig=require('./cloud-test-providers.cjs').juicefsUpstreamProviders();
 const repo=path.resolve(__dirname,'..'),manifest=require('./juicefs-upstream-tests.json');
 const tools=path.join(repo,manifest.directory);
 const python=process.env.ONEMOUNT_TEST_PYTHON;
@@ -21,7 +22,7 @@ const report={started:new Date().toISOString(),upstreamCommit:manifest.commit,
 const save=()=>fs.writeFileSync(path.join(profile,'report.json'),JSON.stringify(report,null,2));
 let m;
 const manager=()=>{
-  const instance=new Manager({root:profile,engines:path.join(repo,'engines'),
+  const instance=new Manager({root:profile,engines:path.join(repo,'engines'),providerConfig,
     protect:s=>safeStorage.encryptString(s).toString('base64'),unprotect:s=>safeStorage.decryptString(Buffer.from(s,'base64'))});
   if(process.env.ONEMOUNT_UPSTREAM_DEBUG==='1'){
     const spawn=instance.spawn.bind(instance);
@@ -157,9 +158,8 @@ app.whenReady().then(async()=>{
   if(original){const state=JSON.parse(fs.readFileSync(path.join(original,'disks.json'),'utf8'));
     fs.writeFileSync(path.join(profile,'disks.json'),JSON.stringify({...state,disks:[],settings:{...state.settings,loginStart:false}}));}
   m=manager();await m.init();assert.ok(m.health.winfsp,'WinFsp required');
-  const types=(process.env.ONEMOUNT_UPSTREAM_TYPES||'local,baidu,onedrive,drive').split(',');
   const modes=(process.env.ONEMOUNT_LIVE_WRITEBACK||'0,1').split(',');
-  for(const type of types){let c;
+  for(const type of providerConfig.enabledProviders){let c;
     if(type==='local'){const backend=await fsp.mkdtemp(path.join(repo,'test-results/juicefs-upstream-backend-'));const id=await m.addLocal({name:'Upstream local control',path:backend});c=m.connection(id);}
     else c=m.state.connections.find(c=>c.type===type);
     assert.ok(c,'signed-in '+type+' connection required');for(const mode of modes)await exercise(c,mode==='1');

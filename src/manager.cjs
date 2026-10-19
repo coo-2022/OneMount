@@ -23,7 +23,7 @@ function containsPath(base, target) {const r = path.relative(base, target); retu
 function displayError(message) {return /rclone|juicefs|token|secret|password|Authorization|client_id|access_key/i.test(message || '') ? '连接或磁盘操作未完成。请检查网络、账号信息与磁盘驱动后重试。' : String(message || '').replace(/https?:\/\/[^\s]+/g, '[服务地址]').slice(0,500);}
 
 class Manager extends EventEmitter {
-  constructor({root, engines, protect, unprotect, oauthClients = {}, providerConfig = require('../provider-config.json'), openExternal = async () => {}, platform = process.platform}) {
+  constructor({root, engines, protect, unprotect, oauthClients = {}, providerConfig, openExternal = async () => {}, platform = process.platform}) {
     super(); Object.assign(this, {root, engines, protect, unprotect, oauthClients, openExternal, platform});
     this.providerConfig = normalizeProviderConfig(providerConfig);
     fs.mkdirSync(root, {recursive: true, mode: 0o700});

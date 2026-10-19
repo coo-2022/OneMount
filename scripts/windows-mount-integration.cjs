@@ -6,13 +6,14 @@ const os = require('node:os');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const {Manager} = require('../src/manager.cjs');
+const {loadProviderConfig} = require('../src/providers.cjs');
 const P = require('../src/processes.cjs');
 if (process.platform !== 'win32') throw new Error('Windows with WinFsp required');
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'onemount-mount-test-'));
 const letter = [...'ZYXWVUTSRQPONMLKJIHGFE'].find(c => !fs.existsSync(c + ':\\')) + ':';
 assert.match(letter, /^[E-Z]:$/);
 const state = path.join(base, 'state');
-const m = new Manager({root: state, engines: path.resolve(__dirname, '../engines'),
+const m = new Manager({root: state, engines: path.resolve(__dirname, '../engines'), providerConfig: loadProviderConfig(),
   // Test-only storage wrapper; no real account credentials enter this temporary fixture.
   protect: s => Buffer.from(s).toString('base64'), unprotect: s => Buffer.from(s, 'base64').toString()});
 const hash = b => crypto.createHash('sha256').update(b).digest('hex');

@@ -3,6 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const {spawn}=require('node:child_process');
 const {Manager}=require('../src/manager.cjs');
+const {loadProviderConfig}=require('../src/providers.cjs');
 const P=require('../src/processes.cjs');
 if(process.platform!=='win32'||process.env.GITHUB_ACTIONS!=='true')throw Error('Disposable Windows CI runner required');
 const mode=process.argv[2];
@@ -62,7 +63,7 @@ async function main(){
  report.catalog=cases.map(({id,suite})=>({id,suite}));save();
  if(mode==='ntfs'){mountRoot=path.join(base,'ntfs');fs.mkdirSync(mountRoot);}
  else {
-  manager=new Manager({root:path.join(base,'state'),engines:path.join(root,'engines'),protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});
+  manager=new Manager({root:path.join(base,'state'),engines:path.join(root,'engines'),providerConfig:loadProviderConfig(),protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});
   await manager.init();const backend=path.join(base,'backend');fs.mkdirSync(backend);
   const connectionId=await manager.addLocal({name:'Conformance only',path:backend});
   const letter=[...'ZYXWVUTSRQPONMLKJIHGFE'].find(c=>!fs.existsSync(c+':\\'));if(!letter)throw Error('No free test drive letter');

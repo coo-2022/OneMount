@@ -1,6 +1,6 @@
 const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const os=require('node:os');const path=require('node:path');
 const {Manager}=require('../src/manager.cjs');
-function setup(t){const root=fs.mkdtempSync(path.join(os.tmpdir(),'ci-unit-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const base=path.join(root,'backend');fs.mkdirSync(base);const m=new Manager({root:path.join(root,'state'),engines:root,protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});return {m,base};}
+function setup(t){const root=fs.mkdtempSync(path.join(os.tmpdir(),'ci-unit-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const base=path.join(root,'backend');fs.mkdirSync(base);const m=new Manager({root:path.join(root,'state'),engines:root,providerConfig:{enabledProviders:['local']},protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});return {m,base};}
 test('creation persists and removal archives without deleting metadata or cache',async t=>{
   const {m,base}=setup(t);const c=await m.addLocal({name:'本地',path:base});const id=await m.addDisk({connectionId:c,name:'卷',mode:'juicefs',letter:'X:',cacheGiB:10});
   const p=m.paths(m.disk(id));fs.writeFileSync(p.meta,'precious metadata');fs.writeFileSync(path.join(p.cache,'pending'),'precious dirty bytes');
@@ -12,7 +12,8 @@ test('state snapshot never includes encryption keys or RC credentials',t=>{
 });
 
 test('Baidu availability needs both application credentials and supports both disk modes',async t=>{
-  const {m}=setup(t); m.oauthClients.baidu={clientId:'PRIVATE_APP'};
+  const {base}=setup(t);
+  const m=new Manager({root:path.join(base,'state'),engines:base,providerConfig:{enabledProviders:['local','baidu']},oauthClients:{baidu:{clientId:'PRIVATE_APP'}},protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});
   assert.equal(m.snapshot().services.find(s=>s.id==='baidu').available,false);
   m.oauthClients.baidu.clientSecret='PRIVATE_SECRET';
   assert.equal(m.snapshot().services.find(s=>s.id==='baidu').available,true);
@@ -56,7 +57,7 @@ test('volume cache settings persist across reload and preserve metadata and cach
   const d=m.disk(id),p=m.paths(d);assert.equal(d.writeback,true);
   fs.writeFileSync(p.meta,'metadata');fs.writeFileSync(path.join(p.cache,'read-cache'),'cached bytes');
   await m.updateDisk(id,{writeback:false,cacheGiB:20});
-  const restored=new Manager({root:m.root,engines:m.engines,protect:m.protect,unprotect:m.unprotect});
+  const restored=new Manager({root:m.root,engines:m.engines,providerConfig:{enabledProviders:['local']},protect:m.protect,unprotect:m.unprotect});
   assert.equal(restored.disk(id).writeback,false);assert.equal(restored.disk(id).cacheGiB,20);
   await restored.updateDisk(id,{name:'改名'});assert.equal(restored.disk(id).writeback,false);
   await restored.updateDisk(id,{writeback:true});assert.equal(restored.disk(id).writeback,true);

@@ -10,7 +10,7 @@ const {Manager} = require('../src/manager.cjs');
 function setup(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(),'ci-failed-mount-'));
   t.after(() => fs.rmSync(root,{recursive:true,force:true}));
-  const m = new Manager({root,engines:root,protect:s=>s,unprotect:s=>s});
+  const m = new Manager({root,engines:root,providerConfig:{enabledProviders:[]},protect:s=>s,unprotect:s=>s});
   const d = {id:'disk',name:'Drive',letter:path.join(root,'drive'),mode:'direct',lastError:'timeout'};
   const r = {proc:{pid:123},status:'error',everMounted:false};
   m.state.disks.push(d); m.runtime.set(d.id,r);
