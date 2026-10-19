@@ -3,4 +3,5 @@ package all
 
 import (
 	_ "github.com/coo-2022/OneMount/engine-src/rclone/backend/baidu"
+	_ "github.com/coo-2022/OneMount/engine-src/rclone/backend/cloud115"
 )

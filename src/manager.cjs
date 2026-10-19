@@ -93,7 +93,7 @@ class Manager extends EventEmitter {
       services: [
         {id: 'local', name: '本地文件夹', available: true}, {id: 'webdav', name: 'WebDAV', available: true},
         {id: 's3', name: 'S3 兼容存储', available: true},
-        ...['onedrive', 'drive', 'dropbox', 'baidu'].map(id => ({id, name: {onedrive: 'OneDrive', drive: 'Google Drive', dropbox: 'Dropbox', baidu: '百度网盘'}[id], available: !!this.oauthClients[id]?.clientId && (id !== 'baidu' || !!this.oauthClients[id]?.clientSecret)}))],
+        ...['onedrive', 'drive', 'dropbox', 'baidu', 'cloud115'].map(id => ({id, name: {onedrive: 'OneDrive', drive: 'Google Drive', dropbox: 'Dropbox', baidu: '百度网盘', cloud115: '115 网盘'}[id], available: !!this.oauthClients[id]?.clientId && (id !== 'baidu' || !!this.oauthClients[id]?.clientSecret) && (id !== 'cloud115' || /^\d{1,20}$/.test(this.oauthClients[id].clientId))}))],
       connections: this.state.connections.map(c => ({id: c.id, name: c.name, type: c.type, folder: c.folder || '/', localPath: c.type === 'local' ? c.source : undefined, performance:{...perf.sample(c.id,this.state.disks,this.runtime),history:this.performanceHistory.get(c.id)}})),
       disks: this.state.disks.map(d => {const r = this.runtime.get(d.id); return {...d, lastError: displayError(d.lastError), paths: this.paths(d), status: r?.status || 'unmounted', error: displayError(r?.error), stats: r?.stats || null, busy: this.busy.has(d.id)};}),
       auth: this.auth ? {id: this.auth.id, status: this.auth.status, service: this.auth.type, question: this.auth.question, error: this.auth.error, device: this.auth.device} : null};
@@ -131,7 +131,8 @@ class Manager extends EventEmitter {
   }
   renameConnection(id, name) {this.connection(id).name = safeName(name); this.save();}
   async addDisk(input) {
-    this.connection(input.connectionId);
+    const connection = this.connection(input.connectionId);
+    if (connection.type === 'cloud115' && input.mode === 'juicefs') throw new Error('115 文件系统卷尚待真实网盘验证，请先使用网盘直连。');
     const d = {id: uid(), ...plan.validateDisk(input, this.state.disks), connectionId: input.connectionId, initialized: false};
     const paths = this.paths(d); fs.mkdirSync(paths.cache, {recursive: true, mode: 0o700});
     this.state.disks.push(d); this.save(); return d.id;

@@ -4,6 +4,7 @@ const {rc, delay} = require('./processes.cjs');
 const {safeName} = require('./manager.cjs');
 const {appendAuthLog, errorDetails} = require('./auth-log.cjs');
 const {authorizeBaidu} = require('./baidu-auth.cjs');
+const {authorize115} = require('./cloud115-auth.cjs');
 
 const TEMPLATE = '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>云屿 · 账号连接</title><body style="font:16px system-ui;background:#f5f7fa;text-align:center;padding:15vh 20px;color:#253044"><h1>{{if .OK}}已收到登录回调{{else}}授权未完成{{end}}</h1><p>{{if .OK}}请返回云屿，等待账户验证并完成网盘选择。最终连接结果以云屿窗口为准。{{else}}请返回云屿，重新尝试连接。{{end}}</p></body></html>';
 const labels = {config_type: '选择账户类型', config_driveid: '选择要连接的磁盘', config_drive_id: '选择要连接的磁盘', drive_id: '选择要连接的磁盘', config_driveok: '确认连接这个磁盘？', config_team_drive: '是否连接共享云端硬盘？', config_team_drive_id: '选择共享云端硬盘', config_site: '选择站点', config_site_url: '输入站点地址', config_region: '选择账户所在区域'};
@@ -13,6 +14,13 @@ const scrub = s => String(s || '').replace(/rclone|juicefs/ig, '云屿');
 // authorization URLs, codes or tokens to the renderer.
 function authErrorMessage(error) {
   const raw = String(error?.message || '');
+  if (/cloud115_auth|cloud115:/.test(raw)) {
+    if (/expired_token/.test(raw)) return '115 授权二维码已过期，请返回后重新连接。';
+    if (/access_denied/.test(raw)) return '115 授权已取消，请返回后重新扫码。';
+    if (/invalid_client/.test(raw)) return '115 应用尚未配置有效的 App ID，请检查开放平台应用配置。';
+    if (/authorization/.test(raw)) return '115 登录授权已失效，请重新连接账号。';
+    return '暂时无法连接 115，请检查网络及开放平台应用权限后重试。';
+  }
   if (/baidu_auth/.test(raw)) {
     if (/invalid_client/.test(raw)) return '百度应用身份验证未通过，请检查应用的 AppKey 和 SecretKey。';
     if (/expired_token|invalid_grant/.test(raw)) return '百度授权码已过期，请返回后重新连接。';
@@ -44,7 +52,7 @@ function installAccounts(Manager) {
   Manager.prototype.connect = async function(input) {
     if (this.auth) throw new Error('请先完成或取消当前连接');
     const name = safeName(input.name), type = input.type;
-    if (!['webdav', 's3', 'onedrive', 'drive', 'dropbox', 'baidu'].includes(type)) throw new Error('暂不支持这个服务');
+    if (!['webdav', 's3', 'onedrive', 'drive', 'dropbox', 'baidu', 'cloud115'].includes(type)) throw new Error('暂不支持这个服务');
     const parameters = {config_auth_no_browser: 'true', config_template: TEMPLATE};
     if (['webdav', 's3'].includes(type)) {
       const url = new URL(String(input.url));
@@ -58,14 +66,32 @@ function installAccounts(Manager) {
       const app = this.oauthClients[type];
       if (!app?.clientId) throw new Error('此服务尚未开放登录，等待发布者完成授权接入');
       if (type === 'baidu' && !app.clientSecret) throw new Error('百度网盘的应用配置尚未完成');
-      Object.assign(parameters, {client_id: app.clientId, client_secret: app.clientSecret || ''});
+      Object.assign(parameters, type === 'cloud115' ? {client_id: app.clientId} : {client_id: app.clientId, client_secret: app.clientSecret || ''});
       if (type === 'drive') parameters.scope = 'drive';
     }
     const a = {id: crypto.randomUUID(), name, type, remote: 'ci_' + crypto.randomBytes(10).toString('hex'), status: 'connecting', parameters, started: Date.now()};
     this.auth = a; this.emit('change');
     this.logAuth(a, 'connection_started');
     const start = () => this.advanceAuth(a, 'config/create', {name: a.remote, type, parameters, opt: {nonInteractive: true, obscure: true}});
-    if (type === 'baidu') {
+    if (type === 'cloud115') {
+      a.controller = new AbortController(); a.stage = 'qr_authorization';
+      a.deviceTask = authorize115({clientId: parameters.client_id, signal: a.controller.signal,
+        onCode: async device => {
+          if (this.auth !== a || a.cancelled) return;
+          a.device = device; a.status = 'qr_authorizing';
+          this.logAuth(a, 'qr_authorization_started'); this.emit('change');
+        },
+        onScanned: () => {
+          if (this.auth !== a || a.cancelled) return;
+          a.status = 'qr_scanned'; this.emit('change');
+        },
+      }).then(async token => {
+        if (this.auth !== a || a.cancelled) return;
+        a.device = null; parameters.token = JSON.stringify(token);
+        a.status = 'connecting'; this.logAuth(a, 'qr_authorization_succeeded'); this.emit('change');
+        await start();
+      }).catch(e => this.authFailure(a, e));
+    } else if (type === 'baidu') {
       a.controller = new AbortController(); a.stage = 'device_authorization';
       a.deviceTask = authorizeBaidu({clientId: parameters.client_id, clientSecret: parameters.client_secret, signal: a.controller.signal,
         onCode: async device => {

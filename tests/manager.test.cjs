@@ -26,6 +26,20 @@ test('Baidu availability needs both application credentials and supports both di
 test('dirty cache metadata scan includes open dirty files and fails closed on malformed data',async t=>{
   const {m,base}=setup(t);const dir=path.join(base,'vfsMeta');fs.mkdirSync(dir);fs.writeFileSync(path.join(dir,'dirty'),JSON.stringify({Dirty:true}));fs.writeFileSync(path.join(dir,'clean'),JSON.stringify({Dirty:false}));assert.equal(await m.dirtyMetadata(dir),1);fs.writeFileSync(path.join(dir,'bad'),'{');await assert.rejects(()=>m.dirtyMetadata(dir));
 });
+
+test('115 requires only an approved numeric App ID and unverified volume mode stays closed',async t=>{
+  const {m}=setup(t);
+  assert.equal(m.snapshot().services.find(s=>s.id==='cloud115').available,false);
+  m.oauthClients.cloud115={clientId:'123456'};
+  assert.equal(m.snapshot().services.find(s=>s.id==='cloud115').available,true);
+  assert.doesNotMatch(JSON.stringify(m.snapshot()),/123456/);
+  m.state.connections.push({id:'115',type:'cloud115',name:'115',source:'test:'});
+  const id=await m.addDisk({connectionId:'115',name:'115',mode:'direct',letter:'W:',cacheGiB:10});
+  assert.equal(m.disk(id).mode,'direct');
+  await assert.rejects(m.addDisk({connectionId:'115',name:'卷',mode:'juicefs',letter:'V:',cacheGiB:10}),/真实网盘验证/);
+  m.oauthClients.cloud115.clientId='invalid';
+  assert.equal(m.snapshot().services.find(s=>s.id==='cloud115').available,false);
+});
 test('disk edits, removal, and duplicate actions are blocked while running',async t=>{
   const {m,base}=setup(t);const c=await m.addLocal({name:'本地',path:base});const id=await m.addDisk({connectionId:c,name:'卷',mode:'direct',letter:'X:',cacheGiB:10});m.runtime.set(id,{status:'mounted'});
   await assert.rejects(()=>m.removeDisk(id));await assert.rejects(()=>m.updateDisk(id,{cacheGiB:2}));m.busy.add(id);await assert.rejects(()=>m.locked(id,async()=>{}));

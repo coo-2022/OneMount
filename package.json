@@ -18,7 +18,10 @@
     "engine:rclone:test": "node scripts/test-rclone-extension.cjs"
   },
   "devDependencies": {
-    "electron": "44.7.0",
-    "@electron/packager": "20.3.0"
+    "@electron/packager": "20.3.0",
+    "electron": "44.7.0"
+  },
+  "dependencies": {
+    "qrcode": "1.5.4"
   }
 }

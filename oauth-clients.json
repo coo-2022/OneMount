@@ -7,6 +7,10 @@
     "clientId": "",
     "clientSecret": ""
   },
+  "cloud115": {
+    "clientId": "",
+    "clientSecret": ""
+  },
   "dropbox": {
     "clientId": "",
     "clientSecret": ""

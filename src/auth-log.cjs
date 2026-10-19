@@ -17,13 +17,15 @@ function errorDetails(error) {
   const networkCodes=NETWORK_ERRORS.filter(code=>raw.includes(code)||causeCodes.includes(code));
   let category='unknown';
   if (/failed to get token/i.test(raw)) category='token_exchange';
-  else if (/baidu_auth/.test(raw)) category='device_authorization';
+  else if (/baidu_auth|cloud115_auth/.test(raw)) category='device_authorization';
   else if (/failed to refresh token/i.test(raw)) category='authorization_callback';
   else if (/failed to query.*drive|failed to query root|failed to configure OneDrive/i.test(raw)) category='drive_discovery';
   if(category==='unknown'&&/timeout|timed out|fetch failed|connectex|no such host|TLS handshake/i.test(raw)) category='network';
   if(category==='unknown'&&/登录超时/.test(raw)) category='authorization_timeout';
   const status=raw.match(/\b(?:HTTP(?:\/\d(?:\.\d)?)?|status(?: code)?|cannot fetch token)[\s:=]+([45]\d\d)\b/i)?.[1];
   const detail={category,microsoftCodes,oauthErrors,networkCodes};
+  const providerCode=raw.match(/\bcloud115(?:_auth|:)[^\n]*?\bcode=(\d{1,10})\b/)?.[1];
+  if(providerCode)detail.providerCode=Number(providerCode);
   if(status)detail.httpStatus=Number(status);
   for(const [field,label] of [['traceId','Trace ID'],['correlationId','Correlation ID']]) {
     const value=raw.match(new RegExp(label+':\\s*([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})','i'))?.[1];

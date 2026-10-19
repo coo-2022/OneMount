@@ -37,6 +37,7 @@ require (
 	github.com/aalpar/deheap v1.1.2 // indirect
 	github.com/abbot/go-http-auth v0.4.0 // indirect
 	github.com/adrg/xdg v0.5.3 // indirect
+	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 	github.com/anacrolix/dms v1.7.2 // indirect
 	github.com/anacrolix/generics v0.2.0 // indirect
 	github.com/anacrolix/log v0.17.0 // indirect
