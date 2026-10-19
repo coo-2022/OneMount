@@ -86,15 +86,15 @@ npm run engine:rclone:build
 
 入口开启后，仍需配齐该服务的登录凭据，否则显示「等待发布者开放登录」。已保存的连接和磁盘继续展示、使用和安全卸载，避免入口调整影响已有数据；这个配置用于产品入口控制，不是数据访问权限隔离。
 
-构建工作副本中可设置 `ONEMOUNT_ENABLED_PROVIDERS=baidu`，再运行 `npm run release:config`；多个服务用逗号分隔。默认开放全部已集成的服务入口。115 仍保留在独立开发分支，不在此配置支持范围内。
+构建工作副本中可设置 `ONEMOUNT_ENABLED_PROVIDERS=baidu`，再运行 `npm run release:config`；多个服务用逗号分隔。默认仅开放本地文件夹、WebDAV 和 S3 兼容存储。OneDrive、Google Drive、Dropbox、百度网盘需要显式加入允许列表，并配齐登录凭据；仅填写凭据不会自动开启入口。115 仍保留在独立开发分支，不在此配置支持范围内。
 
 最终用户的流程是「添加服务 → 浏览器授权 → 选择目录」。不提供导入底层配置、执行命令行或显示原始配置问答的入口。
 
 第三方授权页展示的应用名由 OAuth 注册决定。默认构建不使用 rclone 内置的公共 Client ID，避免授权页出现不属于本产品的名称。发布者应注册自己的桌面 OAuth 应用，把显示名设为 OneMount，配置相应权限与重定向地址。
 
 1. 按 `oauth-clients.json` 格式新建 `oauth-clients.local.json`（已被 Git 忽略）。
-2. 填写 `onedrive`、`drive`、`dropbox` 或 `baidu` 对应的 `clientId`、`clientSecret`；百度对应 AppKey / SecretKey。构建工作副本中执行 `npm run release:config`，注意此命令会将私有配置写入 `oauth-clients.json`，不得提交含密钥的生成文件。
-3. 执行打包。未配置的服务会显示「等待发布者开放登录」。
+2. 填写 `onedrive`、`drive`、`dropbox` 或 `baidu` 对应的 `clientId`、`clientSecret`；百度对应 AppKey / SecretKey。在构建工作副本的 `provider-config.json` 中加入要开放的服务，或设置 `ONEMOUNT_ENABLED_PROVIDERS`，再执行 `npm run release:config`。注意此命令会将私有配置写入 `oauth-clients.json`，不得提交含密钥的生成文件。
+3. 执行打包。已开启入口但缺少凭据的服务会显示「等待发布者开放登录」；未开启的服务不显示入口。
 
 也可通过 `ONEMOUNT_OAUTH_ONEDRIVE_CLIENT_ID` 等环境变量注入。桌面程序中的 Client Secret 可被提取，不能把它当成服务器端保密凭据；应按各厂商对本机应用的要求注册。回调使用内置引擎的本机回调端口 `53682`，常见 URI 为 `http://localhost:53682/`；具体提供商要求请以其官方注册指南为准。
 
@@ -165,6 +165,8 @@ node scripts/windows-volume-ui-smoke.cjs
 ```
 
 真实网盘测试默认覆盖百度、OneDrive、Google Drive，以及关闭/开启后台上传两种模式；可用 `ONEMOUNT_LIVE_TYPES=baidu,drive` 和 `ONEMOUNT_LIVE_WRITEBACK=0,1` 选择范围。测试使用复制的加密账号配置及独立盘符，不复用用户挂载；校验中文路径、跨块数据、随机写、追加、空文件、稀疏文件、截断、重命名、删除和两次冷缓存重启，最后检查远端数据块。报告、元数据、缓存备份均保留在被 Git 忽略的 `test-results/cloud-volume-*/`，远端测试卷也保留供核对。真实账号测试不会随 `npm test` 自动执行。
+
+这套真实网盘测试按 `ONEMOUNT_LIVE_TYPES`（未设置时使用上述默认范围）为独立测试配置开放对应服务，冷重启时保持一致，不读取或修改产品的 `provider-config.json`。因此无需为运行测试更改发行版入口，但仍需各测试网盘已有授权。
 
 本次验证记录见 [JuiceFS 网盘后端验证](docs/JUICEFS-CLOUD-VALIDATION-2026-10-14.md)。
 
