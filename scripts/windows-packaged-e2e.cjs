@@ -11,7 +11,7 @@ const P = require('../src/processes.cjs');
 if (process.platform !== 'win32' || process.env.GITHUB_ACTIONS !== 'true') throw new Error('Disposable Windows CI runner required');
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'onemount-packaged-'));
 const results = path.resolve(__dirname, '../test-results'); fs.mkdirSync(results, {recursive:true});
-const exe = path.resolve(__dirname, '../dist/CloudIsland-win32-x64/CloudIsland.exe');
+const exe = path.resolve(__dirname, '../dist/OneMount-win32-x64/OneMount.exe');
 const backend = path.join(base, 'backend'); fs.mkdirSync(backend);
 fs.writeFileSync(path.join(backend, 'existing.txt'), 'existing backend file');
 const letters = [...'ZYXWVUTSRQPONMLKJIHGFE'].filter(c=>!fs.existsSync(c+':\\')).slice(0,2).map(c=>c+':');
@@ -36,6 +36,8 @@ async function launch() {
   await page.waitForFunction(()=>document.querySelector('#content h1')?.textContent==='我的磁盘');
   const info=await app.evaluate(({app,safeStorage,BrowserWindow})=>({packaged:app.isPackaged,version:app.getVersion(),encryption:safeStorage.isEncryptionAvailable(),root:app.getPath('userData'),prefs:BrowserWindow.getAllWindows()[0].webContents.getLastWebPreferences()}));
   assert.equal(info.packaged,true); assert.equal(info.version,report.version); assert.equal(info.encryption,true);
+  assert.equal(await app.evaluate(({app}) => app.getName()), 'OneMount');
+  assert.equal(await page.title(), 'OneMount');
   assert.equal(info.prefs.nodeIntegration,false); assert.equal(info.prefs.contextIsolation,true); assert.equal(info.prefs.sandbox,true);
   stateRoot=info.root;
 }

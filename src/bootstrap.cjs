@@ -1,6 +1,6 @@
 'use strict';
 const {app} = require('electron');
-app.setName('CloudIsland');
+require('./identity.cjs').configureIdentity(app);
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
   const main = require('./main.cjs');

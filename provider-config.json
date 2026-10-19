@@ -1,0 +1,3 @@
+{
+  "enabledProviders": ["local", "webdav", "s3", "onedrive", "drive", "dropbox", "baidu"]
+}

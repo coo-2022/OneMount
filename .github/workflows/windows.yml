@@ -45,6 +45,9 @@ jobs:
       - name: Validate packaged desktop application
         timeout-minutes: 6
         run: node scripts/windows-packaged-e2e.cjs
+      - name: Verify provider editions and OneMount profile compatibility
+        timeout-minutes: 3
+        run: node scripts/windows-provider-config-smoke.cjs
       - name: Verify both mount modes as a standard Windows user
         timeout-minutes: 12
         run: ./scripts/run-standard-user-test.ps1 -Script scripts/windows-mount-integration.cjs
@@ -61,5 +64,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: OneMount-Windows-x64-preview
-          path: dist/CloudIsland-win32-x64/
+          path: dist/OneMount-win32-x64/
           retention-days: 14

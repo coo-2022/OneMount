@@ -5,9 +5,9 @@ const {safeName} = require('./manager.cjs');
 const {appendAuthLog, errorDetails} = require('./auth-log.cjs');
 const {authorizeBaidu} = require('./baidu-auth.cjs');
 
-const TEMPLATE = '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>云屿 · 账号连接</title><body style="font:16px system-ui;background:#f5f7fa;text-align:center;padding:15vh 20px;color:#253044"><h1>{{if .OK}}已收到登录回调{{else}}授权未完成{{end}}</h1><p>{{if .OK}}请返回云屿，等待账户验证并完成网盘选择。最终连接结果以云屿窗口为准。{{else}}请返回云屿，重新尝试连接。{{end}}</p></body></html>';
+const TEMPLATE = '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>OneMount · 账号连接</title><body style="font:16px system-ui;background:#f5f7fa;text-align:center;padding:15vh 20px;color:#253044"><h1>{{if .OK}}已收到登录回调{{else}}授权未完成{{end}}</h1><p>{{if .OK}}请返回 OneMount，等待账户验证并完成网盘选择。最终连接结果以 OneMount 窗口为准。{{else}}请返回 OneMount，重新尝试连接。{{end}}</p></body></html>';
 const labels = {config_type: '选择账户类型', config_driveid: '选择要连接的磁盘', config_drive_id: '选择要连接的磁盘', drive_id: '选择要连接的磁盘', config_driveok: '确认连接这个磁盘？', config_team_drive: '是否连接共享云端硬盘？', config_team_drive_id: '选择共享云端硬盘', config_site: '选择站点', config_site_url: '输入站点地址', config_region: '选择账户所在区域'};
-const scrub = s => String(s || '').replace(/rclone|juicefs/ig, '云屿');
+const scrub = s => String(s || '').replace(/rclone|juicefs/ig, 'OneMount');
 
 // Map known errors to fixed user messages. Never expose raw provider responses,
 // authorization URLs, codes or tokens to the renderer.
@@ -45,6 +45,7 @@ function installAccounts(Manager) {
     if (this.auth) throw new Error('请先完成或取消当前连接');
     const name = safeName(input.name), type = input.type;
     if (!['webdav', 's3', 'onedrive', 'drive', 'dropbox', 'baidu'].includes(type)) throw new Error('暂不支持这个服务');
+    this.assertProviderEnabled(type);
     const parameters = {config_auth_no_browser: 'true', config_template: TEMPLATE};
     if (['webdav', 's3'].includes(type)) {
       const url = new URL(String(input.url));
