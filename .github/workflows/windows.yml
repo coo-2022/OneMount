@@ -9,7 +9,7 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 40
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,6 +38,10 @@ jobs:
         run: node scripts/windows-cache-settings-integration.cjs
       - name: Build portable Windows application
         run: npm run package:win
+      - name: Build Windows installer and update metadata
+        run: npm run installer:win
+      - name: Verify installer contents and update checksums
+        run: npm run installer:check
       - name: Install isolated desktop test tools
         run: |
           npm install --prefix "$env:RUNNER_TEMP/onemount-tools" --no-audit --no-fund playwright@1.64.0
@@ -48,6 +52,17 @@ jobs:
       - name: Verify provider editions and OneMount profile compatibility
         timeout-minutes: 3
         run: node scripts/windows-provider-config-smoke.cjs
+      - name: Build isolated installer upgrade fixtures
+        timeout-minutes: 8
+        run: node scripts/build-install-test-fixtures.cjs
+        env:
+          ONEMOUNT_ELECTRON_DIST: node_modules/electron/dist
+      - name: Verify installation, upgrade and safe uninstall
+        timeout-minutes: 6
+        run: node scripts/windows-install-update-smoke.cjs
+      - name: Verify real updater downloads and checksum rejection
+        timeout-minutes: 3
+        run: node scripts/windows-update-download-smoke.cjs
       - name: Verify both mount modes as a standard Windows user
         timeout-minutes: 12
         run: ./scripts/run-standard-user-test.ps1 -Script scripts/windows-mount-integration.cjs
@@ -59,10 +74,26 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Windows-validation-evidence
-          path: test-results/
+          path: |
+            test-results/*report*.json
+            test-results/onemount-provider-desktop.json
+            test-results/*.png
+            test-results/*.log
+            test-results/cache-settings-*/report.json
+            test-results/update-download-smoke/run-*/report.json
+            test-results/update-download-smoke/run-*/requests.json
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
           name: OneMount-Windows-x64-preview
           path: dist/OneMount-win32-x64/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OneMount-Windows-x64-installer
+          path: |
+            dist/installer/*.exe
+            dist/installer/*.blockmap
+            dist/installer/latest.yml
+            dist/installer/BUILD-CHECK.json
           retention-days: 14
