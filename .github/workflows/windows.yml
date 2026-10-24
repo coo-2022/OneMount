@@ -21,6 +21,8 @@ jobs:
           go-version-file: engine-src/rclone/go.mod
           cache-dependency-path: engine-src/rclone/go.sum
       - run: npm ci --no-audit --no-fund
+      - name: Prepare pinned Electron runtime for desktop tests
+        run: npm run install:electron
       - run: npm test
       - name: Verify custom backend discovery and Go tests
         run: npm run engine:rclone:test
