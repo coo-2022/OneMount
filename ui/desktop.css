@@ -1,4 +1,7 @@
 :root{color-scheme:light dark}body{margin:0;background:light-dark(#fafbfc,#202125)}
+#island-refined .ci-update-note{margin-top:12px}
+#island-refined .ci-update-progress{padding-top:12px;font-variant-numeric:tabular-nums}
+#island-refined .ci-update-progress p{margin-top:8px;color:var(--ir-muted);font-size:12px}
 #island-refined .ir-cache-size{display:flex;align-items:center;gap:10px;flex-shrink:0;color:var(--ir-muted)}
 #island-refined .ir-cache-size input{width:100px;text-align:right}
 #island-refined .ir-cache-details .ir-row>div{min-width:85px}

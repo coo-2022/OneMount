@@ -42,4 +42,16 @@ function listServices(config, oauthClients) {
   }));
 }
 
-module.exports = {PROVIDERS, normalizeProviderConfig, loadProviderConfig, listServices};
+function loadOAuthClients({root = path.resolve(__dirname, '..'), executableDir} = {}) {
+  const external = executableDir && path.join(executableDir, 'oauth-clients.json');
+  const file = external && fs.existsSync(external) ? external : path.join(root, 'oauth-clients.json');
+  try {
+    const clients = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (!clients || typeof clients !== 'object' || Array.isArray(clients) ||
+        Object.values(clients).some(c => !c || typeof c !== 'object' || Array.isArray(c) ||
+          typeof c.clientId !== 'string' || typeof c.clientSecret !== 'string')) throw new Error();
+    return clients;
+  } catch {throw new Error('无法读取应用登录配置，请检查 oauth-clients.json 格式。');}
+}
+
+module.exports = {PROVIDERS, normalizeProviderConfig, loadProviderConfig, loadOAuthClients, listServices};

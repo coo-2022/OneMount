@@ -29,7 +29,9 @@ class Manager extends EventEmitter {
     fs.mkdirSync(root, {recursive: true, mode: 0o700});
     this.file = path.join(root, 'disks.json'); this.config = path.join(root, 'accounts.conf');
     this.state = read(this.file, {version: 1, connections: [], disks: [], settings: {loginStart: false}});
-    this.state.settings = {loginStart: false, ...this.state.settings, proxy: normalizeProxy(this.state.settings?.proxy)};
+    this.state.settings = {loginStart: false, ...this.state.settings, proxy: normalizeProxy(this.state.settings?.proxy),
+      updates: {checkOnStartup: this.state.settings?.updates?.checkOnStartup === true,
+        allowPrerelease: this.state.settings?.updates?.allowPrerelease === true}};
     this.activeProxy = {...this.state.settings.proxy};
     this.performanceHistory = new perf.History();
     this.runtime = new Map(); this.busy = new Set(); this.polling = false;
@@ -61,6 +63,12 @@ class Manager extends EventEmitter {
       next.loginStart = input.loginStart;
     }
     if (input.proxy !== undefined) next.proxy = normalizeProxy(input.proxy);
+    if (input.updates !== undefined) {
+      const u = input.updates;
+      if (!u || typeof u !== 'object' || Array.isArray(u) || Object.keys(u).some(k => !['checkOnStartup', 'allowPrerelease'].includes(k)) ||
+          Object.values(u).some(v => typeof v !== 'boolean')) throw new Error('更新设置无效');
+      next.updates = {...this.state.settings.updates, ...u};
+    }
     this.state.settings = next; this.save();
   }
   async locked(id, fn) {if (this.busy.has(id)) throw new Error('此磁盘正在处理上一个操作'); this.busy.add(id); try {return await fn();} finally {this.busy.delete(id); this.emit('change');}}

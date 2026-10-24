@@ -1,6 +1,20 @@
 const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const os=require('node:os');const path=require('node:path');
 const {Manager}=require('../src/manager.cjs');
 function setup(t){const root=fs.mkdtempSync(path.join(os.tmpdir(),'ci-unit-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));const base=path.join(root,'backend');fs.mkdirSync(base);const m=new Manager({root:path.join(root,'state'),engines:root,providerConfig:{enabledProviders:['local']},protect:s=>Buffer.from(s).toString('base64'),unprotect:s=>Buffer.from(s,'base64').toString()});return {m,base};}
+test('update preferences persist while invalid writes leave all settings unchanged', t => {
+  const {m} = setup(t);
+  assert.deepEqual(m.state.settings.updates, {checkOnStartup: false, allowPrerelease: false});
+  m.updateSettings({updates: {checkOnStartup: true}});
+  m.updateSettings({updates: {allowPrerelease: true}});
+  const saved = fs.readFileSync(m.file, 'utf8');
+  for (const updates of [null, [], {allowPrerelease: 'true'}, {feedURL: 'https://invalid.example'}]) {
+    assert.throws(() => m.updateSettings({updates, loginStart: true}), /更新设置/);
+    assert.equal(fs.readFileSync(m.file, 'utf8'), saved);
+    assert.equal(m.state.settings.loginStart, false);
+  }
+  const restored = new Manager({root: m.root, engines: m.engines, providerConfig: {enabledProviders: ['local']}, protect: m.protect, unprotect: m.unprotect});
+  assert.deepEqual(restored.state.settings.updates, {checkOnStartup: true, allowPrerelease: true});
+});
 test('creation persists and removal archives without deleting metadata or cache',async t=>{
   const {m,base}=setup(t);const c=await m.addLocal({name:'本地',path:base});const id=await m.addDisk({connectionId:c,name:'卷',mode:'juicefs',letter:'X:',cacheGiB:10});
   const p=m.paths(m.disk(id));fs.writeFileSync(p.meta,'precious metadata');fs.writeFileSync(path.join(p.cache,'pending'),'precious dirty bytes');

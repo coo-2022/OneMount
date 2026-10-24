@@ -7,7 +7,7 @@ const path = require('node:path');
 const {execFileSync} = require('node:child_process');
 const {Manager} = require('../src/manager.cjs');
 require('../src/accounts.cjs').installAccounts(Manager);
-const {normalizeProviderConfig, loadProviderConfig} = require('../src/providers.cjs');
+const {normalizeProviderConfig, loadProviderConfig, loadOAuthClients} = require('../src/providers.cjs');
 
 function fixture(t) {
   const tempRoot = path.resolve(os.tmpdir());
@@ -100,4 +100,26 @@ test('release config writes the selected edition and rejects invalid selection b
   assert.equal(fs.readFileSync(oauth, 'utf8'), before);
   run('');
   assert.deepEqual(loadProviderConfig({root: base}).enabledProviders, []);
+});
+
+test('external OAuth config survives bundle changes and invalid overrides fail without disclosing secrets', t => {
+  const {base} = fixture(t), root = path.join(base, 'bundle'), executableDir = path.join(base, 'installed');
+  fs.mkdirSync(root); fs.mkdirSync(executableDir);
+  const defaults = {baidu: {clientId: '', clientSecret: ''}};
+  const privateClients = {baidu: {clientId: 'PRIVATE_APP', clientSecret: 'PRIVATE_SECRET'}};
+  fs.writeFileSync(path.join(root, 'oauth-clients.json'), JSON.stringify(defaults));
+  assert.deepEqual(loadOAuthClients({root, executableDir}), defaults);
+  const override = path.join(executableDir, 'oauth-clients.json');
+  fs.writeFileSync(override, JSON.stringify(privateClients));
+  assert.deepEqual(loadOAuthClients({root, executableDir}), privateClients);
+  fs.writeFileSync(path.join(root, 'oauth-clients.json'), '{}');
+  assert.deepEqual(loadOAuthClients({root, executableDir}), privateClients);
+  for (const invalid of ['PRIVATE_SECRET invalid json', '[]', 'null', '{"baidu":{"clientId":123,"clientSecret":"PRIVATE_SECRET"}}']) {
+    fs.writeFileSync(override, invalid);
+    assert.throws(() => loadOAuthClients({root, executableDir}), error => {
+      assert.match(error.message, /oauth-clients.json/);
+      assert.doesNotMatch(error.message, /PRIVATE_/);
+      return true;
+    });
+  }
 });
